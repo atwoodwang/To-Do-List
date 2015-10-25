@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:paddingTop="@dimen/activity_vertical_margin"
+              android:paddingBottom="@dimen/activity_vertical_margin"
+              android:orientation="vertical"
+              tools:context=".TaskDetailActivityFragment">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/task_title_label"
+        style="?android:listSeparatorTextViewStyle"/>
+    <EditText
+        android:id="@+id/task_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@android:style/TextAppearance.Large"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/task_detail_label"
+        style="?android:listSeparatorTextViewStyle"/>
+    <EditText
+        android:id="@+id/task_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        style="@android:style/TextAppearance.Medium"
+        android:layout_marginLeft="16dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/task_time_label"
+        style="?android:listSeparatorTextViewStyle"/>
+    <Button
+        android:id="@+id/task_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/task_Location_label"
+        style="?android:listSeparatorTextViewStyle"/>
+    <TextView
+        android:id="@+id/task_location_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/task_location_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
+        style="@android:style/TextAppearance.Medium"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/need_remind"
+        android:id="@+id/needCheckBox"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/task_finished"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/task_finished_label"/>
+
+
+</LinearLayout>
