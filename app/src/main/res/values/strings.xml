@@ -8,4 +8,6 @@
     <string name="task_location_content">Home</string>
     <string name="need_remind">Need Remind?</string>
     <string name="task_finished_label">Task Finished</string>
+    <string name="delete_task">Delete Task</string>
+    <string name="date_time_picker_title">Set Reminder time</string>
 </resources>

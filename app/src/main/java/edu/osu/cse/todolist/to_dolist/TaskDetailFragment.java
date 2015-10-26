@@ -3,11 +3,16 @@ package edu.osu.cse.todolist.to_dolist;
 /**
  * Created by AtwoodWang on 15/10/25.
  */
+import android.app.Activity;
+import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,15 +23,17 @@ import java.util.Date;
 
 public class TaskDetailFragment extends Fragment {
     private Task mTask;
-    private Date mDate;
     private Button mDateButton;
     private EditText mTitleField;
     private EditText mDetailField;
     private CheckBox mNeedCheckBox;
+    private static final String DIALOG_DATE = "DialogDate";
+    private static final int REQUEST_DATE = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         mTask = TaskLab.get(getActivity()).getTasks().get(1);
     }
 
@@ -72,10 +79,18 @@ public class TaskDetailFragment extends Fragment {
             }
         });
 
-
-        mDate = new Date();
         mDateButton = (Button)v.findViewById(R.id.task_time);
-        mDateButton.setText(mDate.toString());
+        mDateButton.setText(mTask.getDate().toString());
+        mDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager manager = getFragmentManager();
+                DateTimePickerFragment dialog = new DateTimePickerFragment().newInstance(mTask.getDate());
+                dialog.setTargetFragment(TaskDetailFragment.this, REQUEST_DATE);
+                dialog.show(manager, DIALOG_DATE);
+
+            }
+        });
 
 
         mNeedCheckBox = (CheckBox)v.findViewById(R.id.needCheckBox);
@@ -87,6 +102,27 @@ public class TaskDetailFragment extends Fragment {
         });
 
         return v;
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == REQUEST_DATE) {
+            Date date = (Date) data
+                    .getSerializableExtra(DateTimePickerFragment.EXTRA_DATE);
+            mTask.setDate(date);
+            mDateButton.setText(mTask.getDate().toString());
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu,MenuInflater inflater){
+        super.onCreateOptionsMenu(menu,inflater);
+        inflater.inflate(R.menu.fragment_task_detail,menu);
     }
 }
 

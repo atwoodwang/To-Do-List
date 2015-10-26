@@ -6,6 +6,7 @@ package edu.osu.cse.todolist.to_dolist;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +18,8 @@ public class TaskLab {
 
     private ArrayList<Task> mTasks;
 
+    private Date mDate;
+
     public static TaskLab get(Context context){
         if (sTaskLab == null){
             sTaskLab = new TaskLab(context);
@@ -26,11 +29,13 @@ public class TaskLab {
 
     private TaskLab(Context context){
         mTasks = new ArrayList<>();
+        mDate = new Date();
         for (int i=0;i<100;i++){
             Task task = new Task();
             task.setTitle("Task #" + i);
-            task.setDetail("Detail #"+i);
-            task.setNeed(i % 2==0);
+            task.setDetail("Detail #" + i);
+            task.setNeed(i % 2 == 0);
+            task.setDate(mDate);
             mTasks.add(task);
         }
     }

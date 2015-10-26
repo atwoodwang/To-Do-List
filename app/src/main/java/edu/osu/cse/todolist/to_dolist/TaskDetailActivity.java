@@ -20,11 +20,10 @@ public class TaskDetailActivity extends AppCompatActivity {
         android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.taskDetailFragment);
 
-        if (fragment == null){
+        if (fragment == null) {
             fragment = new TaskDetailFragment();
-            fm.beginTransaction().add(R.id.taskDetailFragment,fragment).commit();
+            fm.beginTransaction().add(R.id.taskDetailFragment, fragment).commit();
         }
-
     }
 
 }
