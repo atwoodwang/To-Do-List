@@ -3,7 +3,9 @@ package edu.osu.cse.todolist.to_dolist;
 /**
  * Created by AtwoodWang on 15/10/25.
  */
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -15,6 +17,7 @@ public class Task {
     private String mDetail;
     private Date mDate;
     private boolean mNeed;
+    private static String mFormats = "MM/dd/yy HH:mm E";
 
     public Task(){
         mId = UUID.randomUUID();
@@ -54,5 +57,10 @@ public class Task {
 
     public void setNeed(boolean need) {
         mNeed = need;
+    }
+
+    public static String formatDate(Date date){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(mFormats, Locale.US);
+        return simpleDateFormat.format(date);
     }
 }

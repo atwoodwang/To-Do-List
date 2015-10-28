@@ -19,7 +19,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class TaskDetailFragment extends Fragment {
     private Task mTask;
@@ -29,6 +32,7 @@ public class TaskDetailFragment extends Fragment {
     private CheckBox mNeedCheckBox;
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 1;
+    private String mFormats = "MM/dd/yy HH:mm E";
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -80,7 +84,7 @@ public class TaskDetailFragment extends Fragment {
         });
 
         mDateButton = (Button)v.findViewById(R.id.task_time);
-        mDateButton.setText(mTask.getDate().toString());
+        mDateButton.setText(Task.formatDate(new Date()));
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +119,7 @@ public class TaskDetailFragment extends Fragment {
             Date date = (Date) data
                     .getSerializableExtra(DateTimePickerFragment.EXTRA_DATE);
             mTask.setDate(date);
-            mDateButton.setText(mTask.getDate().toString());
+            mDateButton.setText(Task.formatDate(date));
         }
     }
 
@@ -124,5 +128,6 @@ public class TaskDetailFragment extends Fragment {
         super.onCreateOptionsMenu(menu,inflater);
         inflater.inflate(R.menu.fragment_task_detail,menu);
     }
+
 }
 
