@@ -23,6 +23,7 @@ import android.widget.EditText;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.UUID;
 
 public class TaskDetailFragment extends Fragment {
     private Task mTask;
@@ -32,13 +33,24 @@ public class TaskDetailFragment extends Fragment {
     private CheckBox mNeedCheckBox;
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 1;
-    private String mFormats = "MM/dd/yy HH:mm E";
+    private static final String ARG_TASK_ID = "task_id";
+
+
+    public static TaskDetailFragment newInstance(UUID taskId){
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_TASK_ID,taskId);
+
+        TaskDetailFragment fragment = new TaskDetailFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mTask = TaskLab.get(getActivity()).getTasks().get(1);
+        UUID taskId = (UUID)getArguments().getSerializable(ARG_TASK_ID);
+        mTask = TaskLab.get(getActivity()).getTask(taskId);
     }
 
     @Override
