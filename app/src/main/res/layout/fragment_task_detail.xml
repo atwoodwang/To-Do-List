@@ -19,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@android:style/TextAppearance.Large"
+        android:hint="@string/task_title_hint"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"/>
     <TextView
@@ -28,6 +29,7 @@
         style="?android:listSeparatorTextViewStyle"/>
     <EditText
         android:id="@+id/task_detail"
+        android:hint="@string/task_detail_hint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"

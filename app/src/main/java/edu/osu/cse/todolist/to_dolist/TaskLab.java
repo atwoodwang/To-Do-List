@@ -29,15 +29,14 @@ public class TaskLab {
 
     private TaskLab(Context context){
         mTasks = new ArrayList<>();
-        mDate = new Date();
-        for (int i=0;i<100;i++){
-            Task task = new Task();
-            task.setTitle("Task #" + i);
-            task.setDetail("Detail #" + i);
-            task.setNeed(i % 2 == 0);
-            task.setDate(mDate);
-            mTasks.add(task);
-        }
+    }
+
+    public void addTask(Task task){
+        mTasks.add(task);
+    }
+
+    public void deleteTask(Task task){
+        mTasks.remove(task);
     }
 
     public List<Task> getTasks(){

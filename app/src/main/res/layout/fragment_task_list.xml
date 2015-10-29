@@ -1,7 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/task_recycler_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-</android.support.v7.widget.RecyclerView>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:fab="http://schemas.android.com/tools"
+             android:orientation="vertical">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/task_recycler_view"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </android.support.v7.widget.RecyclerView>
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/floating_action_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        fab:menu_icon="@drawable/ic_float_button">
+
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/floating_action_add_task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_float_button_add"
+            fab:fab_size="mini"
+            fab:fab_label="Menu item 1"/>
+
+    </com.github.clans.fab.FloatingActionMenu>
+</FrameLayout>

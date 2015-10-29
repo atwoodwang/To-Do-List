@@ -10,4 +10,7 @@
     <string name="task_finished_label">Task Finished</string>
     <string name="delete_task">Delete Task</string>
     <string name="date_time_picker_title">Set Reminder time</string>
+    <string name="location_setting">Location Setting</string>
+    <string name="task_title_hint">Enter a title for the task</string>
+    <string name="task_detail_hint">Enter details of the task</string>
 </resources>

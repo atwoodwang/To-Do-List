@@ -4,15 +4,20 @@ package edu.osu.cse.todolist.to_dolist;
  * Created by AtwoodWang on 15/10/25.
  */
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -21,7 +26,9 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -48,6 +55,8 @@ public class TaskDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+
         setHasOptionsMenu(true);
         UUID taskId = (UUID)getArguments().getSerializable(ARG_TASK_ID);
         mTask = TaskLab.get(getActivity()).getTask(taskId);
@@ -96,7 +105,7 @@ public class TaskDetailFragment extends Fragment {
         });
 
         mDateButton = (Button)v.findViewById(R.id.task_time);
-        mDateButton.setText(Task.formatDate(new Date()));
+        mDateButton.setText(Task.formatDate(mTask.getDate()));
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,6 +119,7 @@ public class TaskDetailFragment extends Fragment {
 
 
         mNeedCheckBox = (CheckBox)v.findViewById(R.id.needCheckBox);
+        mNeedCheckBox.setChecked(mTask.isNeed());
         mNeedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -139,6 +149,31 @@ public class TaskDetailFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu,MenuInflater inflater){
         super.onCreateOptionsMenu(menu,inflater);
         inflater.inflate(R.menu.fragment_task_detail,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.menu_item_delete_task:
+                Dialog alertDialog = new AlertDialog.Builder(getActivity())
+                        .setMessage("Do you want to delete this task?")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                TaskLab taskLab = TaskLab.get(getActivity());
+                                List<Task> mTasks = taskLab.getTasks();
+                                mTasks.remove(mTask);
+                                getActivity().finish();
+                            }
+                        })
+                        .setNegativeButton("Cancel",null)
+                        .create();
+                alertDialog.show();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

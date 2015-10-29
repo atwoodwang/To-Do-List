@@ -6,12 +6,18 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionButton;
+
 import java.util.List;
+
 
 /**
  * Created by Zicong on 2015/10/27.
@@ -19,14 +25,41 @@ import java.util.List;
 public class TaskListFragment extends Fragment {
     private RecyclerView mTaskRecyclerView;
     private TaskAdapter mAdapter;
+    private FloatingActionButton mFloatingAddTask;
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater layoutInflater,ViewGroup container,Bundle savedInstanceState){
         View view = layoutInflater.inflate(R.layout.fragment_task_list,container,false);
         mTaskRecyclerView = (RecyclerView)view.findViewById(R.id.task_recycler_view);
         mTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mFloatingAddTask=(FloatingActionButton)view.findViewById(R.id.floating_action_add_task);
+        mFloatingAddTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Task task = new Task();
+                TaskLab.get(getActivity()).addTask(task);
+                Intent intent = TaskDetailActivity.newIntent(getActivity(), task.getId());
+                startActivity(intent);
+//                getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+            }
+        });
+
         updateUI();
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu,MenuInflater inflater){
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_task_list, menu);
     }
 
     @Override
@@ -62,8 +95,9 @@ public class TaskListFragment extends Fragment {
 
         @Override
         public void onClick(View v){
-            Intent intent = TaskDetailActivity.newIntent(getActivity(),mTask.getId());
+            Intent intent = TaskDetailActivity.newIntent(getActivity(), mTask.getId());
             startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
         }
 
         public void bindTask(Task task){
@@ -71,6 +105,12 @@ public class TaskListFragment extends Fragment {
             mTitleTextView.setText(mTask.getTitle());
             mDateTextView.setText(Task.formatDate(mTask.getDate()));
             mRemindCheckBox.setChecked(mTask.isNeed());
+            mRemindCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    mTask.setNeed(isChecked);
+                }
+            });
         }
     }
 
