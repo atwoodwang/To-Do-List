@@ -13,4 +13,11 @@
     <string name="location_setting">Location Setting</string>
     <string name="task_title_hint">Enter a title for the task</string>
     <string name="task_detail_hint">Enter details of the task</string>
+    <string name="reminder_type_label">Set Reminder Type</string>
+    <string-array name="reminder_type_array">
+        <item>None</item>
+        <item>Time</item>
+        <item>Location</item>
+        <item>Either one</item>
+    </string-array>
 </resources>

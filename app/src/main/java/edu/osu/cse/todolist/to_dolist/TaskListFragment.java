@@ -3,6 +3,7 @@ package edu.osu.cse.todolist.to_dolist;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ public class TaskListFragment extends Fragment {
     private RecyclerView mTaskRecyclerView;
     private TaskAdapter mAdapter;
     private FloatingActionButton mFloatingAddTask;
+    private final static int EMPTY_VIEW = 10;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -38,7 +40,10 @@ public class TaskListFragment extends Fragment {
     public View onCreateView(LayoutInflater layoutInflater,ViewGroup container,Bundle savedInstanceState){
         View view = layoutInflater.inflate(R.layout.fragment_task_list,container,false);
         mTaskRecyclerView = (RecyclerView)view.findViewById(R.id.task_recycler_view);
+        mTaskRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
         mTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mTaskRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
 
         mFloatingAddTask=(FloatingActionButton)view.findViewById(R.id.floating_action_add_task);
         mFloatingAddTask.setOnClickListener(new View.OnClickListener() {
@@ -82,7 +87,7 @@ public class TaskListFragment extends Fragment {
     private class TaskHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTitleTextView;
         private TextView mDateTextView;
-        private CheckBox mRemindCheckBox;
+        private CheckBox mIsFinishedCheckBox;
         private Task mTask;
 
         public TaskHolder(View itemView){
@@ -90,8 +95,9 @@ public class TaskListFragment extends Fragment {
             itemView.setOnClickListener(this);
             mTitleTextView = (TextView)itemView.findViewById(R.id.list_item_task_title_text_view);
             mDateTextView = (TextView)itemView.findViewById(R.id.list_item_task_date_text_view);
-            mRemindCheckBox = (CheckBox)itemView.findViewById(R.id.list_item_task_remind_check_box);
+            mIsFinishedCheckBox = (CheckBox)itemView.findViewById(R.id.list_item_task_is_finished_check_box);
         }
+
 
         @Override
         public void onClick(View v){
@@ -104,15 +110,16 @@ public class TaskListFragment extends Fragment {
             mTask = task;
             mTitleTextView.setText(mTask.getTitle());
             mDateTextView.setText(Task.formatDate(mTask.getDate()));
-            mRemindCheckBox.setChecked(mTask.isNeed());
-            mRemindCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            mIsFinishedCheckBox.setChecked(mTask.isFinished());
+            mIsFinishedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    mTask.setNeed(isChecked);
+                    mTask.setIsFinished(isChecked);
                 }
             });
         }
     }
+
 
     private class TaskAdapter extends RecyclerView.Adapter<TaskHolder>{
         private List<Task> mTasks;
@@ -138,5 +145,6 @@ public class TaskListFragment extends Fragment {
         public int getItemCount(){
             return mTasks.size();
         }
+
     }
 }

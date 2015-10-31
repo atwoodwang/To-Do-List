@@ -16,7 +16,8 @@ public class Task {
     private String mTitle;
     private String mDetail;
     private Date mDate;
-    private boolean mNeed;
+    private String mReminder;
+    private boolean mIsFinished;
     private static String mFormats = "MM/dd/yy HH:mm E";
 
     public Task(){
@@ -52,12 +53,20 @@ public class Task {
         mDate = date;
     }
 
-    public boolean isNeed() {
-        return mNeed;
+    public String getReminder() {
+        return mReminder;
     }
 
-    public void setNeed(boolean need) {
-        mNeed = need;
+    public void setReminder(String reminder) {
+        mReminder = reminder;
+    }
+
+    public boolean isFinished() {
+        return mIsFinished;
+    }
+
+    public void setIsFinished(boolean isFinished) {
+        mIsFinished = isFinished;
     }
 
     public static String formatDate(Date date){

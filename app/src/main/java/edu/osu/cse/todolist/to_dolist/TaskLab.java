@@ -18,7 +18,6 @@ public class TaskLab {
 
     private ArrayList<Task> mTasks;
 
-    private Date mDate;
 
     public static TaskLab get(Context context){
         if (sTaskLab == null){

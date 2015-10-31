@@ -2,30 +2,36 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="72dp"
+                android:layout_gravity="center">
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/list_item_task_remind_check_box"
-        android:layout_alignParentRight="true"
-        android:padding="4dp"/>
+        android:id="@+id/list_item_task_is_finished_check_box"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"/>
 
     <TextView
         android:id="@+id/list_item_task_title_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/list_item_task_remind_check_box"
+        android:layout_toRightOf="@id/list_item_task_is_finished_check_box"
         android:textStyle="bold"
-        android:padding="4dp"
+        android:textSize="16sp"
+        android:layout_marginLeft="72dp"
+        android:paddingTop="16dp"
         tools:text="Task Title"/>
 
     <TextView
         android:id="@+id/list_item_task_date_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/list_item_task_remind_check_box"
+        android:layout_toRightOf="@+id/list_item_task_is_finished_check_box"
         android:layout_below="@+id/list_item_task_title_text_view"
-        android:padding="4dp"
+        android:paddingBottom="16dp"
+        android:layout_marginLeft="72dp"
+        android:textSize="14sp"
         tools:text="Task Date"/>
 </RelativeLayout>
