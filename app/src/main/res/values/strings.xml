@@ -14,10 +14,11 @@
     <string name="task_title_hint">Enter a title for the task</string>
     <string name="task_detail_hint">Enter details of the task</string>
     <string name="reminder_type_label">Set Reminder Type</string>
+    <string name="Abouts">Abouts</string>
+    <string name="no_task">No tasks yet, press \"+\" to create a task.</string>
     <string-array name="reminder_type_array">
         <item>None</item>
         <item>Time</item>
         <item>Location</item>
-        <item>Either one</item>
     </string-array>
 </resources>

@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.GridLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -26,6 +29,7 @@ import java.util.List;
 public class TaskListFragment extends Fragment {
     private RecyclerView mTaskRecyclerView;
     private TaskAdapter mAdapter;
+    private TextView mNoTaskTextView;
     private FloatingActionButton mFloatingAddTask;
     private final static int EMPTY_VIEW = 10;
     @Override
@@ -40,6 +44,7 @@ public class TaskListFragment extends Fragment {
     public View onCreateView(LayoutInflater layoutInflater,ViewGroup container,Bundle savedInstanceState){
         View view = layoutInflater.inflate(R.layout.fragment_task_list,container,false);
         mTaskRecyclerView = (RecyclerView)view.findViewById(R.id.task_recycler_view);
+        mNoTaskTextView = (TextView)view.findViewById(R.id.no_task_text_view);
         mTaskRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
         mTaskRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mTaskRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -76,17 +81,25 @@ public class TaskListFragment extends Fragment {
     private void updateUI(){
         TaskLab taskLab = TaskLab.get(getActivity());
         List<Task> tasks = taskLab.getTasks();
-        if (mAdapter == null){
-        mAdapter = new TaskAdapter(tasks);
-        mTaskRecyclerView.setAdapter(mAdapter);
+        if(tasks.isEmpty()){
+            mTaskRecyclerView.setVisibility(View.GONE);
+            mNoTaskTextView.setVisibility(View.VISIBLE);
         }else{
-            mAdapter.notifyDataSetChanged();
+            mNoTaskTextView.setVisibility(View.GONE);
+            mTaskRecyclerView.setVisibility(View.VISIBLE);
+            if (mAdapter == null){
+                mAdapter = new TaskAdapter(tasks);
+                mTaskRecyclerView.setAdapter(mAdapter);
+            }else{
+                mAdapter.notifyDataSetChanged();
+            }
         }
     }
 
     private class TaskHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTitleTextView;
-        private TextView mDateTextView;
+        private TextView mTitleSingleTextView;
+        private TextView mReminderTypeView;
         private CheckBox mIsFinishedCheckBox;
         private Task mTask;
 
@@ -94,8 +107,10 @@ public class TaskListFragment extends Fragment {
             super(itemView);
             itemView.setOnClickListener(this);
             mTitleTextView = (TextView)itemView.findViewById(R.id.list_item_task_title_text_view);
-            mDateTextView = (TextView)itemView.findViewById(R.id.list_item_task_date_text_view);
+            mTitleSingleTextView =(TextView)itemView.findViewById(R.id.list_item_task_title_single_text_view);
+            mReminderTypeView = (TextView)itemView.findViewById(R.id.list_item_reminder_type_text_view);
             mIsFinishedCheckBox = (CheckBox)itemView.findViewById(R.id.list_item_task_is_finished_check_box);
+
         }
 
 
@@ -108,8 +123,28 @@ public class TaskListFragment extends Fragment {
 
         public void bindTask(Task task){
             mTask = task;
-            mTitleTextView.setText(mTask.getTitle());
-            mDateTextView.setText(Task.formatDate(mTask.getDate()));
+            if (mTask.getReminder().equals("Time")){
+                setParentLayout(72);
+                mTitleTextView.setText(mTask.getTitle());
+                mTitleSingleTextView.setVisibility(View.GONE);
+                mTitleTextView.setVisibility(View.VISIBLE);
+                mReminderTypeView.setVisibility(View.VISIBLE);
+                mReminderTypeView.setText(Task.formatDate(mTask.getDate()));
+            }else if(mTask.getReminder().equals("Location")){
+                setParentLayout(72);
+                mTitleTextView.setText(mTask.getTitle());
+                mTitleSingleTextView.setVisibility(View.GONE);
+                mTitleTextView.setVisibility(View.VISIBLE);
+                mReminderTypeView.setVisibility(View.VISIBLE);
+                mReminderTypeView.setText(R.string.location_setting);
+            }else{
+                setParentLayout(48);
+                mTitleTextView.setVisibility(View.GONE);
+                mReminderTypeView.setVisibility(View.GONE);
+                mTitleSingleTextView.setVisibility(View.VISIBLE);
+                mTitleSingleTextView.setText(mTask.getTitle());
+            }
+
             mIsFinishedCheckBox.setChecked(mTask.isFinished());
             mIsFinishedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -118,9 +153,14 @@ public class TaskListFragment extends Fragment {
                 }
             });
         }
+
+        private void setParentLayout(int dp){
+            RelativeLayout r = (RelativeLayout) mTitleSingleTextView.getParent();
+            final float scale = getContext().getResources().getDisplayMetrics().density;
+            int pixels = (int) (dp * scale + 0.5f);
+            r.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, pixels));
+        }
     }
-
-
     private class TaskAdapter extends RecyclerView.Adapter<TaskHolder>{
         private List<Task> mTasks;
 
