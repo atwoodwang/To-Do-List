@@ -7,7 +7,6 @@
     <string name="task_Location_label">Location:</string>
     <string name="task_location_content">Home</string>
     <string name="need_remind">Need Remind?</string>
-    <string name="task_finished_label">Task Finished</string>
     <string name="delete_task">Delete Task</string>
     <string name="date_time_picker_title">Set Reminder time</string>
     <string name="location_setting">Location Setting</string>
@@ -16,9 +15,19 @@
     <string name="reminder_type_label">Set Reminder Type</string>
     <string name="Abouts">Abouts</string>
     <string name="no_task">No tasks yet, press \"+\" to create a task.</string>
+    <string name="done_button">Done</string>
+    <string name="location_arriving">When arriving:</string>
+    <string name="location_leaving">When leaving:</string>
+    <string name="task_importance">Task importance</string>
     <string-array name="reminder_type_array">
         <item>None</item>
         <item>Time</item>
-        <item>Location</item>
+        <item>Location(Arriving)</item>
+        <item>Location(Leaving)</item>
+    </string-array>
+    <string-array name="location_array">
+        <item>None</item>
+        <item>Home</item>
+        <item>School</item>
     </string-array>
 </resources>

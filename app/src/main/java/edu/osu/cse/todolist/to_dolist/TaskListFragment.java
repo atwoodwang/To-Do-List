@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,9 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 
@@ -31,7 +31,8 @@ public class TaskListFragment extends Fragment {
     private TaskAdapter mAdapter;
     private TextView mNoTaskTextView;
     private FloatingActionButton mFloatingAddTask;
-    private final static int EMPTY_VIEW = 10;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -101,6 +102,7 @@ public class TaskListFragment extends Fragment {
         private TextView mTitleSingleTextView;
         private TextView mReminderTypeView;
         private CheckBox mIsFinishedCheckBox;
+        private ImageButton mIsImportant;
         private Task mTask;
 
         public TaskHolder(View itemView){
@@ -110,7 +112,7 @@ public class TaskListFragment extends Fragment {
             mTitleSingleTextView =(TextView)itemView.findViewById(R.id.list_item_task_title_single_text_view);
             mReminderTypeView = (TextView)itemView.findViewById(R.id.list_item_reminder_type_text_view);
             mIsFinishedCheckBox = (CheckBox)itemView.findViewById(R.id.list_item_task_is_finished_check_box);
-
+            mIsImportant = (ImageButton)itemView.findViewById(R.id.list_item_task_importance);
         }
 
 
@@ -130,13 +132,20 @@ public class TaskListFragment extends Fragment {
                 mTitleTextView.setVisibility(View.VISIBLE);
                 mReminderTypeView.setVisibility(View.VISIBLE);
                 mReminderTypeView.setText(Task.formatDate(mTask.getDate()));
-            }else if(mTask.getReminder().equals("Location")){
+            }else if(mTask.getReminder().equals("Location(Arriving)")){
                 setParentLayout(72);
                 mTitleTextView.setText(mTask.getTitle());
                 mTitleSingleTextView.setVisibility(View.GONE);
                 mTitleTextView.setVisibility(View.VISIBLE);
                 mReminderTypeView.setVisibility(View.VISIBLE);
-                mReminderTypeView.setText(R.string.location_setting);
+                mReminderTypeView.setText(R.string.location_arriving);
+            }else if(mTask.getReminder().equals("Location(Leaving)")){
+                setParentLayout(72);
+                mTitleTextView.setText(mTask.getTitle());
+                mTitleSingleTextView.setVisibility(View.GONE);
+                mTitleTextView.setVisibility(View.VISIBLE);
+                mReminderTypeView.setVisibility(View.VISIBLE);
+                mReminderTypeView.setText(R.string.location_leaving);
             }else{
                 setParentLayout(48);
                 mTitleTextView.setVisibility(View.GONE);
@@ -150,6 +159,27 @@ public class TaskListFragment extends Fragment {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     mTask.setIsFinished(isChecked);
+                }
+            });
+
+            if(mTask.isImportant()){
+                mIsImportant.setImageResource(R.drawable.ic_task_important);
+            }else{
+                mIsImportant.setImageResource(R.drawable.ic_list_task_not_important);
+            }
+
+            mIsImportant.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(!mTask.isImportant()){
+                        mTask.setIsImportant(true);
+                        mIsImportant.setImageResource(R.drawable.ic_task_important);
+                        Toast.makeText(getActivity(), "You have set this task to be important", Toast.LENGTH_SHORT).show();
+                    }else{
+                        mTask.setIsImportant(false);
+                        mIsImportant.setImageResource(R.drawable.ic_list_task_not_important);
+                        Toast.makeText(getActivity(), "You have set this task to be unimportant", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }

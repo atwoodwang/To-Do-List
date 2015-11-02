@@ -43,4 +43,13 @@
         android:paddingBottom="16dp"
         android:layout_marginLeft="56dp"
         android:textSize="14sp"/>
+
+    <ImageButton
+        android:id="@+id/list_item_task_importance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="16dp"
+        android:background="@android:color/transparent"/>
 </RelativeLayout>

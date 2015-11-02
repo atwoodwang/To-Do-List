@@ -19,10 +19,12 @@ public class Task {
     private String mReminder;
     private boolean mIsFinished;
     private static String mFormats = "MM/dd/yy HH:mm E";
+    private boolean mIsImportant;
 
     public Task(){
         mId = UUID.randomUUID();
         mDate = new Date();
+        mIsImportant=false;
     }
 
     public UUID getId(){
@@ -67,6 +69,14 @@ public class Task {
 
     public void setIsFinished(boolean isFinished) {
         mIsFinished = isFinished;
+    }
+
+    public boolean isImportant() {
+        return mIsImportant;
+    }
+
+    public void setIsImportant(boolean isImportant) {
+        mIsImportant = isImportant;
     }
 
     public static String formatDate(Date date){

@@ -31,6 +31,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.security.acl.LastOwnerException;
 import java.text.SimpleDateFormat;
@@ -45,10 +47,15 @@ public class TaskDetailFragment extends Fragment {
     private Button mDateButton;
     private EditText mTitleField;
     private EditText mDetailField;
+    private TextView mTimeTitleTextView;
+    private TextView mLocationTextView;
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 1;
     private static final String ARG_TASK_ID = "task_id";
     private Spinner mRemindSpinner;
+    private Spinner mLocationSpinner;
+    private Button mDoneButton;
+    private MenuItem mImportance;
 
     public static TaskDetailFragment newInstance(UUID taskId) {
         Bundle args = new Bundle();
@@ -133,7 +140,8 @@ public class TaskDetailFragment extends Fragment {
         });
 
 
-
+        mTimeTitleTextView =(TextView)v.findViewById(R.id.task_time_label);
+        mLocationTextView = (TextView)v.findViewById(R.id.task_location_label);
         mRemindSpinner = (Spinner) v.findViewById(R.id.reminder_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.reminder_type_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -145,6 +153,22 @@ public class TaskDetailFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 mTask.setReminder(parent.getItemAtPosition(pos).toString());
+                if(mTask.getReminder().equals("Time")){
+                    mTimeTitleTextView.setVisibility(View.VISIBLE);
+                    mDateButton.setVisibility(View.VISIBLE);
+                    mLocationTextView.setVisibility(View.GONE);
+                    mLocationSpinner.setVisibility(View.GONE);
+                }else if(mTask.getReminder().equals("None")){
+                    mTimeTitleTextView.setVisibility(View.GONE);
+                    mDateButton.setVisibility(View.GONE);
+                    mLocationTextView.setVisibility(View.GONE);
+                    mLocationSpinner.setVisibility(View.GONE);
+                }else{
+                    mTimeTitleTextView.setVisibility(View.GONE);
+                    mDateButton.setVisibility(View.GONE);
+                    mLocationTextView.setVisibility(View.VISIBLE);
+                    mLocationSpinner.setVisibility(View.VISIBLE);
+                }
             }
 
             @Override
@@ -152,6 +176,32 @@ public class TaskDetailFragment extends Fragment {
 
             }
         });
+
+        mLocationSpinner = (Spinner) v.findViewById(R.id.location_spinner);
+        ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(getActivity(), R.array.location_array, android.R.layout.simple_spinner_item);
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mLocationSpinner.setAdapter(adapter1);
+
+        mLocationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        mDoneButton = (Button)v.findViewById(R.id.done_button);
+        mDoneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
+
+
         return v;
     }
 
@@ -174,6 +224,10 @@ public class TaskDetailFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_task_detail, menu);
+        mImportance = menu.findItem(R.id.menu_item_task_importance);
+        if(mTask.isImportant()){
+            mImportance.setIcon(R.drawable.ic_task_important);
+        }
     }
 
     @Override
@@ -193,7 +247,17 @@ public class TaskDetailFragment extends Fragment {
                         .create();
                 alertDialog.show();
                 return true;
-
+            case R.id.menu_item_task_importance:
+                if(!mTask.isImportant()){
+                    mTask.setIsImportant(true);
+                    mImportance.setIcon(R.drawable.ic_task_important);
+                    Toast.makeText(getActivity(), "You have set this task to be important", Toast.LENGTH_SHORT).show();
+                }else{
+                    mTask.setIsImportant(false);
+                    mImportance.setIcon(R.drawable.ic_task_not_important);
+                    Toast.makeText(getActivity(), "You have set this task to be unimportant", Toast.LENGTH_SHORT).show();
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
