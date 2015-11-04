@@ -7,6 +7,8 @@ public class AccessPoint {
     private long mId;
     private String mSSID;
     private String mMAC;
+
+    // The MaxSignal and MinSignal defines a range of signal strength
     private double mMaxSignal;
     private double mMinSignal;
 

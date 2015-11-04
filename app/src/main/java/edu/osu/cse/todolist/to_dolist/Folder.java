@@ -32,6 +32,11 @@ public class Folder {
         mTitle = title;
     }
 
+    /**
+     * Get all uncompleted Tasks inside this Folder
+     *
+     * @return all Tasks belongs to this Folder with isComplete() return false
+     */
     public List<Task> getTasks() {
         return mTasks;
     }
@@ -43,6 +48,12 @@ public class Folder {
         // TODO: update database
     }
 
+    /**
+     * Remove a Task from this Folder
+     *
+     * @param task the Task need to be removed
+     * @return the removed Task if remove successfully, otherwise return <code>null</code>
+     */
     public Task removeTask(Task task) {
         if (mTasks.remove(task)) {
             return task;
@@ -52,10 +63,23 @@ public class Folder {
         // TODO: update database
     }
 
+    /**
+     * Remove all Tasks inside this Folder
+     * <p/>
+     * Remove all Tasks inside this Folder, including completed and uncompleted. This method is used
+     * to completely remove a Folder and all Tasks associated with it.
+     *
+     * @return all removed tasks inside this Folder if successful, otherwise null
+     */
     public List<Task> removeAllTask() {
         return null;
     }
 
+    /**
+     * Get the number of uncompleted tasks inside this folder
+     *
+     * @return number of tasks inside this folder
+     */
     public int count() {
         return mTasks.size();
     }

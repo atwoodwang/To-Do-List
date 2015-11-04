@@ -10,7 +10,13 @@ public class WiFiPosition {
     private List<AccessPoint> APs;
     private ConfigType mConfig;
 
+    /**
+     * Config for how the WiFiPosition works
+     */
     public enum ConfigType {
+        /**
+         * Basic mode, only check one AccessPoint is connected or not
+         */
         BASIC
     }
 
@@ -47,6 +53,11 @@ public class WiFiPosition {
         return null;
     }
 
+    /**
+     * Check if it is in the specific location defined by WiFi
+     *
+     * @return <code>true</code> if it's in the position it defines, otherwise <code>false</code>
+     */
     public boolean isInRange() {
         return false;
     }

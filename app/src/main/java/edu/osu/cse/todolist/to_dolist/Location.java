@@ -11,8 +11,19 @@ public class Location {
     private GPSCoordinate mGPSCoordinate;
     private WiFiPosition mWiFiPosition;
 
+    /**
+     * Config Type for setting up Location definition
+     */
     public enum ConfigType {
-        GPS, WiFi
+        /**
+         * Define a Location based on GPS Coordinates
+         */
+        GPS,
+
+        /**
+         * Define a Location based on WiFi and Access Point
+         */
+        WiFi
     }
 
     public Location() {
