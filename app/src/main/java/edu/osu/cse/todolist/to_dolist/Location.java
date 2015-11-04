@@ -9,7 +9,7 @@ public class Location {
     private String mNote;
     private ConfigType mConfig;
     private GPSCoordinate mGPSCoordinate;
-    private WiFiPosition mWiFiPos;
+    private WiFiPosition mWiFiPosition;
 
     public enum ConfigType {
         GPS, WiFi
@@ -59,12 +59,12 @@ public class Location {
         mGPSCoordinate = GPSCoordinate;
     }
 
-    public WiFiPosition getWiFiPos() {
-        return mWiFiPos;
+    public WiFiPosition getWiFiPosition() {
+        return mWiFiPosition;
     }
 
-    public void setWiFiPos(WiFiPosition wiFiPos) {
-        mWiFiPos = wiFiPos;
+    public void setWiFiPosition(WiFiPosition wiFiPosition) {
+        mWiFiPosition = wiFiPosition;
     }
 
     public boolean save() {

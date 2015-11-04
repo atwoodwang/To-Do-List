@@ -60,6 +60,11 @@ public class Folder {
         return mTasks.size();
     }
 
+    //TODO: add methods for completed Tasks
+    public List<Task> getCompleteTasks() {
+        return null;
+    }
+
     public boolean save() {
         boolean result = false;
         if (mId == -1) {

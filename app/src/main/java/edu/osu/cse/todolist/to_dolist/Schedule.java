@@ -13,7 +13,7 @@ public class Schedule {
     private Date mDate;
     private Task mTask;
 
-    private final static String sFormats = "MM/dd/yy HH:mm E";
+    private final String DATE_FORMAT = "MM/dd/yy HH:mm E";
 
     public enum ConfigType {
         NONE
@@ -53,10 +53,11 @@ public class Schedule {
         return mTask;
     }
 
-    // TODO: need refactor
-    public static String formatDate(Date date) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(sFormats, Locale.US);
-        return simpleDateFormat.format(date);
+    //TODO: May need refactor to deal with i18n, use resource string as date format
+    @Override
+    public String toString() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+        return simpleDateFormat.format(mDate);
     }
 
     public boolean save() {

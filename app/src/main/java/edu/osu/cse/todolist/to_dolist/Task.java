@@ -101,6 +101,14 @@ public class Task {
         return result;
     }
 
+    public String getRemindDateString() {
+        String result = "";
+        if (mSchedule != null) {
+            result = mSchedule.toString();
+        }
+        return result;
+    }
+
     public void setRemindDate(Date date) {
         //TODO: implement setRemindDate()
         // if no associated schedule, create one and call Schedule.setDate()
