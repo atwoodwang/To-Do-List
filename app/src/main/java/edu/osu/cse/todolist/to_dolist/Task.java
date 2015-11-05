@@ -1,86 +1,180 @@
 package edu.osu.cse.todolist.to_dolist;
 
-/**
- * Created by AtwoodWang on 15/10/25.
- */
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
-import java.util.UUID;
 
 /**
- * Created by AtwoodWang on 15/10/25.
+ * Created by NoAnyLove on 2015/11/2.
  */
 public class Task {
-    private UUID mId;
+    private long mId;
     private String mTitle;
-    private String mDetail;
-    private Date mDate;
-    private String mReminder;
-    private boolean mIsFinished;
-    private static String mFormats = "MM/dd/yy HH:mm E";
-    private boolean mIsImportant;
+    private String mNote;
 
-    public Task(){
-        mId = UUID.randomUUID();
-        mDate = new Date();
-        mIsImportant=false;
+    /**
+     * Indicates this Task is starred or not
+     */
+    private boolean mStarred;
+
+    /**
+     * Config for how to trigger remind
+     */
+    private ConfigType mConfig;
+    private Schedule mSchedule;
+    private Location mLocation;
+    private boolean mComplete;
+
+    /**
+     * Config Type for setting up reminder manner
+     */
+    public enum ConfigType {
+        /**
+         * default, no reminder
+         */
+        NONE,
+
+        /**
+         * Reminder based on date and time
+         */
+        TIME,
+
+        /**
+         * Remind based on location
+         */
+        LOCATION
     }
 
-    public UUID getId(){
+    public Task() {
+        //TODO: generate a random id for current coding
+        // Id=-1 means this Object hasn't saved in the database yet
+        mId = -1;
+        mStarred = false;
+        mConfig = ConfigType.NONE;
+        mSchedule = null;
+        mLocation = null;
+    }
+
+    public Task(long id) {
+        mId = id;
+    }
+
+    public long getId() {
         return mId;
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return mTitle;
     }
 
-    public void setTitle(String title){
+    public void setTitle(String title) {
         mTitle = title;
     }
 
-    public String getDetail() {
-        return mDetail;
+    public String getNote() {
+        return mNote;
     }
 
-    public void setDetail(String detail) {
-        mDetail = detail;
+    public void setNote(String note) {
+        mNote = note;
     }
 
-    public Date getDate() {
-        return mDate;
+    /**
+     * Check if the Task is starred
+     *
+     * @return <code>true</code> if it is starred, otherwise <code>false</code>
+     */
+    public boolean isStarred() {
+        return mStarred;
     }
 
-    public void setDate(Date date) {
-        mDate = date;
+    public void setStarred(boolean starred) {
+        mStarred = starred;
     }
 
-    public String getReminder() {
-        return mReminder;
+    public ConfigType getConfig() {
+        return mConfig;
     }
 
-    public void setReminder(String reminder) {
-        mReminder = reminder;
+    public void setConfig(ConfigType config) {
+        mConfig = config;
     }
 
-    public boolean isFinished() {
-        return mIsFinished;
+    public Schedule getSchedule() {
+        return mSchedule;
     }
 
-    public void setIsFinished(boolean isFinished) {
-        mIsFinished = isFinished;
+    public void setSchedule(Schedule schedule) {
+        mSchedule = schedule;
     }
 
-    public boolean isImportant() {
-        return mIsImportant;
+    public Location getLocation() {
+        return mLocation;
     }
 
-    public void setIsImportant(boolean isImportant) {
-        mIsImportant = isImportant;
+    public void setLocation(Location location) {
+        mLocation = location;
     }
 
-    public static String formatDate(Date date){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(mFormats, Locale.US);
-        return simpleDateFormat.format(date);
+    public boolean isComplete() {
+        return mComplete;
+    }
+
+    public void setComplete(boolean complete) {
+        mComplete = complete;
+    }
+
+    /**
+     * Get the remind time in Date format
+     * <p/>
+     * This method returns a Date object indicates when to remind this Task
+     *
+     * @return the <code>Date</code> of mSchedule, or <code>null</code> if there is no associated
+     * schedule.
+     */
+    public Date getRemindDate() {
+        Date result = null;
+        if (mSchedule != null) {
+            result = mSchedule.getDate();
+        }
+        return result;
+    }
+
+    /**
+     * Get the remind time in String format
+     *
+     * @return the <code>Date</code> of mSchedule in String, or "" if there is if there is no
+     * associated schedule
+     */
+    public String getRemindDateString() {
+        String result = "";
+        if (mSchedule != null) {
+            result = mSchedule.toString();
+        }
+        return result;
+    }
+
+    /**
+     * Set when to remind in Date format
+     * <p/>
+     * This method is responsible for creating or update associated schedule.
+     *
+     * @param date of when to remind
+     */
+    public void setRemindDate(Date date) {
+        //TODO: implement setRemindDate()
+        // if no associated schedule, create one and call Schedule.setDate()
+        // if has associated schedule, directly set its date and save to Database
+    }
+
+    public boolean save() {
+        boolean result = false;
+        if (mId == -1) {
+            // TODO: write into database, and update mId with ROW_ID
+            // Save object into database
+            result = true;
+        } else {
+            // Update database
+            result = true;
+        }
+        return result;
     }
 }
