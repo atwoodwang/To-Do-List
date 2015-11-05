@@ -7,8 +7,7 @@ import java.util.Locale;
 /**
  * Created by Sniper on 2015/11/3.
  */
-public class Schedule {
-    private long mId;
+public class Schedule extends Model {
     private ConfigType mConfig;
     private Date mDate;
     private Task mTask;
@@ -20,17 +19,13 @@ public class Schedule {
     }
 
     public Schedule(Task task) {
-        mId = -1;
+        super();
         mTask = task;
     }
 
     public Schedule(long id, Task task) {
-        mId = id;
+        super(id);
         mTask = task;
-    }
-
-    public long getId() {
-        return mId;
     }
 
     public ConfigType getConfig() {
@@ -60,16 +55,4 @@ public class Schedule {
         return simpleDateFormat.format(mDate);
     }
 
-    public boolean save() {
-        boolean result = false;
-        if (mId == -1) {
-            // TODO: write into database, and update mId with ROW_ID
-            // Save object into database
-            result = true;
-        } else {
-            // Update database
-            result = true;
-        }
-        return result;
-    }
 }

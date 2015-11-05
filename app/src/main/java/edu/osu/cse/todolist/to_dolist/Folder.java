@@ -5,24 +5,10 @@ import java.util.List;
 /**
  * Created by NoAnyLove on 2015/11/2.
  */
-public class Folder {
-    private long mId;
+public class Folder extends Model {
     private String mTitle;
     private List<Task> mTasks;
     // TODO: add ability of virtual folder
-
-    public Folder() {
-        mId = -1;
-    }
-
-    public Folder(long id) {
-        // id is the row id of Folder table
-        mId = id;
-    }
-
-    public long getId() {
-        return mId;
-    }
 
     public String getTitle() {
         return mTitle;
@@ -89,16 +75,4 @@ public class Folder {
         return null;
     }
 
-    public boolean save() {
-        boolean result = false;
-        if (mId == -1) {
-            // TODO: write into database, and update mId with ROW_ID
-            // Save object into database
-            result = true;
-        } else {
-            // Update database
-            result = true;
-        }
-        return result;
-    }
 }

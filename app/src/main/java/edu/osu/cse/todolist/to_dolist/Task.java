@@ -5,8 +5,7 @@ import java.util.Date;
 /**
  * Created by NoAnyLove on 2015/11/2.
  */
-public class Task {
-    private long mId;
+public class Task extends Model {
     private String mTitle;
     private String mNote;
 
@@ -44,9 +43,7 @@ public class Task {
     }
 
     public Task() {
-        //TODO: generate a random id for current coding
-        // Id=-1 means this Object hasn't saved in the database yet
-        mId = -1;
+        super();
         mStarred = false;
         mConfig = ConfigType.NONE;
         mSchedule = null;
@@ -54,11 +51,8 @@ public class Task {
     }
 
     public Task(long id) {
-        mId = id;
-    }
-
-    public long getId() {
-        return mId;
+        super(id);
+        // Load data from database
     }
 
     public String getTitle() {
@@ -163,18 +157,5 @@ public class Task {
         //TODO: implement setRemindDate()
         // if no associated schedule, create one and call Schedule.setDate()
         // if has associated schedule, directly set its date and save to Database
-    }
-
-    public boolean save() {
-        boolean result = false;
-        if (mId == -1) {
-            // TODO: write into database, and update mId with ROW_ID
-            // Save object into database
-            result = true;
-        } else {
-            // Update database
-            result = true;
-        }
-        return result;
     }
 }

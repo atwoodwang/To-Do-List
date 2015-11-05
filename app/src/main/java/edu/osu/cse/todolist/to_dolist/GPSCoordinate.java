@@ -3,23 +3,10 @@ package edu.osu.cse.todolist.to_dolist;
 /**
  * Created by Sniper on 2015/11/3.
  */
-public class GPSCoordinate {
-    private long mId;
+public class GPSCoordinate extends Model {
     private double mLongitude;
     private double mLatitude;
     private double mRange;
-
-    public GPSCoordinate() {
-        mId = -1;
-    }
-
-    public GPSCoordinate(int id) {
-        mId = id;
-    }
-
-    public long getId() {
-        return mId;
-    }
 
     public double getLongitude() {
         return mLongitude;
@@ -49,16 +36,4 @@ public class GPSCoordinate {
         return false;
     }
 
-    public boolean save() {
-        boolean result = false;
-        if (mId == -1) {
-            // TODO: write into database, and update mId with ROW_ID
-            // Save object into database
-            result = true;
-        } else {
-            // Update database
-            result = true;
-        }
-        return result;
-    }
 }

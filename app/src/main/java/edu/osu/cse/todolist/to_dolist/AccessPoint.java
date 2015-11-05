@@ -3,26 +3,13 @@ package edu.osu.cse.todolist.to_dolist;
 /**
  * Created by Sniper on 2015/11/3.
  */
-public class AccessPoint {
-    private long mId;
+public class AccessPoint extends Model {
     private String mSSID;
     private String mMAC;
 
     // The MaxSignal and MinSignal defines a range of signal strength
     private double mMaxSignal;
     private double mMinSignal;
-
-    public AccessPoint() {
-        mId = -1;
-    }
-
-    public AccessPoint(long id) {
-        mId = id;
-    }
-
-    public long getId() {
-        return mId;
-    }
 
     public String getSSID() {
         return mSSID;
@@ -60,16 +47,4 @@ public class AccessPoint {
         return false;
     }
 
-    public boolean save() {
-        boolean result = false;
-        if (mId == -1) {
-            // TODO: write into database, and update mId with ROW_ID
-            // Save object into database
-            result = true;
-        } else {
-            // Update database
-            result = true;
-        }
-        return result;
-    }
 }

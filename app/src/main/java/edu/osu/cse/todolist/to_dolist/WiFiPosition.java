@@ -5,8 +5,7 @@ import java.util.List;
 /**
  * Created by Sniper on 2015/11/3.
  */
-public class WiFiPosition {
-    private long mId;
+public class WiFiPosition extends Model {
     private List<AccessPoint> APs;
     private ConfigType mConfig;
 
@@ -18,18 +17,6 @@ public class WiFiPosition {
          * Basic mode, only check one AccessPoint is connected or not
          */
         BASIC
-    }
-
-    public WiFiPosition() {
-        mId = -1;
-    }
-
-    public WiFiPosition(long id) {
-        mId = id;
-    }
-
-    public long getId() {
-        return mId;
     }
 
     public ConfigType getConfig() {
@@ -62,16 +49,4 @@ public class WiFiPosition {
         return false;
     }
 
-    public boolean save() {
-        boolean result = false;
-        if (mId == -1) {
-            // TODO: write into database, and update mId with ROW_ID
-            // Save object into database
-            result = true;
-        } else {
-            // Update database
-            result = true;
-        }
-        return result;
-    }
 }

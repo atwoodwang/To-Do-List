@@ -3,8 +3,7 @@ package edu.osu.cse.todolist.to_dolist;
 /**
  * Created by Sniper on 2015/11/3.
  */
-public class Location {
-    private long mId;
+public class Location extends Model {
     private String mTitle;
     private String mNote;
     private ConfigType mConfig;
@@ -24,18 +23,6 @@ public class Location {
          * Define a Location based on WiFi and Access Point
          */
         WiFi
-    }
-
-    public Location() {
-        mId = -1;
-    }
-
-    public Location(long id) {
-        mId = id;
-    }
-
-    public long getId() {
-        return mId;
     }
 
     public String getTitle() {
@@ -78,16 +65,4 @@ public class Location {
         mWiFiPosition = wiFiPosition;
     }
 
-    public boolean save() {
-        boolean result = false;
-        if (mId == -1) {
-            // TODO: write into database, and update mId with ROW_ID
-            // Save object into database
-            result = true;
-        } else {
-            // Update database
-            result = true;
-        }
-        return result;
-    }
 }
