@@ -6,6 +6,11 @@ import java.util.Date;
  * Created by NoAnyLove on 2015/11/2.
  */
 public class Task extends Model {
+    /**
+     * Foreign key reference to Folder
+     */
+    private long FOLDER_ID;
+
     private String mTitle;
     private String mNote;
 
@@ -158,9 +163,14 @@ public class Task extends Model {
      *
      * @param date of when to remind
      */
-    public void setRemindDate(Date date) {
+    public boolean setRemindDate(Date date) {
         //TODO: implement setRemindDate()
-        // if no associated schedule, create one and call Schedule.setDate()
-        // if has associated schedule, directly set its date and save to Database
+        
+        // if there is no associated schedule, create a new one
+        if (mSchedule == null) {
+            mSchedule = new Schedule(this);
+        }
+        mSchedule.setDate(date);
+        return mSchedule.save();
     }
 }
