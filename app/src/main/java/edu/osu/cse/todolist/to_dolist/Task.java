@@ -37,9 +37,14 @@ public class Task extends Model {
         TIME,
 
         /**
-         * Remind based on location
+         * Remind based on arriving a location
          */
-        LOCATION
+        LOCATION_ARRIVING,
+
+        /**
+         * Remind based on leaving a location
+         */
+        LOCATION_LEAVING
     }
 
     public Task() {
