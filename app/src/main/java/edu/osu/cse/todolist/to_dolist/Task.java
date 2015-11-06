@@ -3,13 +3,20 @@ package edu.osu.cse.todolist.to_dolist;
 import java.util.Date;
 
 /**
- * Created by NoAnyLove on 2015/11/2.
+ * Task Model class
  */
+
+/*
+Conventions:
+    * Task belongs to one Folder
+    * Task has one schedule (optional)
+    * Task has one Location (optional)
+*/
 public class Task extends Model {
     /**
-     * Foreign key reference to Folder
+     * Foreign key reference to Folder.mID
      */
-    private long FOLDER_ID;
+    private long mFolderID;
 
     private String mTitle;
     private String mNote;
@@ -165,12 +172,14 @@ public class Task extends Model {
      */
     public boolean setRemindDate(Date date) {
         //TODO: implement setRemindDate()
-        
+
         // if there is no associated schedule, create a new one
         if (mSchedule == null) {
             mSchedule = new Schedule(this);
         }
         mSchedule.setDate(date);
         return mSchedule.save();
+
+        // TODO: update Task.mSchedule and Schedule.mTask
     }
 }

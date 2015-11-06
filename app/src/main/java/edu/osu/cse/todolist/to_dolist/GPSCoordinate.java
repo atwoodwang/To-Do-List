@@ -4,6 +4,11 @@ package edu.osu.cse.todolist.to_dolist;
  * Created by Sniper on 2015/11/3.
  */
 public class GPSCoordinate extends Model {
+    /**
+     * Foreign key reference to Location.mID
+     */
+    private long mLocationID;
+
     private double mLongitude;
     private double mLatitude;
     private double mRange;

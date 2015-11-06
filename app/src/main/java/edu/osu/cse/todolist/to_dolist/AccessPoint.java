@@ -4,6 +4,11 @@ package edu.osu.cse.todolist.to_dolist;
  * Created by Sniper on 2015/11/3.
  */
 public class AccessPoint extends Model {
+    /**
+     * Foreign key reference to WiFiPosition.mID
+     */
+    private long mWiFiPositionID;
+
     private String mSSID;
     private String mMAC;
 

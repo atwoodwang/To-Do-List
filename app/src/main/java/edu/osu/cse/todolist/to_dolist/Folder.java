@@ -26,28 +26,30 @@ public class Folder extends Model {
     public List<Task> getTasks() {
         return mTasks;
     }
+// No need for Folder.addTask(), use Task.setFolder() instead
+//    public void addTask(Task task) {
+//        if (!mTasks.contains(task)) {
+//            mTasks.add(task);
+//        }
+//        // TODO: update database
+//    }
 
-    public void addTask(Task task) {
-        if (!mTasks.contains(task)) {
-            mTasks.add(task);
-        }
-        // TODO: update database
-    }
-
-    /**
-     * Remove a Task from this Folder
-     *
-     * @param task the Task need to be removed
-     * @return the removed Task if remove successfully, otherwise return <code>null</code>
-     */
-    public Task removeTask(Task task) {
-        if (mTasks.remove(task)) {
-            return task;
-        } else {
-            return null;
-        }
-        // TODO: update database
-    }
+    // No need for Folder.removeTask(), use Task.setFolder() instead
+    // A Task must belongs to one Folder
+//    /**
+//     * Remove a Task from this Folder
+//     *
+//     * @param task the Task need to be removed
+//     * @return the removed Task if remove successfully, otherwise return <code>null</code>
+//     */
+//    public Task removeTask(Task task) {
+//        if (mTasks.remove(task)) {
+//            return task;
+//        } else {
+//            return null;
+//        }
+//        // TODO: update database
+//    }
 
     /**
      * Remove all Tasks inside this Folder

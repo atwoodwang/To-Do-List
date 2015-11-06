@@ -8,6 +8,11 @@ import java.util.Locale;
  * Created by Sniper on 2015/11/3.
  */
 public class Schedule extends Model {
+    /**
+     * Foreign key reference to Task.mID
+     */
+    private long mTaskID;
+
     private ConfigType mConfig;
     private Date mDate;
     private Task mTask;
