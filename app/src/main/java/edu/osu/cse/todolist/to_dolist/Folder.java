@@ -26,30 +26,40 @@ public class Folder extends Model {
     public List<Task> getTasks() {
         return mTasks;
     }
-// No need for Folder.addTask(), use Task.setFolder() instead
-//    public void addTask(Task task) {
-//        if (!mTasks.contains(task)) {
-//            mTasks.add(task);
-//        }
-//        // TODO: update database
-//    }
 
-    // No need for Folder.removeTask(), use Task.setFolder() instead
-    // A Task must belongs to one Folder
-//    /**
-//     * Remove a Task from this Folder
-//     *
-//     * @param task the Task need to be removed
-//     * @return the removed Task if remove successfully, otherwise return <code>null</code>
-//     */
-//    public Task removeTask(Task task) {
-//        if (mTasks.remove(task)) {
-//            return task;
-//        } else {
-//            return null;
-//        }
-//        // TODO: update database
-//    }
+    public boolean addTask(Task task) {
+        boolean result = false;
+        if (task != null) {
+            if (!mTasks.contains(task)) {
+                // TODO: tasks with same id but different instances maybe treated as different
+                // tasks, need sovle this problem
+                task.setForeignKey(getId());
+                task.save();
+                if (mTasks.add(task)) {
+                    result = true;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Remove a Task from this Folder
+     *
+     * @param task the Task need to be removed
+     * @return the removed Task if remove successfully, otherwise return <code>null</code>
+     */
+
+    public Task removeTask(Task task) {
+        Task result = null;
+        if (mTasks.remove(task)) {
+            result = task;
+//            task.setForeignKey(ToDoLab.getDefaultFolder.getId());
+//            task.save();
+        }
+        // TODO: update database
+        return result;
+    }
 
     /**
      * Remove all Tasks inside this Folder
@@ -76,5 +86,4 @@ public class Folder extends Model {
     public List<Task> getCompleteTasks() {
         return null;
     }
-
 }
