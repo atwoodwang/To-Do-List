@@ -4,6 +4,7 @@ package edu.osu.cse.todolist.to_dolist;
  * Created by Sniper on 2015/11/3.
  */
 public class Location extends Model {
+
     private String mTitle;
     private String mNote;
     private ConfigType mConfig;

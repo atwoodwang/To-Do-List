@@ -13,10 +13,6 @@ Conventions:
     * Task has one Location (optional)
 */
 public class Task extends Model {
-    /**
-     * Foreign key reference to Folder.mID
-     */
-    private long mFolderID;
 
     private String mTitle;
     private String mNote;

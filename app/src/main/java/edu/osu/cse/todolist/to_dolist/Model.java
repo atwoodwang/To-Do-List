@@ -9,6 +9,11 @@ public class Model {
     private long mId;
 
     /**
+     * Foreign key reference to another Object
+     */
+    private long mForeignKey;
+
+    /**
      * Tag used for debug
      */
     private static final String TAG = "ToDoList-Model";
@@ -25,14 +30,24 @@ public class Model {
 
     public Model() {
         mId = -1;
+        mForeignKey = -1;
 
         Log.d(TAG, String.format("%s(id=%d) created", getClass().getName(), mId));
     }
 
     public Model(long id) {
         mId = id;
+        mForeignKey = -1;
 
         Log.d(TAG, String.format("%s(id=%d) created", getClass().getName(), mId));
+    }
+
+    public long getForeignKey() {
+        return mForeignKey;
+    }
+
+    public void setForeignKey(long foreignKey) {
+        mForeignKey = foreignKey;
     }
 
     /**

@@ -6,10 +6,6 @@ import java.util.List;
  * Created by Sniper on 2015/11/3.
  */
 public class WiFiPosition extends Model {
-    /**
-     * Foreign key reference to Location.mID
-     */
-    private long mLocationID;
 
     private List<AccessPoint> APs;
     private ConfigType mConfig;
