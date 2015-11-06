@@ -14,11 +14,11 @@ public class ToDoLab {
     private Context mContext;
 
     private List<Task> mTasks;
-    private List<Folder> mFolders;
+    //    private List<Folder> mFolders;
     private List<Location> mLocations;
     private List<GPSCoordinate> mGPSCoordinates;
     private List<WiFiPosition> mWiFiPositions;
-    private List<AccessPoint> mAccessPoints;
+    //    private List<AccessPoint> mAccessPoints;
     private List<Schedule> mSchedules;
 
     public static ToDoLab get(Context context) {
@@ -32,11 +32,11 @@ public class ToDoLab {
         mContext = context.getApplicationContext();
 
         mTasks = new ArrayList<>();
-        mFolders = new ArrayList<>();
+//        mFolders = new ArrayList<>();
         mLocations = new ArrayList<>();
         mGPSCoordinates = new ArrayList<>();
         mWiFiPositions = new ArrayList<>();
-        mAccessPoints = new ArrayList<>();
+//        mAccessPoints = new ArrayList<>();
         mSchedules = new ArrayList<>();
     }
 
@@ -52,9 +52,9 @@ public class ToDoLab {
         return mTasks;
     }
 
-    public List<Folder> getFolders() {
-        return mFolders;
-    }
+//    public List<Folder> getFolders() {
+//        return mFolders;
+//    }
 
     public List<Location> getLocations() {
         return mLocations;

@@ -7,38 +7,43 @@ import java.util.List;
  */
 public class WiFiPosition extends Model {
 
-    private List<AccessPoint> APs;
-    private ConfigType mConfig;
+    private String mSSID;
+    private String mMAC;
 
-    /**
-     * Config for how the WiFiPosition works
-     */
-    public enum ConfigType {
-        /**
-         * Basic mode, only check one AccessPoint is connected or not
-         */
-        BASIC
+    // The MaxSignal and MinSignal defines a range of signal strength
+    private double mMaxSignal;
+    private double mMinSignal;
+
+    public String getSSID() {
+        return mSSID;
     }
 
-    public ConfigType getConfig() {
-        return mConfig;
+    public void setSSID(String SSID) {
+        mSSID = SSID;
     }
 
-    public void setConfig(ConfigType config) {
-        mConfig = config;
+    public String getMAC() {
+        return mMAC;
     }
 
-    public void addAP(AccessPoint AP) {
-
+    public void setMAC(String MAC) {
+        mMAC = MAC;
     }
 
-    // TODO: modify the way of remove AP, maybe by SSID or MAC
-    public AccessPoint removeAP(AccessPoint AP) {
-        return null;
+    public double getMaxSignal() {
+        return mMaxSignal;
     }
 
-    public List<AccessPoint> removeAllAP() {
-        return null;
+    public void setMaxSignal(double maxSignal) {
+        mMaxSignal = maxSignal;
+    }
+
+    public double getMinSignal() {
+        return mMinSignal;
+    }
+
+    public void setMinSignal(double minSignal) {
+        mMinSignal = minSignal;
     }
 
     /**
