@@ -220,9 +220,6 @@ public class TaskDetailFragment extends Fragment {
 
         mLocationSpinner = (Spinner) v.findViewById(R.id.location_spinner);
         updateLocationSpinner();
-        int locationposition = mLocations.indexOf(mTask.getLocation()) + 1;
-        mLocationSpinner.setSelection(locationposition);
-
         mLocationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -230,6 +227,8 @@ public class TaskDetailFragment extends Fragment {
                 for (Location location : mLocations) {
                     if (location.getTitle() == title) {
                         mTask.setLocation(location);
+                    }else{
+                        mTask.setLocation(null);
                     }
                 }
             }
@@ -271,6 +270,8 @@ public class TaskDetailFragment extends Fragment {
         ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, mlocationArray);
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mLocationSpinner.setAdapter(adapter1);
+        int locationposition = mLocations.indexOf(mTask.getLocation()) + 1;
+        mLocationSpinner.setSelection(locationposition);
     }
 
     @Override
