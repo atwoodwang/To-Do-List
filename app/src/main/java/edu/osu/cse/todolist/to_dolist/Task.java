@@ -166,7 +166,7 @@ public class Task extends Model {
      *
      * @param date of when to remind
      */
-    public boolean setRemindDate(Date date) {
+    public Schedule setRemindDate(Date date) {
         //TODO: implement setRemindDate()
 
         // if there is no associated schedule, create a new one
@@ -174,7 +174,7 @@ public class Task extends Model {
             mSchedule = new Schedule(this);
         }
         mSchedule.setDate(date);
-        return mSchedule.save();
+        return mSchedule;
 
         // TODO: update Task.mSchedule and Schedule.mTask
     }

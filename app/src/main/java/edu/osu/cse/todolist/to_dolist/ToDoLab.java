@@ -1,12 +1,13 @@
 package edu.osu.cse.todolist.to_dolist;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Sniper on 2015/11/3.
+ * ToDoLab singleton centralized data class
  */
 public class ToDoLab {
     private static ToDoLab sToDoLab;
@@ -20,6 +21,17 @@ public class ToDoLab {
     private List<WiFiPosition> mWiFiPositions;
     //    private List<AccessPoint> mAccessPoints;
     private List<Schedule> mSchedules;
+
+    /**
+     * Use static class variable to simulate SQLite ROW_ID. This is only used for developing and
+     * test
+     */
+    private static long dummyId = 1;
+
+    /**
+     * Tag used for debug
+     */
+    private static final String TAG = "ToDoLab";
 
     public static ToDoLab get(Context context) {
         if (sToDoLab == null) {
@@ -92,6 +104,60 @@ public class ToDoLab {
                 return task;
             }
         }
+        return null;
+    }
+
+    /**
+     * Save/update a Model object to database
+     *
+     * @param model the Model need to be saved/updated
+     * @return return <code>true</code> if save successfully, otherwise <code>false</code>
+     */
+    public <T extends Model> boolean save(T model) {
+        boolean result = false;
+
+        if (model.getId() == -1) {
+            // TODO: write into database, and update mId with ROW_ID
+            // Save object into database
+            model.setId(dummyId++);
+            result = true;
+        } else {
+            // Retrieve object from database if necessary
+            // and then Update database
+            result = true;
+        }
+
+        Log.d(TAG, String.format("%s(id=%d) saved", model.getClass().getName(), model.getId()));
+        return result;
+    }
+
+    /**
+     * Delete a Model object record from database
+     *
+     * @return <code>true</code> if successfully delete, otherwise <code>false</code>.
+     */
+    public <T extends Model> boolean delete(T model) {
+        boolean result = false;
+        if (model.getId() != -1) {
+            result = true;
+            Log.d(TAG, String.format("%s(id=%d) deleted", model.getClass().getName(), model.getId()));
+            model.setId(-1);
+        } else {
+            Log.d(TAG, String.format("Cannot delete %s(id=%d)", model.getClass().getName(),
+                    model.getId()));
+        }
+        return result;
+    }
+
+    /**
+     * Find an object from database with its id
+     *
+     * @param type class type of the object
+     * @param id   primary key id
+     * @param <T>  class type
+     * @return the object if found, otherwise return <code>null</code>
+     */
+    public <T extends Model> T findById(Class<T> type, Long id) {
         return null;
     }
 }
