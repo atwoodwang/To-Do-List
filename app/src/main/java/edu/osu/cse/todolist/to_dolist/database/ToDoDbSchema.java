@@ -53,7 +53,7 @@ public class ToDoDbSchema {
     /**
      * Location table schema
      */
-    public static final class LocationTale {
+    public static final class LocationTable {
         /**
          * Table Name: Location
          */
@@ -116,7 +116,7 @@ public class ToDoDbSchema {
     /**
      * WiFiPosition table schema
      */
-    public static final class WiFiPosition {
+    public static final class WiFiPositionTable {
         /**
          * Table Name: WiFiPosition
          */
