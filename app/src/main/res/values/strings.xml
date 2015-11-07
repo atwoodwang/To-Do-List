@@ -14,20 +14,33 @@
     <string name="task_detail_hint">Enter details of the task</string>
     <string name="reminder_type_label">Set Reminder Type</string>
     <string name="Abouts">Abouts</string>
-    <string name="no_task">No tasks yet, press \"+\" to create a task.</string>
+    <string name="no_task">Press \"+\" to create a task.</string>
     <string name="done_button">Done</string>
-    <string name="location_arriving">When arriving:</string>
-    <string name="location_leaving">When leaving:</string>
     <string name="task_importance">Task importance</string>
+    <string name="date_time_setting">Date and Time Setting</string>
+    <string name="location_setting_title">Location Setting</string>
+    <string name="location_title_hint">Enter a title for this location</string>
+    <string name="location_detail_hint">Enter detail of the location</string>
+    <string name="location_type_label">Set Location Type</string>
+    <string name="use_current_wifi_label">Use Current Wi-Fi location</string>
+    <string name="wifi_advanced_settings">Wi-Fi Location Advanced Settings</string>
+    <string name="gps_location_setting">GPS Location Setting</string>
+    <string name="location_setting_label">Set Location</string>
+    <string name="no_location">Press \"+\" to add a new location</string>
+    <string name="list_based_on_gps">Based on: GPS</string>
+    <string name="list_based_on_wifi">Based on: Wi-Fi</string>
+    <string name="delete_location">Delete Location</string>
+    <string name="location_arriving">"When Arriving: "</string>
+    <string name="location_leaving">When Leaving:</string>
+    <string name="shortcut_location_setting">Go to Location Setting</string>
     <string-array name="reminder_type_array">
         <item>None</item>
         <item>Time</item>
         <item>Location(Arriving)</item>
         <item>Location(Leaving)</item>
     </string-array>
-    <string-array name="location_array">
-        <item>None</item>
-        <item>Home</item>
-        <item>School</item>
+    <string-array name="location_type_array">
+        <item>GPS</item>
+        <item>Wi-Fi</item>
     </string-array>
 </resources>

@@ -76,6 +76,19 @@ public class ToDoLab {
         mTasks.add(task);
     }
 
+    public void addLocation(Location location) {
+        mLocations.add(location);
+    }
+
+    public Location removeLocation(Location location) {
+        if (mLocations.contains(location)) {
+            mLocations.remove(location);
+            return location;
+        } else {
+            return null;
+        }
+    }
+
     public Task removeTask(Task task) {
         if (mTasks.contains(task)) {
             mTasks.remove(task);
@@ -90,6 +103,16 @@ public class ToDoLab {
         for (Task task : mTasks) {
             if (task.getId() == id) {
                 return task;
+            }
+        }
+        return null;
+    }
+
+    public Location getLocation(long id) {
+        // TODO: need read location from database
+        for (Location location : mLocations) {
+            if (location.getId() == id) {
+                return location;
             }
         }
         return null;

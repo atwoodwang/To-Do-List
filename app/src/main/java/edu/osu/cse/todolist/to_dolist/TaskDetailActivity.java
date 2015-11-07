@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class TaskDetailActivity extends SingleFragmentActivity {
     private  static final String EXTRA_TASK_ID = "edu.osu.cse.todolist.to_dolist.task_id";
-    private UUID mtaskId;
+    private long mtaskId;
     private List<Task> mTasks;
     private Task mTask;
 
@@ -38,13 +38,13 @@ public class TaskDetailActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment createFragment(){
-        mtaskId= (UUID) getIntent().getSerializableExtra(EXTRA_TASK_ID);
+        mtaskId= (long) getIntent().getSerializableExtra(EXTRA_TASK_ID);
         return TaskDetailFragment.newInstance(mtaskId);
     }
 
     @Override
     public void onBackPressed(){
-        TaskLab taskLab = TaskLab.get(this);
+        ToDoLab taskLab = ToDoLab.get(this);
         mTasks = taskLab.getTasks();
         mTask=taskLab.getTask(mtaskId);
 
@@ -58,15 +58,28 @@ public class TaskDetailActivity extends SingleFragmentActivity {
                             finish();
                         }
                     })
-                    .setNegativeButton("Cancel",null)
+                    .setNegativeButton("Cancel", null)
+                    .create();
+            alertDialog.show();
+        }else if(mTask.getConfig()==Task.ConfigType.TIME & mTask.getRemindDate()==null){
+            Dialog alertDialog = new AlertDialog.Builder(this)
+                    .setMessage("Have to select a time for your task")
+                    .setPositiveButton("OK", null)
+                    .create();
+            alertDialog.show();
+        }else if((mTask.getConfig()==Task.ConfigType.LOCATION_ARRIVING||mTask.getConfig()==Task.ConfigType.LOCATION_LEAVING)&mTask.getLocation()==null){
+            Dialog alertDialog = new AlertDialog.Builder(this)
+                    .setMessage("Have to select a location for your task")
+                    .setPositiveButton("OK", null)
                     .create();
             alertDialog.show();
         }else{
+            mTask.save();
             finish();
         }
     }
 
-    public static Intent newIntent(Context packageContext,UUID taskId){
+    public static Intent newIntent(Context packageContext,long taskId){
         Intent intent = new Intent(packageContext,TaskDetailActivity.class);
         intent.putExtra(EXTRA_TASK_ID,taskId);
         return intent;

@@ -22,6 +22,12 @@
         <activity android:name=".TaskDetailActivity"
             android:parentActivityName=".TaskListActivity">
         </activity>
+        <activity android:name=".LocationDetailActivity"
+                  android:parentActivityName=".LocationListActivity">
+        </activity>
+        <activity android:name=".LocationListActivity"
+                  android:parentActivityName=".TaskListActivity">
+        </activity>
     </application>
 
 </manifest>
