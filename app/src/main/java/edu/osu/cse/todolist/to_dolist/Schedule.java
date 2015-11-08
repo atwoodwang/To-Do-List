@@ -6,6 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
+import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.ScheduleTable;
+
 /**
  * Created by Sniper on 2015/11/3.
  */
@@ -60,6 +63,12 @@ public class Schedule extends Model {
     }
 
     public ContentValues getContentValues() {
-        return null;
+        ContentValues values = new ContentValues();
+
+        values.put(ScheduleTable.Cols.TASK_ID, mTask.getId());
+        values.put(ScheduleTable.Cols.CONFIG, mConfig.ordinal());
+        values.put(ScheduleTable.Cols.DATE, mDate.getTime());
+
+        return values;
     }
 }
