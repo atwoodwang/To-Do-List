@@ -1,5 +1,7 @@
 package edu.osu.cse.todolist.to_dolist;
 
+import android.content.ContentValues;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -56,4 +58,7 @@ public class Schedule extends Model {
         return simpleDateFormat.format(mDate);
     }
 
+    public ContentValues getContentValues() {
+        return null;
+    }
 }

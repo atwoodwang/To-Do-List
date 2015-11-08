@@ -1,5 +1,7 @@
 package edu.osu.cse.todolist.to_dolist;
 
+import android.content.ContentValues;
+
 import java.util.List;
 
 /**
@@ -55,4 +57,7 @@ public class WiFiPosition extends Model {
         return false;
     }
 
+    public ContentValues getContentValues() {
+        return null;
+    }
 }

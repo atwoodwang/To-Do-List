@@ -1,5 +1,7 @@
 package edu.osu.cse.todolist.to_dolist;
 
+import android.content.ContentValues;
+
 import java.util.List;
 
 /**
@@ -34,7 +36,6 @@ public class Folder extends Model {
                 // TODO: tasks with same id but different instances maybe treated as different
                 // tasks, need sovle this problem
                 task.setForeignKey(getId());
-                task.save();
                 if (mTasks.add(task)) {
                     result = true;
                 }
@@ -84,6 +85,10 @@ public class Folder extends Model {
 
     //TODO: add methods for completed Tasks
     public List<Task> getCompleteTasks() {
+        return null;
+    }
+
+    public ContentValues getContentValues() {
         return null;
     }
 }

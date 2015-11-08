@@ -1,5 +1,7 @@
 package edu.osu.cse.todolist.to_dolist;
 
+import android.content.ContentValues;
+
 /**
  * Created by Sniper on 2015/11/3.
  */
@@ -37,4 +39,7 @@ public class GPSCoordinate extends Model {
         return false;
     }
 
+    public ContentValues getContentValues() {
+        return null;
+    }
 }
