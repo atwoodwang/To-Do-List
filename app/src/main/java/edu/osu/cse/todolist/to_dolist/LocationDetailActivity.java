@@ -53,7 +53,8 @@ public class LocationDetailActivity extends SingleFragmentActivity {
                     .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            mLocations.remove(mLocation);
+//                            mLocations.remove(mLocation);
+                            ToDoLab.get(getApplicationContext()).delete(mLocation);
                             finish();
                         }
                     })
@@ -61,7 +62,8 @@ public class LocationDetailActivity extends SingleFragmentActivity {
                     .create();
             alertDialog.show();
         } else {
-            mLocation.save();
+//            mLocation.save();
+            ToDoLab.get(this).save(mLocation);
             finish();
         }
     }

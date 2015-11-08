@@ -82,6 +82,7 @@ public class LocationListFragment extends Fragment {
                 mAdapter = new LocationAdapter(locations);
                 mLocationRecyclerView.setAdapter(mAdapter);
             } else {
+                mAdapter.setLocations(locations);
                 mAdapter.notifyDataSetChanged();
             }
         }
@@ -144,6 +145,10 @@ public class LocationListFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mLocations.size();
+        }
+
+        public void setLocations(List<Location> locations) {
+            mLocations = locations;
         }
 
     }

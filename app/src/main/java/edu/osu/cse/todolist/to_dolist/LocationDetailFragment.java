@@ -184,7 +184,8 @@ public class LocationDetailFragment extends Fragment {
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ToDoLab.get(getActivity()).removeLocation(mLocation);
+//                                ToDoLab.get(getActivity()).removeLocation(mLocation);
+                                ToDoLab.get(getActivity()).delete(mLocation);
                                 getActivity().finish();
                             }
                         })
