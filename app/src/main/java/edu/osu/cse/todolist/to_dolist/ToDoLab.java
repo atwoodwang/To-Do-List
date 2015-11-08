@@ -24,6 +24,10 @@ public class ToDoLab {
     private Context mContext;
     private SQLiteDatabase mDatabase;
 
+    /**
+     * Currently manipulate Task
+     */
+    private Task mTask;
     private List<Task> mTasks;
     //    private List<Folder> mFolders;
     private List<Location> mLocations;
@@ -72,7 +76,7 @@ public class ToDoLab {
     }
 
     public List<Task> getTasks() {
-        return mTasks;
+        return findAll(Task.class);
     }
 
 //    public List<Folder> getFolders() {
@@ -96,7 +100,9 @@ public class ToDoLab {
     }
 
     public void addTask(Task task) {
-        mTasks.add(task);
+        if (task.getId() == -1) {
+            mTask = task;
+        }
     }
 
     public void addLocation(Location location) {
@@ -122,13 +128,13 @@ public class ToDoLab {
     }
 
     public Task getTask(long id) {
-        // TODO: need read task from database
-        for (Task task : mTasks) {
-            if (task.getId() == id) {
-                return task;
-            }
+        Task task = null;
+        if (id == -1) {
+            task = mTask;
+        } else {
+            task = findById(Task.class, id);
         }
-        return null;
+        return task;
     }
 
     public Location getLocation(long id) {
