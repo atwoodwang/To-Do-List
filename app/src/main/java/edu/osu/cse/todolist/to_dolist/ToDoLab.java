@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.osu.cse.todolist.to_dolist.database.LocationCursorWrapper;
+import edu.osu.cse.todolist.to_dolist.database.ScheduleCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.TaskCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.ToDoBaseHelper;
+import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
 
 import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
 
@@ -287,6 +289,33 @@ public class ToDoLab {
         }
 
         return model;
+    }
+
+    public Schedule findScheduleByTask(Task task) {
+        if (task == null) {
+            return null;
+        }
+        if (task.getId() == -1) {
+            return null;
+        }
+        Schedule schedule = null;
+        Cursor cursor = query(
+                ScheduleTable.NAME,     //Table Name
+                ScheduleTable.Cols.TASK_ID + " = ?",       //select by primary key ID
+                new String[]{Long.toString(task.getId())}
+        );
+        ScheduleCursorWrapper cw = new ScheduleCursorWrapper(cursor);
+        try {
+            if (cw.getCount() == 0) {
+                return null;
+            }
+            cw.moveToFirst();
+            schedule = cw.get(task);
+        } finally {
+            cw.close();
+        }
+
+        return schedule;
     }
 
 
