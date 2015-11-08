@@ -192,14 +192,30 @@ public class ToDoLab {
      * @return <code>true</code> if successfully delete, otherwise <code>false</code>.
      */
     public <T extends Model> boolean delete(T model) {
+        // handle in-memory Task object and error id parameter
+        long id = model.getId();
+        if (id == -1) {
+            if (mTask != null) {
+                mTask = null;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         boolean result = false;
-        if (model.getId() != -1) {
+        int numOfLine = mDatabase.delete(getTableName(model),
+                "ID = ?",
+                new String[]{Long.toString(id)}
+        );
+        if (numOfLine > 0) {
             result = true;
-            Log.d(TAG, String.format("%s(id=%d) deleted", model.getClass().getName(), model.getId()));
-            model.setId(-1);
+        }
+
+        if (result) {
+            Log.d(TAG, String.format("%s(id=%d) deleted", model.getClass().getSimpleName(), id));
         } else {
-            Log.d(TAG, String.format("Cannot delete %s(id=%d)", model.getClass().getName(),
-                    model.getId()));
+            Log.d(TAG, String.format("%s(id=%d) failed to delet", model.getClass().getSimpleName(), id));
         }
         return result;
     }
