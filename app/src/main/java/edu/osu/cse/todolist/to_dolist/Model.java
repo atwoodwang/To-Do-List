@@ -1,11 +1,12 @@
 package edu.osu.cse.todolist.to_dolist;
 
+import android.content.ContentValues;
 import android.util.Log;
 
 /**
  * Base class for Models, similar to Active Record style
  */
-public class Model {
+public abstract class Model {
     /**
      *
      */
@@ -58,4 +59,10 @@ public class Model {
         mForeignKey = foreignKey;
     }
 
+    /**
+     * Must override this method to provide ContentValues for database manipulation
+     *
+     * @return a ContentValues that can insert/update to Database
+     */
+    public abstract ContentValues getContentValues();
 }
