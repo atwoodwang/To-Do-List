@@ -182,6 +182,8 @@ public class TaskListFragment extends Fragment {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     mTask.setComplete(isChecked);
+                    // Save the Complete status into database
+                    ToDoLab.get(getActivity()).saveTask(mTask);
                 }
             });
 
@@ -203,6 +205,8 @@ public class TaskListFragment extends Fragment {
                         mIsImportant.setImageResource(R.drawable.ic_list_task_not_important);
                         Toast.makeText(getActivity(), "You have set this task to be unimportant", Toast.LENGTH_SHORT).show();
                     }
+                    // Save the star status into database
+                    ToDoLab.get(getActivity()).saveTask(mTask);
                 }
             });
         }
