@@ -6,6 +6,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
+
 /**
  * ToDoLab singleton centralized data class
  */
@@ -159,5 +161,36 @@ public class ToDoLab {
      */
     public <T extends Model> T findById(Class<T> type, Long id) {
         return null;
+    }
+
+    /**
+     * Get the table name of the given object
+     *
+     * @param model given object which is a subclass of Model
+     * @param <T>
+     * @return the table name of the given subclass of Model
+     */
+    public <T extends Model> String getTableName(T model) {
+        String tableName = "";
+        String className = model.getClass().getName();
+        className = className.substring(className.lastIndexOf(".") + 1);
+        switch (className) {
+            case "Task":
+                tableName = TaskTable.NAME;
+                break;
+            case "Schedule":
+                tableName = ScheduleTable.NAME;
+                break;
+            case "Location":
+                tableName = LocationTable.NAME;
+                break;
+            case "GPSCoordinate":
+                tableName = GPSCoordinateTable.NAME;
+                break;
+            case "WiFiPosition":
+                tableName = WiFiPositionTable.NAME;
+                break;
+        }
+        return tableName;
     }
 }
