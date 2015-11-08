@@ -1,11 +1,14 @@
 package edu.osu.cse.todolist.to_dolist.database;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
 import edu.osu.cse.todolist.to_dolist.Location;
+import edu.osu.cse.todolist.to_dolist.Schedule;
 import edu.osu.cse.todolist.to_dolist.Task;
 import edu.osu.cse.todolist.to_dolist.Task.ConfigType;
+import edu.osu.cse.todolist.to_dolist.ToDoLab;
 
 import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
 
@@ -22,7 +25,7 @@ public class TaskCursorWrapper extends CursorWrapper {
         super(cursor);
     }
 
-    public Task get() {
+    public Task get(Context context) {
         // get field values
         long id = getLong((getColumnIndex(TaskTable.Cols.ID)));
         String title = getString((getColumnIndex(TaskTable.Cols.TITLE)));
@@ -45,6 +48,8 @@ public class TaskCursorWrapper extends CursorWrapper {
             case NONE:
                 break;
             case TIME:
+                Schedule s = ToDoLab.get(context).findScheduleByTask(task);
+                task.setSchedule(s);
                 break;
             case LOCATION_ARRIVING:
                 break;

@@ -329,7 +329,7 @@ public class ToDoLab {
         if ("Task".equals(className)) { // Task class
             TaskCursorWrapper cw = new TaskCursorWrapper(cursor);
             cw.moveToFirst();
-            model = (T) cw.get();
+            model = (T) cw.get(mContext);
         } else if ("Schedule".equals(className)) { // Schedule class
 
         } else if ("Location".equals(className)) { // Location class
@@ -363,7 +363,7 @@ public class ToDoLab {
             TaskCursorWrapper cw = new TaskCursorWrapper(cursor);
             cw.moveToFirst();
             while (!cw.isAfterLast()) {
-                list.add((T) cw.get());
+                list.add((T) cw.get(mContext));
                 cw.moveToNext();
             }
         } else if ("Schedule".equals(className)) { // Schedule class
