@@ -1,7 +1,9 @@
 package edu.osu.cse.todolist.to_dolist;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.*;
@@ -10,7 +12,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -63,7 +67,16 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
-        enableMyLocation();
+        if (mLocation.getGPSCoordinate()==null){
+            enableMyLocation();
+        }else{
+            mMap.setMyLocationEnabled(true);
+            GPSCoordinate gpsCoordinate = mLocation.getGPSCoordinate();
+            double lat = gpsCoordinate.getLatitude();
+            double lng = gpsCoordinate.getLongitude();
+            mLatLng = new LatLng(lat,lng);
+            addMarker(mLatLng);
+        }
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
@@ -71,24 +84,7 @@ public class MapsActivity extends AppCompatActivity
             public void onMapClick(LatLng latLng) {
 
                 mLatLng = latLng;
-                // Creating a marker
-                MarkerOptions markerOptions = new MarkerOptions();
-
-                // Setting the position for the marker
-                markerOptions.position(latLng);
-
-                // Setting the title for the marker.
-                // This will be displayed on taping the marker
-                markerOptions.title(latLng.latitude + " : " + latLng.longitude);
-
-                // Clears the previously touched position
-                mMap.clear();
-
-                // Animating to the touched position
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-
-                // Placing a marker on the touched position
-                mMap.addMarker(markerOptions);
+                addMarker(latLng);
             }
         });
     }
@@ -115,11 +111,8 @@ public class MapsActivity extends AppCompatActivity
             if (location != null) {
                 // Toast.makeText(BasicMapActivity_new.this, "Selected Provider " + provider,
                 //Toast.LENGTH_SHORT).show();
-                CameraPosition position = new CameraPosition.Builder()
-                        .target(new LatLng(location.getLatitude(),location.getLongitude()))
-                        .zoom(14).build();
-
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(position));
+                mLatLng = new LatLng(location.getLatitude(),location.getLongitude());
+                addMarker(mLatLng);
             } else {
                 return;
             }
@@ -165,8 +158,55 @@ public class MapsActivity extends AppCompatActivity
 
     public static Intent newIntent(Context packageContext,long locationId){
         Intent intent = new Intent(packageContext,MapsActivity.class);
-        intent.putExtra(EXTRA_LOCATION,locationId);
+        intent.putExtra(EXTRA_LOCATION, locationId);
         return intent;
     }
 
+    @Override
+    public void onBackPressed(){
+        Dialog alertDialog = new AlertDialog.Builder(this)
+                .setMessage("Do you want to save the maker's location as your reminder location?")
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        GPSCoordinate gpsCoordinate = new GPSCoordinate();
+                        mLocation.setGPSCoordinate(gpsCoordinate);
+                        gpsCoordinate.setLatitude(mLatLng.latitude);
+                        gpsCoordinate.setLongitude(mLatLng.longitude);
+                        finish();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+        alertDialog.show();
+    }
+
+
+    public void addMarker(LatLng latLng){
+        // Creating a marker
+        MarkerOptions markerOptions = new MarkerOptions();
+
+        // Setting the position for the marker
+        markerOptions.position(latLng);
+
+        // Setting the title for the marker.
+        // This will be displayed on taping the marker
+        markerOptions.title(latLng.latitude + " : " + latLng.longitude);
+
+        // Clears the previously touched position
+        mMap.clear();
+
+        // Animating to the touched position
+        CameraPosition position = new CameraPosition.Builder()
+                .target(latLng)
+                .zoom(14).build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(position));
+
+        // Placing a marker on the touched position
+        mMap.addMarker(markerOptions);
+    }
 }
+
+//TODO Change coordinates to street name
+//TODO ADD USE CURRENT LOCATION AS DEFAULT
+//TODO CHECK IF USERS' DOESN'T SELECT ANY LOCATION
