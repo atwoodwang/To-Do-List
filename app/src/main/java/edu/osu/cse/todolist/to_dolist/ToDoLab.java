@@ -2,12 +2,15 @@ package edu.osu.cse.todolist.to_dolist;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.osu.cse.todolist.to_dolist.database.TaskCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.ToDoBaseHelper;
 
 import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
@@ -195,16 +198,93 @@ public class ToDoLab {
         return result;
     }
 
-    /**
-     * Find an object from database with its id
-     *
-     * @param type class type of the object
-     * @param id   primary key id
-     * @param <T>  class type
-     * @return the object if found, otherwise return <code>null</code>
-     */
-    public <T extends Model> T findById(Class<T> type, Long id) {
-        return null;
+    public Cursor query(String table, String whereClause, String[] whereArgs) {
+        Cursor cursor = mDatabase.query(
+                table,
+                null, // Columns - null selects all columns
+                whereClause,
+                whereArgs,
+                null, // groupBy
+                null, // having
+                null  // orderBy
+        );
+        return cursor;
+    }
+
+    public <T extends Model> T findById(Class<T> type, long id) {
+        T model = null;
+
+        Cursor cursor = query(
+                getTableName(type),     //Table Name
+                "ID = ?",       //select by primary key ID
+                new String[]{Long.toString(id)}
+        );
+
+        try {
+            model = loadFromCursor(type, cursor);
+        } finally {
+            cursor.close();
+        }
+
+        return model;
+    }
+
+
+    public <T extends Model> T loadFromCursor(Class<T> type, Cursor cursor) {
+        if (cursor.getCount() == 0) {
+            return null;
+        }
+        T model = null;
+
+        String className = type.getSimpleName();
+        if ("Task".equals(className)) { // Task class
+            TaskCursorWrapper cw = new TaskCursorWrapper(cursor);
+            cw.moveToFirst();
+            model = (T) cw.get();
+        } else if ("Schedule".equals(className)) { // Schedule class
+
+        } else if ("Location".equals(className)) { // Location class
+
+        } else if ("GPSCoordinate".equals(className)) { // GPSCoordinate class
+
+        } else if ("WiFIPosition".equals(className)) { // WiFIPosition
+
+        }
+        return model;
+    }
+
+    public <T extends Model> List<T> findAll(Class<T> type) {
+        List<T> list = null;
+        Cursor cursor = query(getTableName(type), null, null);
+        try {
+            list = loadAllFromCursor(type, cursor);
+        } finally {
+            cursor.close();
+        }
+        return list;
+    }
+
+    public <T extends Model> List<T> loadAllFromCursor(Class<T> type, Cursor cursor) {
+        List<T> list = new ArrayList<>();
+        String className = type.getSimpleName();
+
+        if ("Task".equals(className)) { // Task class
+            TaskCursorWrapper cw = new TaskCursorWrapper(cursor);
+            cw.moveToFirst();
+            while (!cw.isAfterLast()) {
+                list.add((T) cw.get());
+                cw.moveToNext();
+            }
+        } else if ("Schedule".equals(className)) { // Schedule class
+
+        } else if ("Location".equals(className)) { // Location class
+
+        } else if ("GPSCoordinate".equals(className)) { // GPSCoordinate class
+
+        } else if ("WiFIPosition".equals(className)) { // WiFIPosition
+
+        }
+        return list;
     }
 
     /**
