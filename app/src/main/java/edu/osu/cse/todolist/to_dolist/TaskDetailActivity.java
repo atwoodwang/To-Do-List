@@ -76,7 +76,7 @@ public class TaskDetailActivity extends SingleFragmentActivity {
             alertDialog.show();
         }else{
 //            mTask.save();
-            ToDoLab.get(getApplicationContext()).save(mTask);
+            ToDoLab.get(getApplicationContext()).saveTask(mTask);
             finish();
         }
     }

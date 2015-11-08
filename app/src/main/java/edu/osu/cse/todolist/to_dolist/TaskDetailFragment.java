@@ -227,7 +227,7 @@ public class TaskDetailFragment extends Fragment {
                 for (Location location : mLocations) {
                     if (location.getTitle() == title) {
                         mTask.setLocation(location);
-                    }else{
+                    } else {
                         mTask.setLocation(null);
                     }
                 }
@@ -252,6 +252,7 @@ public class TaskDetailFragment extends Fragment {
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                ToDoLab.get(getActivity()).saveTask(mTask);
                 getActivity().onBackPressed();
             }
         });
@@ -284,6 +285,11 @@ public class TaskDetailFragment extends Fragment {
             Date date = (Date) data
                     .getSerializableExtra(DateTimePickerFragment.EXTRA_DATE);
             mTask.setRemindDate(date);
+            // Update schedule into database if it's not in-memory
+            Schedule s = mTask.getSchedule();
+            if (s.getId() != -1) {
+                ToDoLab.get(getActivity()).save(s);
+            }
             mDateButton.setText(mTask.getRemindDateString());
         }
     }
