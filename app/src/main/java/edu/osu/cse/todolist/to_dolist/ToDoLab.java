@@ -194,6 +194,36 @@ public class ToDoLab {
         return result;
     }
 
+    public boolean saveTask(Task task) {
+        if (task == null) {
+            return false;
+        }
+
+        // save task first
+        if (!save(task)) {
+            return false;
+        }
+
+        // save associated Schedule or Location according to ConfigType
+        boolean result = false;
+        switch (task.getConfig()) {
+            case NONE:
+                break;
+            case TIME:
+                if (save(task.getSchedule())) {
+                    result = true;
+                }
+                break;
+            case LOCATION_ARRIVING:
+                //TODO: update location
+                break;
+            case LOCATION_LEAVING:
+                //TODO: update location
+                break;
+        }
+        return result;
+    }
+
     /**
      * Delete a Model object record from database
      *
