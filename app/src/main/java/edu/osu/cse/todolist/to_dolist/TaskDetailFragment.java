@@ -252,7 +252,7 @@ public class TaskDetailFragment extends Fragment {
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                ToDoLab.get(getActivity()).saveTask(mTask);
+                ToDoLab.get(getActivity()).saveTask(mTask);
                 getActivity().onBackPressed();
             }
         });
@@ -286,10 +286,10 @@ public class TaskDetailFragment extends Fragment {
                     .getSerializableExtra(DateTimePickerFragment.EXTRA_DATE);
             mTask.setRemindDate(date);
             // Update schedule into database if it's not in-memory
-            Schedule s = mTask.getSchedule();
-            if (s.getId() != -1) {
-                ToDoLab.get(getActivity()).save(s);
-            }
+//            Schedule s = mTask.getSchedule();
+//            if (s.getId() != -1) {
+//                ToDoLab.get(getActivity()).save(s);
+//            }
             mDateButton.setText(mTask.getRemindDateString());
         }
     }
