@@ -10,6 +10,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.osu.cse.todolist.to_dolist.database.LocationCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.TaskCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.ToDoBaseHelper;
 
@@ -29,6 +30,11 @@ public class ToDoLab {
      */
     private Task mTask;
     private List<Task> mTasks;
+
+    /**
+     * Current in-memory Location
+     */
+    private Location mLocation;
     //    private List<Folder> mFolders;
     private List<Location> mLocations;
     private List<GPSCoordinate> mGPSCoordinates;
@@ -84,7 +90,7 @@ public class ToDoLab {
 //    }
 
     public List<Location> getLocations() {
-        return mLocations;
+        return findAll(Location.class);
     }
 
     public List<GPSCoordinate> getGPSCoordinates() {
@@ -106,7 +112,9 @@ public class ToDoLab {
     }
 
     public void addLocation(Location location) {
-        mLocations.add(location);
+        if (location.getId() == -1) {
+            mLocation = location;
+        }
     }
 
     public Location removeLocation(Location location) {
@@ -138,13 +146,13 @@ public class ToDoLab {
     }
 
     public Location getLocation(long id) {
-        // TODO: need read location from database
-        for (Location location : mLocations) {
-            if (location.getId() == id) {
-                return location;
-            }
+        Location loc = null;
+        if (id == -1) {
+            loc = mLocation;
+        } else {
+            loc = findById(Location.class, id);
         }
-        return null;
+        return loc;
     }
 
     /**
@@ -266,7 +274,9 @@ public class ToDoLab {
         } else if ("Schedule".equals(className)) { // Schedule class
 
         } else if ("Location".equals(className)) { // Location class
-
+            LocationCursorWrapper cw = new LocationCursorWrapper(cursor);
+            cw.moveToFirst();
+            model = (T) cw.get();
         } else if ("GPSCoordinate".equals(className)) { // GPSCoordinate class
 
         } else if ("WiFIPosition".equals(className)) { // WiFIPosition
@@ -300,7 +310,12 @@ public class ToDoLab {
         } else if ("Schedule".equals(className)) { // Schedule class
 
         } else if ("Location".equals(className)) { // Location class
-
+            LocationCursorWrapper cw = new LocationCursorWrapper(cursor);
+            cw.moveToFirst();
+            while (!cw.isAfterLast()) {
+                list.add((T) cw.get());
+                cw.moveToNext();
+            }
         } else if ("GPSCoordinate".equals(className)) { // GPSCoordinate class
 
         } else if ("WiFIPosition".equals(className)) { // WiFIPosition

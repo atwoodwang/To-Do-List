@@ -2,6 +2,10 @@ package edu.osu.cse.todolist.to_dolist;
 
 import android.content.ContentValues;
 
+import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
+
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
+
 /**
  * Created by Sniper on 2015/11/3.
  */
@@ -80,6 +84,12 @@ public class Location extends Model {
     }
 
     public ContentValues getContentValues() {
-        return null;
+        ContentValues values = new ContentValues();
+
+        values.put(LocationTable.Cols.TITLE, mTitle);
+        values.put(LocationTable.Cols.NOTE, mNote);
+        values.put(LocationTable.Cols.CONFIG, mConfig.ordinal());
+
+        return values;
     }
 }
