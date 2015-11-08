@@ -223,13 +223,11 @@ public class TaskDetailFragment extends Fragment {
         mLocationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                String title = parent.getItemAtPosition(pos).toString();
-                for (Location location : mLocations) {
-                    if (location.getTitle() == title) {
-                        mTask.setLocation(location);
-                    } else {
-                        mTask.setLocation(null);
-                    }
+                Location loc= (Location) parent.getItemAtPosition(pos);
+                if (loc.getId() != -1) {
+                    mTask.setLocation(loc);
+                } else {
+                    mTask.setLocation(null);
                 }
             }
 
@@ -263,17 +261,31 @@ public class TaskDetailFragment extends Fragment {
     }
 
     private void updateLocationSpinner() {
-        mlocationArray = new ArrayList<String>();
-        mLocations = ToDoLab.get(getActivity()).getLocations();
-        mlocationArray.add("Select Location");
-        for (Location location : mLocations) {
-            mlocationArray.add(location.getTitle());
-        }
-        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, mlocationArray);
-        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mLocationSpinner.setAdapter(adapter1);
-        int locationposition = mLocations.indexOf(mTask.getLocation()) + 1;
-        mLocationSpinner.setSelection(locationposition);
+        Location dummyLoc = new Location();
+        dummyLoc.setTitle("Select Location");
+
+        List<Location> locations = ToDoLab.get(getActivity()).getLocations();
+        locations.add(0, dummyLoc);
+
+        ArrayAdapter adapter = new ArrayAdapter(this.getActivity(), android.R.layout
+                .simple_spinner_item, locations);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        mLocationSpinner.setAdapter(adapter);
+        int pos = locations.indexOf(mTask.getLocation());
+        mLocationSpinner.setSelection(pos);
+
+//        mlocationArray = new ArrayList<String>();
+//        mLocations = ToDoLab.get(getActivity()).getLocations();
+//        mlocationArray.add("Select Location");
+//        for (Location location : mLocations) {
+//            mlocationArray.add(location.getTitle());
+//        }
+//        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, mlocationArray);
+//        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        mLocationSpinner.setAdapter(adapter1);
+//        int locationposition = mLocations.indexOf(mTask.getLocation()) + 1;
+//        mLocationSpinner.setSelection(locationposition);
     }
 
     @Override

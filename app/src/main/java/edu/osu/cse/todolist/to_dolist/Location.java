@@ -92,4 +92,9 @@ public class Location extends Model {
 
         return values;
     }
+
+    @Override
+    public String toString() {
+        return mTitle;
+    }
 }

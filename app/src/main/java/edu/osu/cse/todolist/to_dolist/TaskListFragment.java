@@ -57,7 +57,7 @@ public class TaskListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Task task = new Task();
-                task.setConfig(Task.ConfigType.NONE);
+//                task.setConfig(Task.ConfigType.NONE);
                 ToDoLab.get(getActivity()).addTask(task);
                 Intent intent = TaskDetailActivity.newIntent(getActivity(), task.getId());
                 startActivity(intent);
