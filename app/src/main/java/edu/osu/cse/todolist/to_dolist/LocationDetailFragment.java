@@ -3,6 +3,7 @@ package edu.osu.cse.todolist.to_dolist;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -156,6 +157,14 @@ public class LocationDetailFragment extends Fragment {
             }
         });
 
+        mGPSSettingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = MapsActivity.newIntent(getActivity(),mLocation.getId());
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+            }
+        });
 
         mDoneButton = (Button) v.findViewById(R.id.done_button);
         mDoneButton.setOnClickListener(new View.OnClickListener() {
