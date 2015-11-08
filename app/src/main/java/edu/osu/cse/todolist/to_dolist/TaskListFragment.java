@@ -108,6 +108,7 @@ public class TaskListFragment extends Fragment {
                 mAdapter = new TaskAdapter(tasks);
                 mTaskRecyclerView.setAdapter(mAdapter);
             } else {
+                mAdapter.setTasks(tasks);
                 mAdapter.notifyDataSetChanged();
             }
         }
@@ -239,5 +240,8 @@ public class TaskListFragment extends Fragment {
             return mTasks.size();
         }
 
+        public void setTasks(List<Task> tasks) {
+            mTasks = tasks;
+        }
     }
 }

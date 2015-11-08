@@ -54,7 +54,8 @@ public class TaskDetailActivity extends SingleFragmentActivity {
                     .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            mTasks.remove(mTask);
+//                            mTasks.remove(mTask);
+                            ToDoLab.get(getApplicationContext()).delete(mTask);
                             finish();
                         }
                     })
@@ -74,7 +75,8 @@ public class TaskDetailActivity extends SingleFragmentActivity {
                     .create();
             alertDialog.show();
         }else{
-            mTask.save();
+//            mTask.save();
+            ToDoLab.get(getApplicationContext()).save(mTask);
             finish();
         }
     }

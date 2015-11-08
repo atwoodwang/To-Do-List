@@ -307,7 +307,8 @@ public class TaskDetailFragment extends Fragment {
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ToDoLab.get(getActivity()).removeTask(mTask);
+//                                ToDoLab.get(getActivity()).removeTask(mTask);
+                                ToDoLab.get(getActivity()).delete(mTask);
                                 getActivity().finish();
                             }
                         })
