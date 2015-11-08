@@ -28,6 +28,17 @@ public class Location extends Model {
         WiFi
     }
 
+    public Location() {
+        this(-1);
+    }
+
+    public Location(long id) {
+        super(id);
+        mTitle = "";
+        mNote = "";
+        mConfig = ConfigType.GPS;
+    }
+
     public String getTitle() {
         return mTitle;
     }

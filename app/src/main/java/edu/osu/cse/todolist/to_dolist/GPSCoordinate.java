@@ -11,6 +11,19 @@ public class GPSCoordinate extends Model {
     private double mLatitude;
     private double mRange;
 
+    //TODO: should associate Location with GPSCoordinate, either Location.setGPSCoordinate or
+    // GPSCoordinate.setLocation. REMEMBER to update GPSCoordinate's Foreign key
+    public GPSCoordinate() {
+        this(-1);
+    }
+
+    public GPSCoordinate(long id) {
+        super(id);
+        mLongitude = 0;
+        mLatitude = 0;
+        mRange = 0;
+    }
+
     public double getLongitude() {
         return mLongitude;
     }

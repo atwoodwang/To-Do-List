@@ -16,6 +16,18 @@ public class WiFiPosition extends Model {
     private double mMaxSignal;
     private double mMinSignal;
 
+    public WiFiPosition() {
+        this(-1);
+    }
+
+    public WiFiPosition(long id) {
+        super(id);
+        mSSID = "";
+        mMAC = "";
+        mMaxSignal = 100;
+        mMinSignal = 1;
+    }
+
     public String getSSID() {
         return mSSID;
     }

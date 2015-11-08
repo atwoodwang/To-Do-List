@@ -22,13 +22,14 @@ public class Schedule extends Model {
     }
 
     public Schedule(Task task) {
-        super();
-        mTask = task;
+        this(-1, task);
     }
 
     public Schedule(long id, Task task) {
         super(id);
         mTask = task;
+        mConfig = ConfigType.NONE;
+        mDate = null;
     }
 
     public ConfigType getConfig() {

@@ -12,6 +12,11 @@ public class Folder extends Model {
     private List<Task> mTasks;
     // TODO: add ability of virtual folder
 
+
+    public Folder(long id) {
+        super(id);
+    }
+
     public String getTitle() {
         return mTitle;
     }

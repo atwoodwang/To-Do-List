@@ -62,7 +62,11 @@ public class Task extends Model {
     }
 
     public Task() {
-        super();
+        this(-1);
+    }
+
+    public Task(long id) {
+        super(id);
         mTitle = "";
         mNote = "";
         mStarred = false;
@@ -71,11 +75,6 @@ public class Task extends Model {
 
         mSchedule = null;
         mLocation = null;
-    }
-
-    public Task(long id) {
-        super(id);
-        // Load data from database
     }
 
     public String getTitle() {

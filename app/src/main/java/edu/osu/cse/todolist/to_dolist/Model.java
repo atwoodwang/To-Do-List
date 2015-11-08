@@ -37,12 +37,12 @@ public abstract class Model {
         mId = id;
     }
 
-    public Model() {
-        mId = -1;
-        mForeignKey = -1;
-
-        Log.d(TAG, String.format("%s(id=%d) created", getClass().getName(), mId));
-    }
+//    public Model() {
+//        mId = -1;
+//        mForeignKey = -1;
+//
+//        Log.d(TAG, String.format("%s(id=%d) created", getClass().getName(), mId));
+//    }
 
     public Model(long id) {
         mId = id;
