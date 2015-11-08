@@ -1,10 +1,14 @@
 package edu.osu.cse.todolist.to_dolist;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.osu.cse.todolist.to_dolist.database.ToDoBaseHelper;
 
 import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
 
@@ -15,6 +19,7 @@ public class ToDoLab {
     private static ToDoLab sToDoLab;
 
     private Context mContext;
+    private SQLiteDatabase mDatabase;
 
     private List<Task> mTasks;
     //    private List<Folder> mFolders;
@@ -44,6 +49,7 @@ public class ToDoLab {
 
     private ToDoLab(Context context) {
         mContext = context.getApplicationContext();
+        mDatabase = new ToDoBaseHelper(mContext).getWritableDatabase();
 
         mTasks = new ArrayList<>();
 //        mFolders = new ArrayList<>();
@@ -117,19 +123,34 @@ public class ToDoLab {
      */
     public <T extends Model> boolean save(T model) {
         boolean result = false;
+        ContentValues values = model.getContentValues();
+        String tableName = getTableName(model);
 
+        // if the Model object hasn't saved into database, use insert
         if (model.getId() == -1) {
-            // TODO: write into database, and update mId with ROW_ID
-            // Save object into database
-            model.setId(dummyId++);
-            result = true;
-        } else {
-            // Retrieve object from database if necessary
-            // and then Update database
-            result = true;
+            long id = mDatabase.insert(tableName, null, values);
+            // if successfully insert data
+            if (id != -1) {
+                // update mId with ROW_ID of this record
+                model.setId(id);
+                result = true;
+            }
+        } else { // if the model object is already saved in database, then update it
+            //update database
+            if (mDatabase.update(tableName, values, "ID = ?",
+                    new String[]{Long.toString(model.getId())}) > 0) {
+                result = true;
+            }
         }
 
-        Log.d(TAG, String.format("%s(id=%d) saved", model.getClass().getName(), model.getId()));
+        // output debug info
+        if (result) {
+            Log.d(TAG, String.format("%s(id=%d) saved", model.getClass().getName(), model.getId()));
+        } else {
+            Log.d(TAG, String.format("%s(id=%d) failed to save", model.getClass().getName(), model
+                    .getId()));
+        }
+
         return result;
     }
 
