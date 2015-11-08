@@ -211,13 +211,36 @@ public class ToDoLab {
      * Get the table name of the given object
      *
      * @param model given object which is a subclass of Model
-     * @param <T>
      * @return the table name of the given subclass of Model
      */
     public <T extends Model> String getTableName(T model) {
-        String tableName = "";
         String className = model.getClass().getName();
-        className = className.substring(className.lastIndexOf(".") + 1);
+        return getTableName(className);
+    }
+
+    /**
+     * Get the table name of the given model class
+     *
+     * @param type the class type of Model class
+     * @return the table name associated with the class type
+     */
+    public <T extends Model> String getTableName(Class<T> type) {
+        String className = type.getName();
+        return getTableName(className);
+    }
+
+    /**
+     * Get the table name of the given class name
+     *
+     * @param className the given class name, the class must be a subclass of Model
+     * @return the associated table name of given class name if exists, othewise an empty string
+     */
+    public String getTableName(String className) {
+        String tableName = "";
+        // if it contains package name, extract the class name only
+        if (className.contains(".")) {
+            className = className.substring(className.lastIndexOf(".") + 1);
+        }
         switch (className) {
             case "Task":
                 tableName = TaskTable.NAME;
@@ -234,6 +257,8 @@ public class ToDoLab {
             case "WiFiPosition":
                 tableName = WiFiPositionTable.NAME;
                 break;
+            default:
+                tableName = "";
         }
         return tableName;
     }
