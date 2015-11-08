@@ -214,7 +214,7 @@ public class ToDoLab {
      * @return the table name of the given subclass of Model
      */
     public <T extends Model> String getTableName(T model) {
-        String className = model.getClass().getName();
+        String className = model.getClass().getSimpleName();
         return getTableName(className);
     }
 
@@ -225,7 +225,7 @@ public class ToDoLab {
      * @return the table name associated with the class type
      */
     public <T extends Model> String getTableName(Class<T> type) {
-        String className = type.getName();
+        String className = type.getSimpleName();
         return getTableName(className);
     }
 
@@ -237,29 +237,19 @@ public class ToDoLab {
      */
     public String getTableName(String className) {
         String tableName = "";
-        // if it contains package name, extract the class name only
-        if (className.contains(".")) {
-            className = className.substring(className.lastIndexOf(".") + 1);
+
+        if ("Task".equals(className)) { // Task class
+            tableName = TaskTable.NAME;
+        } else if ("Schedule".equals(className)) { // Schedule class
+            tableName = ScheduleTable.NAME;
+        } else if ("Location".equals(className)) { // Location class
+            tableName = LocationTable.NAME;
+        } else if ("GPSCoordinate".equals(className)) { // GPSCoordinate class
+            tableName = GPSCoordinateTable.NAME;
+        } else if ("WiFIPosition".equals(className)) { // WiFIPosition
+            tableName = WiFiPositionTable.NAME;
         }
-        switch (className) {
-            case "Task":
-                tableName = TaskTable.NAME;
-                break;
-            case "Schedule":
-                tableName = ScheduleTable.NAME;
-                break;
-            case "Location":
-                tableName = LocationTable.NAME;
-                break;
-            case "GPSCoordinate":
-                tableName = GPSCoordinateTable.NAME;
-                break;
-            case "WiFiPosition":
-                tableName = WiFiPositionTable.NAME;
-                break;
-            default:
-                tableName = "";
-        }
+
         return tableName;
     }
 }
