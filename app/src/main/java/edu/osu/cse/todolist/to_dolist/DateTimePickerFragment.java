@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -84,8 +85,14 @@ public class DateTimePickerFragment extends DialogFragment {
                             mHour = mTimePicker.getCurrentHour();
                             mMinute = mTimePicker.getCurrentMinute();
                         }
-                        Date date = new GregorianCalendar(year, month, day,mHour,mMinute).getTime();
-                        sendResult(Activity.RESULT_OK, date);
+                        Date date = new GregorianCalendar(year, month, day, mHour, mMinute).getTime();
+                        Date now = new Date();
+                        if (date.getTime() < now.getTime()) {
+                            Toast.makeText(getContext(), "Cannot set a past time", Toast.LENGTH_SHORT).show();
+
+                        } else {
+                            sendResult(Activity.RESULT_OK, date);
+                        }
                     }
                 })
 

@@ -24,6 +24,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -46,7 +47,7 @@ public class TaskDetailFragment extends Fragment {
     private Task mTask;
     private Button mDateButton;
     private EditText mTitleField;
-    private EditText mDetailField;
+    private EditText mNoteField;
     private TextView mTimeTitleTextView;
     private TextView mLocationTextView;
     private static final String DIALOG_DATE = "DialogDate";
@@ -54,10 +55,13 @@ public class TaskDetailFragment extends Fragment {
     private static final String ARG_TASK_ID = "task_id";
     private Spinner mRemindSpinner;
     private Spinner mLocationSpinner;
+    private Button mShortCutButton;
     private Button mDoneButton;
-    private MenuItem mImportance;
+    private MenuItem mStarred;
+    private List<Location> mLocations;
+    private List<String> mlocationArray;
 
-    public static TaskDetailFragment newInstance(UUID taskId) {
+    public static TaskDetailFragment newInstance(long taskId) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_TASK_ID, taskId);
 
@@ -71,14 +75,22 @@ public class TaskDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-        UUID taskId = (UUID) getArguments().getSerializable(ARG_TASK_ID);
-        mTask = TaskLab.get(getActivity()).getTask(taskId);
+        long taskId = (long) getArguments().getSerializable(ARG_TASK_ID);
+        mTask = ToDoLab.get(getActivity()).getTask(taskId);
 
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateLocationSpinner();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_task_detail, container, false);
+
 
         mTitleField = (EditText) v.findViewById(R.id.task_title);
         mTitleField.setText(mTask.getTitle());
@@ -90,6 +102,14 @@ public class TaskDetailFragment extends Fragment {
             }
         });
 
+        mTitleField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+        });
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -106,10 +126,18 @@ public class TaskDetailFragment extends Fragment {
         });
 
 
+        mNoteField = (EditText) v.findViewById(R.id.task_detail);
+        mNoteField.setText(mTask.getNote());
+        mNoteField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+        });
 
-        mDetailField = (EditText) v.findViewById(R.id.task_detail);
-        mDetailField.setText(mTask.getDetail());
-        mDetailField.addTextChangedListener(new TextWatcher() {
+        mNoteField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -117,7 +145,7 @@ public class TaskDetailFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mTask.setDetail(s.toString());
+                mTask.setNote(s.toString());
             }
 
             @Override
@@ -126,48 +154,61 @@ public class TaskDetailFragment extends Fragment {
             }
         });
 
+
         mDateButton = (Button) v.findViewById(R.id.task_time);
-        mDateButton.setText(Task.formatDate(mTask.getDate()));
+        if (mTask.getRemindDate() == null) {
+            mDateButton.setText(R.string.date_time_setting);
+        } else {
+            mDateButton.setText(mTask.getRemindDateString());
+        }
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mTask.getRemindDate() == null) {
+                    mTask.setRemindDate(new Date());
+                }
                 FragmentManager manager = getFragmentManager();
-                DateTimePickerFragment dialog = new DateTimePickerFragment().newInstance(mTask.getDate());
+                DateTimePickerFragment dialog = new DateTimePickerFragment().newInstance(mTask.getRemindDate());
                 dialog.setTargetFragment(TaskDetailFragment.this, REQUEST_DATE);
                 dialog.show(manager, DIALOG_DATE);
-
             }
         });
 
 
-        mTimeTitleTextView =(TextView)v.findViewById(R.id.task_time_label);
-        mLocationTextView = (TextView)v.findViewById(R.id.task_location_label);
+        mTimeTitleTextView = (TextView) v.findViewById(R.id.task_time_label);
+        mLocationTextView = (TextView) v.findViewById(R.id.task_location_label);
         mRemindSpinner = (Spinner) v.findViewById(R.id.reminder_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.reminder_type_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mRemindSpinner.setAdapter(adapter);
-        int position = adapter.getPosition(mTask.getReminder());
+        int position = mTask.getConfig().ordinal();
         mRemindSpinner.setSelection(position);
-
         mRemindSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                mTask.setReminder(parent.getItemAtPosition(pos).toString());
-                if(mTask.getReminder().equals("Time")){
-                    mTimeTitleTextView.setVisibility(View.VISIBLE);
-                    mDateButton.setVisibility(View.VISIBLE);
-                    mLocationTextView.setVisibility(View.GONE);
-                    mLocationSpinner.setVisibility(View.GONE);
-                }else if(mTask.getReminder().equals("None")){
-                    mTimeTitleTextView.setVisibility(View.GONE);
-                    mDateButton.setVisibility(View.GONE);
-                    mLocationTextView.setVisibility(View.GONE);
-                    mLocationSpinner.setVisibility(View.GONE);
-                }else{
-                    mTimeTitleTextView.setVisibility(View.GONE);
-                    mDateButton.setVisibility(View.GONE);
-                    mLocationTextView.setVisibility(View.VISIBLE);
-                    mLocationSpinner.setVisibility(View.VISIBLE);
+                mTask.setConfig(Task.ConfigType.values()[pos]);
+                switch (mTask.getConfig()) {
+                    case NONE:
+                        mTimeTitleTextView.setVisibility(View.GONE);
+                        mDateButton.setVisibility(View.GONE);
+                        mLocationTextView.setVisibility(View.GONE);
+                        mLocationSpinner.setVisibility(View.GONE);
+                        mShortCutButton.setVisibility(View.GONE);
+                        break;
+                    case TIME:
+                        mTimeTitleTextView.setVisibility(View.VISIBLE);
+                        mDateButton.setVisibility(View.VISIBLE);
+                        mLocationTextView.setVisibility(View.GONE);
+                        mLocationSpinner.setVisibility(View.GONE);
+                        mShortCutButton.setVisibility(View.GONE);
+                        break;
+                    default:
+                        mTimeTitleTextView.setVisibility(View.GONE);
+                        mDateButton.setVisibility(View.GONE);
+                        mLocationTextView.setVisibility(View.VISIBLE);
+                        mLocationSpinner.setVisibility(View.VISIBLE);
+                        mShortCutButton.setVisibility(View.VISIBLE);
+                        break;
                 }
             }
 
@@ -178,13 +219,18 @@ public class TaskDetailFragment extends Fragment {
         });
 
         mLocationSpinner = (Spinner) v.findViewById(R.id.location_spinner);
-        ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(getActivity(), R.array.location_array, android.R.layout.simple_spinner_item);
-        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mLocationSpinner.setAdapter(adapter1);
-
+        updateLocationSpinner();
         mLocationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                String title = parent.getItemAtPosition(pos).toString();
+                for (Location location : mLocations) {
+                    if (location.getTitle() == title) {
+                        mTask.setLocation(location);
+                    }else{
+                        mTask.setLocation(null);
+                    }
+                }
             }
 
             @Override
@@ -193,7 +239,16 @@ public class TaskDetailFragment extends Fragment {
             }
         });
 
-        mDoneButton = (Button)v.findViewById(R.id.done_button);
+        mShortCutButton = (Button) v.findViewById(R.id.go_to_location_setting);
+        mShortCutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), LocationListActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        mDoneButton = (Button) v.findViewById(R.id.done_button);
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -205,6 +260,19 @@ public class TaskDetailFragment extends Fragment {
         return v;
     }
 
+    private void updateLocationSpinner() {
+        mlocationArray = new ArrayList<String>();
+        mLocations = ToDoLab.get(getActivity()).getLocations();
+        mlocationArray.add("Select Location");
+        for (Location location : mLocations) {
+            mlocationArray.add(location.getTitle());
+        }
+        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, mlocationArray);
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mLocationSpinner.setAdapter(adapter1);
+        int locationposition = mLocations.indexOf(mTask.getLocation()) + 1;
+        mLocationSpinner.setSelection(locationposition);
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -215,8 +283,8 @@ public class TaskDetailFragment extends Fragment {
         if (requestCode == REQUEST_DATE) {
             Date date = (Date) data
                     .getSerializableExtra(DateTimePickerFragment.EXTRA_DATE);
-            mTask.setDate(date);
-            mDateButton.setText(Task.formatDate(date));
+            mTask.setRemindDate(date);
+            mDateButton.setText(mTask.getRemindDateString());
         }
     }
 
@@ -224,9 +292,9 @@ public class TaskDetailFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_task_detail, menu);
-        mImportance = menu.findItem(R.id.menu_item_task_importance);
-        if(mTask.isImportant()){
-            mImportance.setIcon(R.drawable.ic_task_important);
+        mStarred = menu.findItem(R.id.menu_item_task_importance);
+        if (mTask.isStarred()) {
+            mStarred.setIcon(R.drawable.ic_task_important);
         }
     }
 
@@ -239,7 +307,7 @@ public class TaskDetailFragment extends Fragment {
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                TaskLab.get(getActivity()).deleteTask(mTask);
+                                ToDoLab.get(getActivity()).removeTask(mTask);
                                 getActivity().finish();
                             }
                         })
@@ -248,13 +316,13 @@ public class TaskDetailFragment extends Fragment {
                 alertDialog.show();
                 return true;
             case R.id.menu_item_task_importance:
-                if(!mTask.isImportant()){
-                    mTask.setIsImportant(true);
-                    mImportance.setIcon(R.drawable.ic_task_important);
+                if (!mTask.isStarred()) {
+                    mTask.setStarred(true);
+                    mStarred.setIcon(R.drawable.ic_task_important);
                     Toast.makeText(getActivity(), "You have set this task to be important", Toast.LENGTH_SHORT).show();
-                }else{
-                    mTask.setIsImportant(false);
-                    mImportance.setIcon(R.drawable.ic_task_not_important);
+                } else {
+                    mTask.setStarred(false);
+                    mStarred.setIcon(R.drawable.ic_task_not_important);
                     Toast.makeText(getActivity(), "You have set this task to be unimportant", Toast.LENGTH_SHORT).show();
                 }
                 return true;
@@ -263,8 +331,10 @@ public class TaskDetailFragment extends Fragment {
         }
     }
 
-
-
-
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 }
 
+//TODO FIX ROTATE BUG
