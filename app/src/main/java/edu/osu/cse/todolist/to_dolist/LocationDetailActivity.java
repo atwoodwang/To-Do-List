@@ -43,6 +43,7 @@ public class LocationDetailActivity extends SingleFragmentActivity {
 
     @Override
     public void onBackPressed() {
+        // TODO: refactor, move Location validation to DONE button
         ToDoLab toDoLab = ToDoLab.get(this);
         mLocations = toDoLab.getLocations();
         mLocation = toDoLab.getLocation(mlocationId);
@@ -63,7 +64,7 @@ public class LocationDetailActivity extends SingleFragmentActivity {
             alertDialog.show();
         } else {
 //            mLocation.save();
-            ToDoLab.get(this).save(mLocation);
+//            ToDoLab.get(this).save(mLocation);
             finish();
         }
     }

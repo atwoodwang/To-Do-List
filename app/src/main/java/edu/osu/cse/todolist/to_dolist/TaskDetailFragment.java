@@ -252,6 +252,7 @@ public class TaskDetailFragment extends Fragment {
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO: move Task validation here, if valid then save
                 ToDoLab.get(getActivity()).saveTask(mTask);
                 getActivity().onBackPressed();
             }

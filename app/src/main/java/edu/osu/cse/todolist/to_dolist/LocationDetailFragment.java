@@ -161,6 +161,8 @@ public class LocationDetailFragment extends Fragment {
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO: move Location validation here, if valid then save
+                ToDoLab.get(getActivity()).save(mLocation);
                 getActivity().onBackPressed();
             }
         });
