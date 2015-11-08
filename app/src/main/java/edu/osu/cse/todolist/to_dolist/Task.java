@@ -1,6 +1,12 @@
 package edu.osu.cse.todolist.to_dolist;
 
+import android.content.ContentValues;
+
 import java.util.Date;
+
+import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
+
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
 
 /**
  * Task Model class
@@ -57,8 +63,12 @@ public class Task extends Model {
 
     public Task() {
         super();
+        mTitle = "";
+        mNote = "";
         mStarred = false;
         mConfig = ConfigType.NONE;
+        mComplete = false;
+
         mSchedule = null;
         mLocation = null;
     }
@@ -177,5 +187,21 @@ public class Task extends Model {
         return mSchedule;
 
         // TODO: update Task.mSchedule and Schedule.mTask
+    }
+
+    @Override
+    public ContentValues getContentValues() {
+        ContentValues values = new ContentValues();
+
+//        if (getId() != -1) {
+//            values.put(TaskTable.Cols.ID, getId());
+//        }
+        values.put(TaskTable.Cols.TITLE, mTitle);
+        values.put(TaskTable.Cols.NOTE, mNote);
+        values.put(TaskTable.Cols.STARRED, mStarred);
+        values.put(TaskTable.Cols.CONFIG, mConfig.ordinal());
+        values.put(TaskTable.Cols.COMPLETE, mComplete);
+
+        return values;
     }
 }
