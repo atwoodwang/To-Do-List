@@ -287,7 +287,7 @@ public class TaskDetailFragment extends Fragment {
         List<Location> locations = ToDoLab.get(getActivity()).getLocations();
         locations.add(0, dummyLoc);
 
-        ArrayAdapter adapter = new ArrayAdapter(this.getActivity(), android.R.layout
+        ArrayAdapter<Location> adapter = new ArrayAdapter<>(this.getActivity(), android.R.layout
                 .simple_spinner_item, locations);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
