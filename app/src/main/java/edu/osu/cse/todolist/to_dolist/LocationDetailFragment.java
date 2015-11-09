@@ -60,7 +60,7 @@ public class LocationDetailFragment extends Fragment {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         upDateGPSTextView();
     }
@@ -134,7 +134,7 @@ public class LocationDetailFragment extends Fragment {
         mWifiSettingLayout = (LinearLayout) v.findViewById(R.id.wifi_setting_layout);
         mWifiAdvancedSettingButton = (Button) v.findViewById(R.id.wifi_advanced_setting);
         mGPSSettingButton = (Button) v.findViewById(R.id.gps_location_setting);
-        mGPSCurrentSettingTextView =(TextView)v.findViewById(R.id.gps_current_setting);
+        mGPSCurrentSettingTextView = (TextView) v.findViewById(R.id.gps_current_setting);
         mLocationTypeSpinner = (Spinner) v.findViewById(R.id.location_type_spinner);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.location_type_array, android.R.layout.simple_spinner_item);
@@ -179,18 +179,28 @@ public class LocationDetailFragment extends Fragment {
 
         upDateGPSTextView();
 
-
         mDoneButton = (Button) v.findViewById(R.id.done_button);
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: move Location validation here, if valid then save
-                ToDoLab.get(getActivity()).save(mLocation);
-                getActivity().onBackPressed();
+                if (mLocation.getTitle() == null || mLocation.getTitle().isEmpty()) {
+                    Dialog alertDialog = new AlertDialog.Builder(getActivity())
+                            .setMessage("Have to enter a title for this location.")
+                            .setPositiveButton("OK", null)
+                            .create();
+                    alertDialog.show();
+                } else if (mLocation.getConfig() == Location.ConfigType.GPS & mLocation.getGPSCoordinate() == null) {
+                    Dialog alertDialog = new AlertDialog.Builder(getActivity())
+                            .setMessage("Have to select a GPS location coordinate.")
+                            .setPositiveButton("OK", null)
+                            .create();
+                    alertDialog.show();
+                } else {
+                    ToDoLab.get(getActivity()).save(mLocation);
+                    getActivity().onBackPressed();
+                }
             }
         });
-
-
         return v;
     }
 
@@ -210,6 +220,7 @@ public class LocationDetailFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 //                                ToDoLab.get(getActivity()).removeLocation(mLocation);
+                                // TODO: Create deleteLocation to deal with foreign key in TaskLocation Table
                                 ToDoLab.get(getActivity()).delete(mLocation);
                                 getActivity().finish();
                             }
@@ -223,18 +234,17 @@ public class LocationDetailFragment extends Fragment {
         }
     }
 
-
     public void hideKeyboard(View view) {
         InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public void upDateGPSTextView(){
-        if(mLocation.getGPSCoordinate()==null){
+    public void upDateGPSTextView() {
+        if (mLocation.getGPSCoordinate() == null) {
             mGPSCurrentSettingTextView.setVisibility(View.GONE);
-        }else{
+        } else {
             mGPSCurrentSettingTextView.setVisibility(View.VISIBLE);
-            mGPSCurrentSettingTextView.setText(mLocation.getGPSCoordinate().getLatitude()+"  "+mLocation.getGPSCoordinate().getLongitude());
+            mGPSCurrentSettingTextView.setText(mLocation.getGPSCoordinate().getLatitude() + "  " + mLocation.getGPSCoordinate().getLongitude());
         }
     }
 

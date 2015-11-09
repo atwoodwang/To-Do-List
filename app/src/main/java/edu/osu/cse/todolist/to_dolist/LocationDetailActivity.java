@@ -40,35 +40,6 @@ public class LocationDetailActivity extends SingleFragmentActivity {
         return LocationDetailFragment.newInstance(mlocationId);
     }
 
-
-    @Override
-    public void onBackPressed() {
-        // TODO: refactor, move Location validation to DONE button
-        ToDoLab toDoLab = ToDoLab.get(this);
-        mLocations = toDoLab.getLocations();
-        mLocation = toDoLab.getLocation(mlocationId);
-
-        if (mLocation.getTitle() == null || mLocation.getTitle().isEmpty()) {
-            Dialog alertDialog = new AlertDialog.Builder(this)
-                    .setMessage("Have to enter a title for this location, press Delete to delete this task.")
-                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-//                            mLocations.remove(mLocation);
-                            ToDoLab.get(getApplicationContext()).delete(mLocation);
-                            finish();
-                        }
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .create();
-            alertDialog.show();
-        } else {
-//            mLocation.save();
-//            ToDoLab.get(this).save(mLocation);
-            finish();
-        }
-    }
-
     public static Intent newIntent(Context packageContext, long locationId) {
         Intent intent = new Intent(packageContext, LocationDetailActivity.class);
         intent.putExtra(EXTRA_LOCATION_ID, locationId);
