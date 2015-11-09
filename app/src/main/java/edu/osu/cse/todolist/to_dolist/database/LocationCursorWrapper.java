@@ -1,10 +1,13 @@
 package edu.osu.cse.todolist.to_dolist.database;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
+import edu.osu.cse.todolist.to_dolist.GPSCoordinate;
 import edu.osu.cse.todolist.to_dolist.Location;
 import edu.osu.cse.todolist.to_dolist.Task;
+import edu.osu.cse.todolist.to_dolist.ToDoLab;
 import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.LocationTable;
 
 /**
@@ -20,7 +23,7 @@ public class LocationCursorWrapper extends CursorWrapper {
         super(cursor);
     }
 
-    public Location get() {
+    public Location get(Context context) {
         // get field values
         long id = getLong((getColumnIndex(LocationTable.Cols.ID)));
         String title = getString((getColumnIndex(LocationTable.Cols.TITLE)));
@@ -37,6 +40,8 @@ public class LocationCursorWrapper extends CursorWrapper {
         // TODO: set GPSCoordinate and WiFiPosition
         switch (config) {
             case GPS:
+                GPSCoordinate gps = ToDoLab.get(context).findGPSCoordinateByLocation(loc);
+                loc.setGPSCoordinate(gps);
                 break;
             case WiFi:
                 break;

@@ -2,6 +2,9 @@ package edu.osu.cse.todolist.to_dolist;
 
 import android.content.ContentValues;
 
+import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
+import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.GPSCoordinateTable;
+
 /**
  * Created by Sniper on 2015/11/3.
  */
@@ -53,6 +56,13 @@ public class GPSCoordinate extends Model {
     }
 
     public ContentValues getContentValues() {
-        return null;
+        ContentValues values = new ContentValues();
+
+        values.put(GPSCoordinateTable.Cols.LOCATION_ID, getForeignKey());
+        values.put(GPSCoordinateTable.Cols.LONGITUDE, mLongitude);
+        values.put(GPSCoordinateTable.Cols.LATITUDE, mLatitude);
+        values.put(GPSCoordinateTable.Cols.RANGE, mRange);
+
+        return values;
     }
 }

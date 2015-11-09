@@ -10,6 +10,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.osu.cse.todolist.to_dolist.database.GPSCoordinateCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.LocationCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.ScheduleCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.TaskCursorWrapper;
@@ -33,6 +34,8 @@ public class ToDoLab {
      */
     private Task mTask;
     private List<Task> mTasks;
+
+    private GPSCoordinate mGPSCoordinate;
 
     /**
      * Current in-memory Location
@@ -84,6 +87,14 @@ public class ToDoLab {
         return mContext;
     }
 
+    public GPSCoordinate getGPSCoordinate() {
+        return mGPSCoordinate;
+    }
+
+    public void setGPSCoordinate(GPSCoordinate GPSCoordinate) {
+        mGPSCoordinate = GPSCoordinate;
+    }
+
     public List<Task> getTasks() {
         return findAll(Task.class);
     }
@@ -96,9 +107,6 @@ public class ToDoLab {
         return findAll(Location.class);
     }
 
-    public List<GPSCoordinate> getGPSCoordinates() {
-        return mGPSCoordinates;
-    }
 
     public List<WiFiPosition> getWiFiPositions() {
         return mWiFiPositions;
@@ -194,6 +202,32 @@ public class ToDoLab {
                     .getId()));
         }
 
+        return result;
+    }
+
+    public boolean saveLocation(Location location) {
+        if (location == null) {
+            return false;
+        }
+
+        // save Location first
+        if (!save(location)) {
+            return false;
+        }
+
+        // save associated GPSCoordinate or WiFiPosition according to ConfigType
+        boolean result = false;
+        switch (location.getConfig()) {
+            case GPS:
+                GPSCoordinate gps = location.getGPSCoordinate();
+                gps.setForeignKey(location.getId());
+                if (save(gps)) {
+                    result = true;
+                }
+                break;
+            case WiFi:
+                break;
+        }
         return result;
     }
 
@@ -434,6 +468,31 @@ public class ToDoLab {
         return loc;
     }
 
+    public GPSCoordinate findGPSCoordinateByLocation(Location loc) {
+        if (loc == null) {
+            return null;
+        }
+        if (loc.getId() == -1) {
+            return null;
+        }
+        GPSCoordinate gps = null;
+        Cursor cursor = query(GPSCoordinateTable.NAME,
+                GPSCoordinateTable.Cols.LOCATION_ID + " = ?",
+                new String[]{Long.toString(loc.getId())}
+        );
+        GPSCoordinateCursorWrapper cw = new GPSCoordinateCursorWrapper(cursor);
+        try {
+            if (cw.getCount() == 0) {
+                return null;
+            }
+            cw.moveToFirst();
+            gps = cw.get();
+        } finally {
+            cw.close();
+        }
+
+        return gps;
+    }
 
     public <T extends Model> T loadFromCursor(Class<T> type, Cursor cursor) {
         if (cursor.getCount() == 0) {
@@ -451,7 +510,7 @@ public class ToDoLab {
         } else if ("Location".equals(className)) { // Location class
             LocationCursorWrapper cw = new LocationCursorWrapper(cursor);
             cw.moveToFirst();
-            model = (T) cw.get();
+            model = (T) cw.get(mContext);
         } else if ("GPSCoordinate".equals(className)) { // GPSCoordinate class
 
         } else if ("WiFIPosition".equals(className)) { // WiFIPosition
@@ -488,7 +547,7 @@ public class ToDoLab {
             LocationCursorWrapper cw = new LocationCursorWrapper(cursor);
             cw.moveToFirst();
             while (!cw.isAfterLast()) {
-                list.add((T) cw.get());
+                list.add((T) cw.get(mContext));
                 cw.moveToNext();
             }
         } else if ("GPSCoordinate".equals(className)) { // GPSCoordinate class
