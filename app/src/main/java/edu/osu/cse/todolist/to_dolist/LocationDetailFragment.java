@@ -2,18 +2,12 @@ package edu.osu.cse.todolist.to_dolist;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,7 +25,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Created by Zicong on 2015/11/6.
@@ -207,7 +200,7 @@ public class LocationDetailFragment extends Fragment {
                     String ssid = info[0];
                     String mac = info[1];
                     wiFiPosition.setSSID(ssid);
-                    wiFiPosition.setMAC(mac);
+                    wiFiPosition.setBSSID(mac);
                     mLocation.setWiFiPosition(wiFiPosition);
                     updateWifiTextView();
                 } else {
@@ -300,7 +293,7 @@ public class LocationDetailFragment extends Fragment {
             mCurrentWifiInfoTextView.setText(getString(R.string.current_wifi_info_title)
                     + " " + mLocation.getWiFiPosition()
                     .getSSID());
-        }//TODO SHOW MAC ADDRESS
+        }//TODO SHOW BSSID ADDRESS
     }
 
 

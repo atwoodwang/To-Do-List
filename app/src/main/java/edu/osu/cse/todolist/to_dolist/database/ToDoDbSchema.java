@@ -132,7 +132,7 @@ public class ToDoDbSchema {
              */
             public static final String LOCATION_ID = "Location_ID";
             public static final String SSID = "SSID";
-            public static final String MAC = "MAC";
+            public static final String BSSID = "BSSID";
             public static final String MAXSIGNAL = "MaxSignal";
             public static final String MINSIGNAL = "MinSignal";
 

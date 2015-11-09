@@ -16,7 +16,7 @@ import java.util.List;
 public class WiFiPosition extends Model {
 
     private String mSSID;
-    private String mMAC;
+    private String mBSSID;
 
     // The MaxSignal and MinSignal defines a range of signal strength
     private double mMaxSignal;
@@ -29,7 +29,7 @@ public class WiFiPosition extends Model {
     public WiFiPosition(long id) {
         super(id);
         mSSID = "";
-        mMAC = "";
+        mBSSID = "";
         mMaxSignal = 100;
         mMinSignal = 1;
     }
@@ -42,12 +42,12 @@ public class WiFiPosition extends Model {
         mSSID = SSID;
     }
 
-    public String getMAC() {
-        return mMAC;
+    public String getBSSID() {
+        return mBSSID;
     }
 
-    public void setMAC(String MAC) {
-        mMAC = MAC;
+    public void setBSSID(String BSSID) {
+        mBSSID = BSSID;
     }
 
     public double getMaxSignal() {

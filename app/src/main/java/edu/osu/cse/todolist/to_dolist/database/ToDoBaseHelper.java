@@ -144,7 +144,7 @@ public class ToDoBaseHelper extends SQLiteOpenHelper {
                 "    %s INTEGER PRIMARY KEY AUTOINCREMENT,\n" + //ID
                 "    %s INTEGER NOT NULL,\n" + //LOCATION_ID
                 "    %s TEXT NOT NULL,\n" +   //SSID
-                "    %s TEXT,\n" + //MAC
+                "    %s TEXT,\n" + //BSSID
                 "    %s INTEGER NOT NULL,\n" +   //MAXSIGNAL
                 "    %s INTEGER NOT NULL,\n" + //MINSIGNAL
                 "    FOREIGN KEY(%s) REFERENCES %s(%s)\n" +  //LOCATION_ID & Location(ID)
@@ -154,7 +154,7 @@ public class ToDoBaseHelper extends SQLiteOpenHelper {
                 WiFiPositionTable.Cols.ID,
                 WiFiPositionTable.Cols.LOCATION_ID,
                 WiFiPositionTable.Cols.SSID,
-                WiFiPositionTable.Cols.MAC,
+                WiFiPositionTable.Cols.BSSID,
                 WiFiPositionTable.Cols.MAXSIGNAL,
                 WiFiPositionTable.Cols.MINSIGNAL,
                 WiFiPositionTable.Cols.LOCATION_ID, LocationTable.NAME, LocationTable.Cols.ID);
