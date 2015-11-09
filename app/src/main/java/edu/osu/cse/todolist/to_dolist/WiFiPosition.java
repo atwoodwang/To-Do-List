@@ -1,6 +1,12 @@
 package edu.osu.cse.todolist.to_dolist;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.text.TextUtils;
 
 import java.util.List;
 
@@ -72,4 +78,22 @@ public class WiFiPosition extends Model {
     public ContentValues getContentValues() {
         return null;
     }
+
+    public static String[] getCurrentWifiInfo(Context context){
+        String ssid = null;
+        String mac = null;
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+        if (networkInfo.isConnected()) {
+            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+            if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
+                ssid = connectionInfo.getSSID();
+                mac = connectionInfo.getMacAddress();
+
+            }
+        }
+        return new String[]{ssid,mac};
+    }
+
 }
