@@ -220,12 +220,23 @@ public class ToDoLab {
         switch (location.getConfig()) {
             case GPS:
                 GPSCoordinate gps = location.getGPSCoordinate();
-                gps.setForeignKey(location.getId());
-                if (save(gps)) {
-                    result = true;
+                // Avoid saving null GPSCoordinate object
+                if (gps != null) {
+                    gps.setForeignKey(location.getId());
+                    if (save(gps)) {
+                        result = true;
+                    }
                 }
                 break;
             case WiFi:
+                WiFiPosition wifiPos = location.getWiFiPosition();
+                // Avoid saving null WiFiPosition object
+                if (wifiPos != null) {
+                    wifiPos.setForeignKey(location.getId());
+                    if (save(wifiPos)) {
+                        result = true;
+                    }
+                }
                 break;
         }
         return result;
@@ -250,7 +261,9 @@ public class ToDoLab {
                 break;
             case TIME:
                 cleanTaskLocationRelation(task);
-                if (save(task.getSchedule())) {
+                Schedule schedule = task.getSchedule();
+                // Avoid saving null schedule object
+                if (schedule != null && save(schedule)) {
                     result = true;
                 }
                 break;
