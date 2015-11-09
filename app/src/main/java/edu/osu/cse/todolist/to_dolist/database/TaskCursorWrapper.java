@@ -52,8 +52,9 @@ public class TaskCursorWrapper extends CursorWrapper {
                 task.setSchedule(s);
                 break;
             case LOCATION_ARRIVING:
-                break;
             case LOCATION_LEAVING:
+                Location loc = ToDoLab.get(context).findLocationByTask(task);
+                task.setLocation(loc);
                 break;
         }
 

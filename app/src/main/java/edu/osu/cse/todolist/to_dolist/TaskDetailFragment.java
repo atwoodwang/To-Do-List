@@ -223,11 +223,9 @@ public class TaskDetailFragment extends Fragment {
         mLocationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                Location loc= (Location) parent.getItemAtPosition(pos);
+                Location loc = (Location) parent.getItemAtPosition(pos);
                 if (loc.getId() != -1) {
                     mTask.setLocation(loc);
-                } else {
-                    mTask.setLocation(null);
                 }
             }
 

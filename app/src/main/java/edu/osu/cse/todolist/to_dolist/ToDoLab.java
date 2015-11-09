@@ -13,6 +13,7 @@ import java.util.List;
 import edu.osu.cse.todolist.to_dolist.database.LocationCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.ScheduleCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.TaskCursorWrapper;
+import edu.osu.cse.todolist.to_dolist.database.TaskLocationCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.ToDoBaseHelper;
 import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
 
@@ -210,18 +211,101 @@ public class ToDoLab {
         boolean result = false;
         switch (task.getConfig()) {
             case NONE:
+                cleanTaskScheduleRelation(task);
+                cleanTaskLocationRelation(task);
                 break;
             case TIME:
+                cleanTaskLocationRelation(task);
                 if (save(task.getSchedule())) {
                     result = true;
                 }
                 break;
             case LOCATION_ARRIVING:
-                //TODO: update location
-                break;
             case LOCATION_LEAVING:
-                //TODO: update location
+                cleanTaskScheduleRelation(task);
+                Location loc = findLocationByTask(task);
+                if (loc == null) { // no exists Task_Location relationship
+                    if (createTaskLocation(task, task.getLocation())) {
+                        result = true;
+                    }
+                } else if (loc.getId() != task.getLocation().getId()) {
+                    // if exists different previous Task_Location relationship, update it
+                    if (updateTaskLocation(task, task.getLocation())) {
+                        result = true;
+                    }
+                } else { // no need to update Task_Location relation
+                    result = true;
+                }
                 break;
+        }
+        return result;
+    }
+
+    private void cleanTaskLocationRelation(Task task) {
+        if (task.getLocation() != null) {
+            deleteTaskLocation(task);
+            task.setLocation(null);
+        }
+    }
+
+    private void cleanTaskScheduleRelation(Task task) {
+        Schedule s = task.getSchedule();
+        if (s != null && s.getId() != -1) {
+            delete(s);
+            task.setSchedule(null);
+        }
+    }
+
+    public boolean createTaskLocation(Task task, Location loc) {
+        boolean result = false;
+        ContentValues values = new ContentValues();
+        values.put(TaskLocationTable.Cols.TASK_ID, task.getId());
+        values.put(TaskLocationTable.Cols.LOCATION_ID, loc.getId());
+
+        long id = mDatabase.insert(TaskLocationTable.NAME, null, values);
+
+        if (id != -1) {
+            result = true;
+            Log.d(TAG, String.format("Create Task_Location relation(id=%d) Task(id=%d)" +
+                    "<==>Location(id=%d)", id, task.getId(), loc.getId()));
+        }
+
+        return result;
+    }
+
+    public boolean updateTaskLocation(Task task, Location loc) {
+        boolean result = false;
+        ContentValues values = new ContentValues();
+        values.put(TaskLocationTable.Cols.TASK_ID, task.getId());
+        values.put(TaskLocationTable.Cols.LOCATION_ID, loc.getId());
+
+        long id = mDatabase.update(TaskLocationTable.NAME,
+                values,
+                TaskLocationTable.Cols.TASK_ID + " = ?",
+                new String[]{Long.toString(task.getId())}
+        );
+
+        if (id != -1) {
+            result = true;
+            Log.d(TAG, String.format("Update Task_Location relation(id=%d) Task(id=%d)" +
+                    "<==>Location(id=%d)", id, task.getId(), loc.getId()));
+        }
+
+        return result;
+    }
+
+    public boolean deleteTaskLocation(Task task) {
+        boolean result = false;
+
+        int numOfLine = mDatabase.delete(TaskLocationTable.NAME,
+                TaskLocationTable.Cols.TASK_ID + " = ?",
+                new String[]{Long.toString(task.getId())}
+        );
+
+        if (numOfLine > 0) {
+            result = true;
+            Log.d(TAG, String.format("Delete %d Task_Location relation with Task(id=%d)",
+                    numOfLine, task.getId()));
         }
         return result;
     }
@@ -316,6 +400,38 @@ public class ToDoLab {
         }
 
         return schedule;
+    }
+
+    public Location findLocationByTask(Task task) {
+        if (task == null) {
+            return null;
+        }
+        if (task.getId() == -1) {
+            return null;
+        }
+
+        Cursor cursor = query(
+                TaskLocationTable.NAME,     //Table and Location joint table
+                TaskLocationTable.Cols.TASK_ID + " = ?",       //select by primary key ID
+                new String[]{Long.toString(task.getId())}
+        );
+        TaskLocationCursorWrapper cw = new TaskLocationCursorWrapper(cursor);
+        long ids[] = null;
+        try {
+            if (cw.getCount() == 0) {
+                return null;
+            }
+            cw.moveToFirst();
+            ids = cw.get();
+        } finally {
+            cw.close();
+        }
+
+        Location loc = null;
+        if (ids != null) {
+            loc = getLocation(ids[2]);
+        }
+        return loc;
     }
 
 

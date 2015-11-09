@@ -44,6 +44,7 @@ public class TaskDetailActivity extends SingleFragmentActivity {
 
     @Override
     public void onBackPressed(){
+        // TODO: refactor, move Task validation to DONE button
         ToDoLab taskLab = ToDoLab.get(this);
         mTasks = taskLab.getTasks();
         mTask=taskLab.getTask(mtaskId);
@@ -76,7 +77,7 @@ public class TaskDetailActivity extends SingleFragmentActivity {
             alertDialog.show();
         }else{
 //            mTask.save();
-            ToDoLab.get(getApplicationContext()).saveTask(mTask);
+//            ToDoLab.get(getApplicationContext()).saveTask(mTask);
             finish();
         }
     }
