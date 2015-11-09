@@ -610,7 +610,7 @@ public class ToDoLab {
             tableName = LocationTable.NAME;
         } else if ("GPSCoordinate".equals(className)) { // GPSCoordinate class
             tableName = GPSCoordinateTable.NAME;
-        } else if ("WiFIPosition".equals(className)) { // WiFIPosition
+        } else if ("WiFiPosition".equals(className)) { // WiFIPosition
             tableName = WiFiPositionTable.NAME;
         }
 
