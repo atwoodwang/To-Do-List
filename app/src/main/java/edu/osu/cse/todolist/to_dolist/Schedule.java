@@ -1,13 +1,19 @@
 package edu.osu.cse.todolist.to_dolist;
 
+import android.content.ContentValues;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
+import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.ScheduleTable;
 
 /**
  * Created by Sniper on 2015/11/3.
  */
 public class Schedule extends Model {
+
     private ConfigType mConfig;
     private Date mDate;
     private Task mTask;
@@ -19,13 +25,14 @@ public class Schedule extends Model {
     }
 
     public Schedule(Task task) {
-        super();
-        mTask = task;
+        this(-1, task);
     }
 
     public Schedule(long id, Task task) {
         super(id);
         mTask = task;
+        mConfig = ConfigType.NONE;
+        mDate = null;
     }
 
     public ConfigType getConfig() {
@@ -55,4 +62,13 @@ public class Schedule extends Model {
         return simpleDateFormat.format(mDate);
     }
 
+    public ContentValues getContentValues() {
+        ContentValues values = new ContentValues();
+
+        values.put(ScheduleTable.Cols.TASK_ID, mTask.getId());
+        values.put(ScheduleTable.Cols.CONFIG, mConfig.ordinal());
+        values.put(ScheduleTable.Cols.DATE, mDate.getTime());
+
+        return values;
+    }
 }

@@ -1,43 +1,63 @@
 package edu.osu.cse.todolist.to_dolist;
 
+import android.content.ContentValues;
+
 import java.util.List;
 
 /**
  * Created by Sniper on 2015/11/3.
  */
 public class WiFiPosition extends Model {
-    private List<AccessPoint> APs;
-    private ConfigType mConfig;
 
-    /**
-     * Config for how the WiFiPosition works
-     */
-    public enum ConfigType {
-        /**
-         * Basic mode, only check one AccessPoint is connected or not
-         */
-        BASIC
+    private String mSSID;
+    private String mMAC;
+
+    // The MaxSignal and MinSignal defines a range of signal strength
+    private double mMaxSignal;
+    private double mMinSignal;
+
+    public WiFiPosition() {
+        this(-1);
     }
 
-    public ConfigType getConfig() {
-        return mConfig;
+    public WiFiPosition(long id) {
+        super(id);
+        mSSID = "";
+        mMAC = "";
+        mMaxSignal = 100;
+        mMinSignal = 1;
     }
 
-    public void setConfig(ConfigType config) {
-        mConfig = config;
+    public String getSSID() {
+        return mSSID;
     }
 
-    public void addAP(AccessPoint AP) {
-
+    public void setSSID(String SSID) {
+        mSSID = SSID;
     }
 
-    // TODO: modify the way of remove AP, maybe by SSID or MAC
-    public AccessPoint removeAP(AccessPoint AP) {
-        return null;
+    public String getMAC() {
+        return mMAC;
     }
 
-    public List<AccessPoint> removeAllAP() {
-        return null;
+    public void setMAC(String MAC) {
+        mMAC = MAC;
+    }
+
+    public double getMaxSignal() {
+        return mMaxSignal;
+    }
+
+    public void setMaxSignal(double maxSignal) {
+        mMaxSignal = maxSignal;
+    }
+
+    public double getMinSignal() {
+        return mMinSignal;
+    }
+
+    public void setMinSignal(double minSignal) {
+        mMinSignal = minSignal;
     }
 
     /**
@@ -49,4 +69,7 @@ public class WiFiPosition extends Model {
         return false;
     }
 
+    public ContentValues getContentValues() {
+        return null;
+    }
 }

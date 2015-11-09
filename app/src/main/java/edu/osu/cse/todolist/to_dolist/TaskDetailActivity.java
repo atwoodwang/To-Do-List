@@ -44,6 +44,7 @@ public class TaskDetailActivity extends SingleFragmentActivity {
 
     @Override
     public void onBackPressed(){
+        // TODO: refactor, move Task validation to DONE button
         ToDoLab taskLab = ToDoLab.get(this);
         mTasks = taskLab.getTasks();
         mTask=taskLab.getTask(mtaskId);
@@ -54,7 +55,8 @@ public class TaskDetailActivity extends SingleFragmentActivity {
                     .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            mTasks.remove(mTask);
+//                            mTasks.remove(mTask);
+                            ToDoLab.get(getApplicationContext()).delete(mTask);
                             finish();
                         }
                     })
@@ -74,7 +76,8 @@ public class TaskDetailActivity extends SingleFragmentActivity {
                     .create();
             alertDialog.show();
         }else{
-            mTask.save();
+//            mTask.save();
+//            ToDoLab.get(getApplicationContext()).saveTask(mTask);
             finish();
         }
     }

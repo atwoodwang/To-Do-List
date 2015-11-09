@@ -1,5 +1,7 @@
 package edu.osu.cse.todolist.to_dolist;
 
+import android.content.ContentValues;
+
 import java.util.List;
 
 /**
@@ -9,6 +11,11 @@ public class Folder extends Model {
     private String mTitle;
     private List<Task> mTasks;
     // TODO: add ability of virtual folder
+
+
+    public Folder(long id) {
+        super(id);
+    }
 
     public String getTitle() {
         return mTitle;
@@ -27,11 +34,19 @@ public class Folder extends Model {
         return mTasks;
     }
 
-    public void addTask(Task task) {
-        if (!mTasks.contains(task)) {
-            mTasks.add(task);
+    public boolean addTask(Task task) {
+        boolean result = false;
+        if (task != null) {
+            if (!mTasks.contains(task)) {
+                // TODO: tasks with same id but different instances maybe treated as different
+                // tasks, need sovle this problem
+                task.setForeignKey(getId());
+                if (mTasks.add(task)) {
+                    result = true;
+                }
+            }
         }
-        // TODO: update database
+        return result;
     }
 
     /**
@@ -40,13 +55,16 @@ public class Folder extends Model {
      * @param task the Task need to be removed
      * @return the removed Task if remove successfully, otherwise return <code>null</code>
      */
+
     public Task removeTask(Task task) {
+        Task result = null;
         if (mTasks.remove(task)) {
-            return task;
-        } else {
-            return null;
+            result = task;
+//            task.setForeignKey(ToDoLab.getDefaultFolder.getId());
+//            task.save();
         }
         // TODO: update database
+        return result;
     }
 
     /**
@@ -75,4 +93,7 @@ public class Folder extends Model {
         return null;
     }
 
+    public ContentValues getContentValues() {
+        return null;
+    }
 }

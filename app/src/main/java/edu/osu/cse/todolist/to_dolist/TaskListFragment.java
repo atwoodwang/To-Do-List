@@ -57,7 +57,7 @@ public class TaskListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Task task = new Task();
-                task.setConfig(Task.ConfigType.NONE);
+//                task.setConfig(Task.ConfigType.NONE);
                 ToDoLab.get(getActivity()).addTask(task);
                 Intent intent = TaskDetailActivity.newIntent(getActivity(), task.getId());
                 startActivity(intent);
@@ -108,6 +108,7 @@ public class TaskListFragment extends Fragment {
                 mAdapter = new TaskAdapter(tasks);
                 mTaskRecyclerView.setAdapter(mAdapter);
             } else {
+                mAdapter.setTasks(tasks);
                 mAdapter.notifyDataSetChanged();
             }
         }
@@ -181,6 +182,8 @@ public class TaskListFragment extends Fragment {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     mTask.setComplete(isChecked);
+                    // Save the Complete status into database
+                    ToDoLab.get(getActivity()).saveTask(mTask);
                 }
             });
 
@@ -202,6 +205,8 @@ public class TaskListFragment extends Fragment {
                         mIsImportant.setImageResource(R.drawable.ic_list_task_not_important);
                         Toast.makeText(getActivity(), "You have set this task to be unimportant", Toast.LENGTH_SHORT).show();
                     }
+                    // Save the star status into database
+                    ToDoLab.get(getActivity()).saveTask(mTask);
                 }
             });
         }
@@ -239,5 +244,8 @@ public class TaskListFragment extends Fragment {
             return mTasks.size();
         }
 
+        public void setTasks(List<Task> tasks) {
+            mTasks = tasks;
+        }
     }
 }

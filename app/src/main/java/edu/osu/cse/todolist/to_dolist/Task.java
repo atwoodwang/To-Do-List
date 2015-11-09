@@ -1,15 +1,24 @@
 package edu.osu.cse.todolist.to_dolist;
 
+import android.content.ContentValues;
+
 import java.util.Date;
 
+import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
+
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
+
 /**
- * Created by NoAnyLove on 2015/11/2.
+ * Task Model class
  */
+
+/*
+Conventions:
+    * Task belongs to one Folder
+    * Task has one schedule (optional)
+    * Task has one Location (optional)
+*/
 public class Task extends Model {
-    /**
-     * Foreign key reference to Folder
-     */
-    private long FOLDER_ID;
 
     private String mTitle;
     private String mNote;
@@ -53,16 +62,19 @@ public class Task extends Model {
     }
 
     public Task() {
-        super();
-        mStarred = false;
-        mConfig = ConfigType.NONE;
-        mSchedule = null;
-        mLocation = null;
+        this(-1);
     }
 
     public Task(long id) {
         super(id);
-        // Load data from database
+        mTitle = "";
+        mNote = "";
+        mStarred = false;
+        mConfig = ConfigType.NONE;
+        mComplete = false;
+
+        mSchedule = null;
+        mLocation = null;
     }
 
     public String getTitle() {
@@ -163,14 +175,32 @@ public class Task extends Model {
      *
      * @param date of when to remind
      */
-    public boolean setRemindDate(Date date) {
+    public Schedule setRemindDate(Date date) {
         //TODO: implement setRemindDate()
-        
+
         // if there is no associated schedule, create a new one
         if (mSchedule == null) {
             mSchedule = new Schedule(this);
         }
         mSchedule.setDate(date);
-        return mSchedule.save();
+        return mSchedule;
+
+        // TODO: update Task.mSchedule and Schedule.mTask
+    }
+
+    @Override
+    public ContentValues getContentValues() {
+        ContentValues values = new ContentValues();
+
+//        if (getId() != -1) {
+//            values.put(TaskTable.Cols.ID, getId());
+//        }
+        values.put(TaskTable.Cols.TITLE, mTitle);
+        values.put(TaskTable.Cols.NOTE, mNote);
+        values.put(TaskTable.Cols.STARRED, mStarred);
+        values.put(TaskTable.Cols.CONFIG, mConfig.ordinal());
+        values.put(TaskTable.Cols.COMPLETE, mComplete);
+
+        return values;
     }
 }
