@@ -40,7 +40,6 @@
     <string name="permission_required_toast">Location permission is required for this demo.</string>
 
 
-
     <string-array name="reminder_type_array">
         <item>None</item>
         <item>Time</item>
@@ -52,4 +51,5 @@
         <item>Wi-Fi</item>
     </string-array>
     <string name="title_activity_maps">Map</string>
+    <string name="current_wifi_info_title">"Current WiFi SSID: "</string>
 </resources>

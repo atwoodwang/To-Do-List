@@ -2,12 +2,18 @@ package edu.osu.cse.todolist.to_dolist;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +25,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -37,10 +45,11 @@ public class LocationDetailFragment extends Fragment {
     private Button mWifiAdvancedSettingButton;
     private Button mGPSSettingButton;
     private TextView mGPSCurrentSettingTextView;
+    private TextView mCurrentWifiInfoTextView;
+    private CheckBox mUseCurrentWifiCheckBox;
     private Spinner mLocationTypeSpinner;
     private GPSCoordinate mGPSCoordinate;
     private static final String ARG_LOCATION_ID = "location_id";
-
 
     public static LocationDetailFragment newInstance(long locationId) {
         Bundle args = new Bundle();
@@ -67,7 +76,7 @@ public class LocationDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        upDateGPSTextView();
+        updateGPSTextView();
     }
 
     @Override
@@ -137,6 +146,7 @@ public class LocationDetailFragment extends Fragment {
         });
 
         mWifiSettingLayout = (LinearLayout) v.findViewById(R.id.wifi_setting_layout);
+        mCurrentWifiInfoTextView = (TextView) v.findViewById(R.id.current_wifi_info_textview);
         mWifiAdvancedSettingButton = (Button) v.findViewById(R.id.wifi_advanced_setting);
         mGPSSettingButton = (Button) v.findViewById(R.id.gps_location_setting);
         mGPSCurrentSettingTextView = (TextView) v.findViewById(R.id.gps_current_setting);
@@ -155,12 +165,14 @@ public class LocationDetailFragment extends Fragment {
                     case GPS:
                         mWifiSettingLayout.setVisibility(View.GONE);
                         mWifiAdvancedSettingButton.setVisibility(View.GONE);
+                        mCurrentWifiInfoTextView.setVisibility(View.GONE);
                         mGPSSettingButton.setVisibility(View.VISIBLE);
                         mGPSCurrentSettingTextView.setVisibility(View.VISIBLE);
                         break;
                     case WiFi:
                         mWifiSettingLayout.setVisibility(View.VISIBLE);
                         mWifiAdvancedSettingButton.setVisibility(View.VISIBLE);
+                        mCurrentWifiInfoTextView.setVisibility(View.VISIBLE);
                         mGPSSettingButton.setVisibility(View.GONE);
                         mGPSCurrentSettingTextView.setVisibility(View.GONE);
                         break;
@@ -182,7 +194,30 @@ public class LocationDetailFragment extends Fragment {
             }
         });
 
-        upDateGPSTextView();
+        updateGPSTextView();
+
+        mUseCurrentWifiCheckBox = (CheckBox) v.findViewById(R.id.use_current_wifi_check_bot);
+        mUseCurrentWifiCheckBox.setChecked(mLocation.getWiFiPosition() != null);
+        mUseCurrentWifiCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    WiFiPosition wiFiPosition = new WiFiPosition();
+                    String[] info = WiFiPosition.getCurrentWifiInfo(getContext());
+                    String ssid = info[0];
+                    String mac = info[1];
+                    wiFiPosition.setSSID(ssid);
+                    wiFiPosition.setMAC(mac);
+                    mLocation.setWiFiPosition(wiFiPosition);
+                    updateWifiTextView();
+                } else {
+                    mLocation.setWiFiPosition(null);
+                    updateWifiTextView();
+                }
+            }
+        });
+
+        updateWifiTextView();
 
         mDoneButton = (Button) v.findViewById(R.id.done_button);
         mDoneButton.setOnClickListener(new View.OnClickListener() {
@@ -247,7 +282,7 @@ public class LocationDetailFragment extends Fragment {
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public void upDateGPSTextView() {
+    public void updateGPSTextView() {
         if (mGPSCoordinate == null) {
             mGPSCurrentSettingTextView.setVisibility(View.GONE);
         } else {
@@ -255,5 +290,18 @@ public class LocationDetailFragment extends Fragment {
             mGPSCurrentSettingTextView.setText(mGPSCoordinate.getLatitude() + "  " + mGPSCoordinate.getLongitude());
         }
     }
+
+
+    private void updateWifiTextView() {
+        if (mLocation.getWiFiPosition() == null) {
+            mCurrentWifiInfoTextView.setVisibility(View.GONE);
+        } else {
+            mCurrentWifiInfoTextView.setVisibility(View.VISIBLE);
+            mCurrentWifiInfoTextView.setText(getString(R.string.current_wifi_info_title)
+                    + " " + mLocation.getWiFiPosition()
+                    .getSSID());
+        }//TODO SHOW MAC ADDRESS
+    }
+
 
 }

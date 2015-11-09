@@ -12,24 +12,24 @@ import android.util.Log;
 /**
  * Created by Zicong on 2015/11/8.
  */
-public class TimeAlarmReceiver extends WakefulBroadcastReceiver{
+public class TimeAlarmReceiver extends WakefulBroadcastReceiver {
     private AlarmManager mTimemAlarmManager;
     private PendingIntent mTimeAlarmIntent;
     private static final String TAG = "RECEIVER";
-    private static final int INTERVAL = 1000*10;
+    private static final int INTERVAL = 1000 * 10;
 
     @Override
-    public void onReceive(Context context,Intent intent){
-        Intent service = new Intent(context,TimeAlarmService.class);
-        startWakefulService(context,service);
+    public void onReceive(Context context, Intent intent) {
+        Intent service = new Intent(context, TimeAlarmService.class);
+        startWakefulService(context, service);
     }
 
 
-    public void setAlarm(Context context){
-        mTimemAlarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context,TimeAlarmReceiver.class);
-        mTimeAlarmIntent = PendingIntent.getBroadcast(context,0,intent,0);
-        mTimemAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),INTERVAL,mTimeAlarmIntent);
+    public void setAlarm(Context context) {
+        mTimemAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, TimeAlarmReceiver.class);
+        mTimeAlarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        mTimemAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), INTERVAL, mTimeAlarmIntent);
 
         ComponentName receiver = new ComponentName(context, TimeAlarmReceiver.class);
         PackageManager packageManager = context.getPackageManager();
@@ -39,8 +39,8 @@ public class TimeAlarmReceiver extends WakefulBroadcastReceiver{
                 PackageManager.DONT_KILL_APP);
     }
 
-    public void cancelAlarm(Context context){
-        if(mTimemAlarmManager!=null){
+    public void cancelAlarm(Context context) {
+        if (mTimemAlarmManager != null) {
             mTimemAlarmManager.cancel(mTimeAlarmIntent);
         }
 

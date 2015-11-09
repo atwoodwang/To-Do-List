@@ -91,6 +91,15 @@
                 android:textStyle="bold"/>
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/current_wifi_info_textview"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
+
         <Button
             android:id="@+id/wifi_advanced_setting"
             android:layout_width="match_parent"
@@ -111,6 +120,7 @@
 
         <TextView
             android:id="@+id/gps_current_setting"
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="16dp"
