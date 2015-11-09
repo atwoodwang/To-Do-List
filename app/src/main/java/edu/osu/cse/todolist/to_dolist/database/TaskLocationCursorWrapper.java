@@ -3,7 +3,7 @@ package edu.osu.cse.todolist.to_dolist.database;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
-import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.TaskLocationTable;
 
 /**
  * Created by Sniper on 2015/11/8.
@@ -19,7 +19,8 @@ public class TaskLocationCursorWrapper extends CursorWrapper {
     }
 
     /**
-     * get
+     * Get the field contents of Task Location join table
+     *
      * @return [ID, Task_ID, Location_ID] in an array of long
      */
     public long[] get() {

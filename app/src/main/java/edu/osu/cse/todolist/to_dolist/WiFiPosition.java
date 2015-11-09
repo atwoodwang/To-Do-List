@@ -8,7 +8,6 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 
-import java.util.List;
 import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.WiFiPositionTable;
 
 /**
@@ -88,7 +87,6 @@ public class WiFiPosition extends Model {
         return values;
     }
 
-    // TODO: need refactor
     public static String[] getCurrentWifiInfo(Context context) {
         String ssid = null;
         String bssid = null;

@@ -2,9 +2,7 @@ package edu.osu.cse.todolist.to_dolist;
 
 import android.content.ContentValues;
 
-import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
-
-import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.LocationTable;
 
 /**
  * Created by Sniper on 2015/11/3.

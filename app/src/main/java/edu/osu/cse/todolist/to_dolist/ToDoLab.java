@@ -3,7 +3,6 @@ package edu.osu.cse.todolist.to_dolist;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -16,10 +15,14 @@ import edu.osu.cse.todolist.to_dolist.database.ScheduleCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.TaskCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.TaskLocationCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.ToDoBaseHelper;
-import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
 import edu.osu.cse.todolist.to_dolist.database.WiFiPositionCursorWrapper;
 
-import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.GPSCoordinateTable;
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.LocationTable;
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.ScheduleTable;
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.TaskLocationTable;
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.TaskTable;
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.WiFiPositionTable;
 
 /**
  * ToDoLab singleton centralized data class

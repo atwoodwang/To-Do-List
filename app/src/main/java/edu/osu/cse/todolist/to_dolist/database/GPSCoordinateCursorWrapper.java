@@ -4,10 +4,8 @@ import android.database.Cursor;
 import android.database.CursorWrapper;
 
 import edu.osu.cse.todolist.to_dolist.GPSCoordinate;
-import edu.osu.cse.todolist.to_dolist.Location;
-import edu.osu.cse.todolist.to_dolist.Schedule;
 
-import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.GPSCoordinateTable;
 
 /**
  * Created by Sniper on 2015/11/9.

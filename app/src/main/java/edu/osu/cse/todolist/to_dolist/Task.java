@@ -4,9 +4,7 @@ import android.content.ContentValues;
 
 import java.util.Date;
 
-import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
-
-import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.TaskTable;
 
 /**
  * Task Model class
@@ -140,7 +138,7 @@ public class Task extends Model {
 
     /**
      * Get the remind time in Date format
-     * <p/>
+     * <p>
      * This method returns a Date object indicates when to remind this Task
      *
      * @return the <code>Date</code> of mSchedule, or <code>null</code> if there is no associated
@@ -170,7 +168,7 @@ public class Task extends Model {
 
     /**
      * Set when to remind in Date format
-     * <p/>
+     * <p>
      * This method is responsible for creating or update associated schedule.
      *
      * @param date of when to remind

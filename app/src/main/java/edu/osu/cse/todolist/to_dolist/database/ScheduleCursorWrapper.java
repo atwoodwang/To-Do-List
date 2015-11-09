@@ -9,7 +9,7 @@ import edu.osu.cse.todolist.to_dolist.Schedule;
 import edu.osu.cse.todolist.to_dolist.Schedule.ConfigType;
 import edu.osu.cse.todolist.to_dolist.Task;
 
-import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
+import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.ScheduleTable;
 
 /**
  * Created by Sniper on 2015/11/8.

@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
 import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.ScheduleTable;
 
 /**

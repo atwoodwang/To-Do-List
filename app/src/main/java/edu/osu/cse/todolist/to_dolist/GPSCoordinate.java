@@ -2,7 +2,6 @@ package edu.osu.cse.todolist.to_dolist;
 
 import android.content.ContentValues;
 
-import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
 import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.GPSCoordinateTable;
 
 /**
