@@ -3,6 +3,7 @@ package edu.osu.cse.todolist.to_dolist;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -35,7 +36,9 @@ public class LocationDetailFragment extends Fragment {
     private LinearLayout mWifiSettingLayout;
     private Button mWifiAdvancedSettingButton;
     private Button mGPSSettingButton;
+    private TextView mGPSCurrentSettingTextView;
     private Spinner mLocationTypeSpinner;
+    private GPSCoordinate mGPSCoordinate;
     private static final String ARG_LOCATION_ID = "location_id";
 
 
@@ -54,6 +57,12 @@ public class LocationDetailFragment extends Fragment {
         setHasOptionsMenu(true);
         long locationId = (long) getArguments().getSerializable(ARG_LOCATION_ID);
         mLocation = ToDoLab.get(getActivity()).getLocation(locationId);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        upDateGPSTextView();
     }
 
     @Override
@@ -125,6 +134,7 @@ public class LocationDetailFragment extends Fragment {
         mWifiSettingLayout = (LinearLayout) v.findViewById(R.id.wifi_setting_layout);
         mWifiAdvancedSettingButton = (Button) v.findViewById(R.id.wifi_advanced_setting);
         mGPSSettingButton = (Button) v.findViewById(R.id.gps_location_setting);
+        mGPSCurrentSettingTextView =(TextView)v.findViewById(R.id.gps_current_setting);
         mLocationTypeSpinner = (Spinner) v.findViewById(R.id.location_type_spinner);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.location_type_array, android.R.layout.simple_spinner_item);
@@ -141,11 +151,13 @@ public class LocationDetailFragment extends Fragment {
                         mWifiSettingLayout.setVisibility(View.GONE);
                         mWifiAdvancedSettingButton.setVisibility(View.GONE);
                         mGPSSettingButton.setVisibility(View.VISIBLE);
+                        mGPSCurrentSettingTextView.setVisibility(View.VISIBLE);
                         break;
                     case WiFi:
                         mWifiSettingLayout.setVisibility(View.VISIBLE);
                         mWifiAdvancedSettingButton.setVisibility(View.VISIBLE);
                         mGPSSettingButton.setVisibility(View.GONE);
+                        mGPSCurrentSettingTextView.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -155,6 +167,17 @@ public class LocationDetailFragment extends Fragment {
 
             }
         });
+
+        mGPSSettingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = MapsActivity.newIntent(getActivity(), mLocation.getId());
+                startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+            }
+        });
+
+        upDateGPSTextView();
 
 
         mDoneButton = (Button) v.findViewById(R.id.done_button);
@@ -205,4 +228,14 @@ public class LocationDetailFragment extends Fragment {
         InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    public void upDateGPSTextView(){
+        if(mLocation.getGPSCoordinate()==null){
+            mGPSCurrentSettingTextView.setVisibility(View.GONE);
+        }else{
+            mGPSCurrentSettingTextView.setVisibility(View.VISIBLE);
+            mGPSCurrentSettingTextView.setText(mLocation.getGPSCoordinate().getLatitude()+"  "+mLocation.getGPSCoordinate().getLongitude());
+        }
+    }
+
 }
