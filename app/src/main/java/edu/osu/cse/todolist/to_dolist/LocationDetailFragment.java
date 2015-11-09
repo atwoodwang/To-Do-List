@@ -57,6 +57,11 @@ public class LocationDetailFragment extends Fragment {
         setHasOptionsMenu(true);
         long locationId = (long) getArguments().getSerializable(ARG_LOCATION_ID);
         mLocation = ToDoLab.get(getActivity()).getLocation(locationId);
+        mGPSCoordinate = mLocation.getGPSCoordinate();
+        if (mGPSCoordinate == null) {
+            mGPSCoordinate = new GPSCoordinate(-1);
+        }
+        ToDoLab.get(getActivity()).setGPSCoordinate(mGPSCoordinate);
     }
 
     @Override
@@ -183,20 +188,23 @@ public class LocationDetailFragment extends Fragment {
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mGPSCoordinate = ToDoLab.get(getActivity()).getGPSCoordinate();
                 if (mLocation.getTitle() == null || mLocation.getTitle().isEmpty()) {
                     Dialog alertDialog = new AlertDialog.Builder(getActivity())
                             .setMessage("Have to enter a title for this location.")
                             .setPositiveButton("OK", null)
                             .create();
                     alertDialog.show();
-                } else if (mLocation.getConfig() == Location.ConfigType.GPS & mLocation.getGPSCoordinate() == null) {
+                } else if (mLocation.getConfig() == Location.ConfigType.GPS & (mGPSCoordinate
+                        .getLongitude() == 0.0 && mGPSCoordinate.getLatitude() == 0.0)) {
                     Dialog alertDialog = new AlertDialog.Builder(getActivity())
                             .setMessage("Have to select a GPS location coordinate.")
                             .setPositiveButton("OK", null)
                             .create();
                     alertDialog.show();
                 } else {
-                    ToDoLab.get(getActivity()).save(mLocation);
+                    mLocation.setGPSCoordinate(mGPSCoordinate);
+                    ToDoLab.get(getActivity()).saveLocation(mLocation);
                     getActivity().onBackPressed();
                 }
             }
@@ -240,11 +248,11 @@ public class LocationDetailFragment extends Fragment {
     }
 
     public void upDateGPSTextView() {
-        if (mLocation.getGPSCoordinate() == null) {
+        if (mGPSCoordinate == null) {
             mGPSCurrentSettingTextView.setVisibility(View.GONE);
         } else {
             mGPSCurrentSettingTextView.setVisibility(View.VISIBLE);
-            mGPSCurrentSettingTextView.setText(mLocation.getGPSCoordinate().getLatitude() + "  " + mLocation.getGPSCoordinate().getLongitude());
+            mGPSCurrentSettingTextView.setText(mGPSCoordinate.getLatitude() + "  " + mGPSCoordinate.getLongitude());
         }
     }
 

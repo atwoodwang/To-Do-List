@@ -42,10 +42,11 @@ public class MapsActivity extends AppCompatActivity
     private String mprovider;
     private LatLng mLatLng;
     private Location mLocation;
+    private GPSCoordinate mGPSCoordinate;
 
     /**
-     * Flag indicating whether a requested permission has been denied after returning in
-     * {@link #onRequestPermissionsResult(int, String[], int[])}.
+     * Flag indicating whether a requested permission has been denied after returning in {@link
+     * #onRequestPermissionsResult(int, String[], int[])}.
      */
     private boolean mPermissionDenied = false;
 
@@ -56,8 +57,10 @@ public class MapsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        long locationId = (long)getIntent().getSerializableExtra(EXTRA_LOCATION);
+        long locationId = (long) getIntent().getSerializableExtra(EXTRA_LOCATION);
         mLocation = ToDoLab.get(this).getLocation(locationId);
+
+        mGPSCoordinate = ToDoLab.get(this).getGPSCoordinate();
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -67,14 +70,14 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
-        if (mLocation.getGPSCoordinate()==null){
+        if (mLocation.getGPSCoordinate() == null) {
             enableMyLocation();
-        }else{
+        } else {
             mMap.setMyLocationEnabled(true);
             GPSCoordinate gpsCoordinate = mLocation.getGPSCoordinate();
             double lat = gpsCoordinate.getLatitude();
             double lng = gpsCoordinate.getLongitude();
-            mLatLng = new LatLng(lat,lng);
+            mLatLng = new LatLng(lat, lng);
             addMarker(mLatLng);
         }
 
@@ -88,8 +91,6 @@ public class MapsActivity extends AppCompatActivity
             }
         });
     }
-
-
 
 
     /**
@@ -111,7 +112,7 @@ public class MapsActivity extends AppCompatActivity
             if (location != null) {
                 // Toast.makeText(BasicMapActivity_new.this, "Selected Provider " + provider,
                 //Toast.LENGTH_SHORT).show();
-                mLatLng = new LatLng(location.getLatitude(),location.getLongitude());
+                mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
                 addMarker(mLatLng);
             } else {
                 return;
@@ -156,23 +157,26 @@ public class MapsActivity extends AppCompatActivity
     }
 
 
-    public static Intent newIntent(Context packageContext,long locationId){
-        Intent intent = new Intent(packageContext,MapsActivity.class);
+    public static Intent newIntent(Context packageContext, long locationId) {
+        Intent intent = new Intent(packageContext, MapsActivity.class);
         intent.putExtra(EXTRA_LOCATION, locationId);
         return intent;
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         Dialog alertDialog = new AlertDialog.Builder(this)
                 .setMessage("Do you want to save the maker's location as your reminder location?")
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        GPSCoordinate gpsCoordinate = new GPSCoordinate();
-                        mLocation.setGPSCoordinate(gpsCoordinate);
-                        gpsCoordinate.setLatitude(mLatLng.latitude);
-                        gpsCoordinate.setLongitude(mLatLng.longitude);
+//                        GPSCoordinate gpsCoordinate = new GPSCoordinate();
+//                        mLocation.setGPSCoordinate(gpsCoordinate);
+//                        gpsCoordinate.setLatitude(mLatLng.latitude);
+//                        gpsCoordinate.setLongitude(mLatLng.longitude);
+                        mGPSCoordinate.setLongitude(mLatLng.longitude);
+                        mGPSCoordinate.setLatitude(mLatLng.latitude);
+                        ToDoLab.get(getApplicationContext()).setGPSCoordinate(mGPSCoordinate);
                         finish();
                     }
                 })
@@ -182,7 +186,7 @@ public class MapsActivity extends AppCompatActivity
     }
 
 
-    public void addMarker(LatLng latLng){
+    public void addMarker(LatLng latLng) {
         // Creating a marker
         MarkerOptions markerOptions = new MarkerOptions();
 
