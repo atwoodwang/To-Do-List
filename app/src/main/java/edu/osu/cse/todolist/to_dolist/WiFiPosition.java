@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 
 import java.util.List;
+import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.WiFiPositionTable;
 
 /**
  * Created by Sniper on 2015/11/3.
@@ -76,12 +77,21 @@ public class WiFiPosition extends Model {
     }
 
     public ContentValues getContentValues() {
-        return null;
+        ContentValues values = new ContentValues();
+
+        values.put(WiFiPositionTable.Cols.LOCATION_ID, getForeignKey());
+        values.put(WiFiPositionTable.Cols.SSID, mSSID);
+        values.put(WiFiPositionTable.Cols.BSSID, mBSSID);
+        values.put(WiFiPositionTable.Cols.MAXSIGNAL, mMaxSignal);
+        values.put(WiFiPositionTable.Cols.MINSIGNAL, mMinSignal);
+
+        return values;
     }
 
-    public static String[] getCurrentWifiInfo(Context context){
+    // TODO: need refactor
+    public static String[] getCurrentWifiInfo(Context context) {
         String ssid = null;
-        String mac = null;
+        String bssid = null;
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
         if (networkInfo.isConnected()) {
@@ -89,11 +99,10 @@ public class WiFiPosition extends Model {
             final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
             if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
                 ssid = connectionInfo.getSSID();
-                mac = connectionInfo.getMacAddress();
-
+                bssid = connectionInfo.getBSSID();
             }
         }
-        return new String[]{ssid,mac};
+        return new String[]{ssid, bssid};
     }
 
 }

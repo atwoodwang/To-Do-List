@@ -198,9 +198,9 @@ public class LocationDetailFragment extends Fragment {
                     WiFiPosition wiFiPosition = new WiFiPosition();
                     String[] info = WiFiPosition.getCurrentWifiInfo(getContext());
                     String ssid = info[0];
-                    String mac = info[1];
+                    String bssid = info[1];
                     wiFiPosition.setSSID(ssid);
-                    wiFiPosition.setBSSID(mac);
+                    wiFiPosition.setBSSID(bssid);
                     mLocation.setWiFiPosition(wiFiPosition);
                     updateWifiTextView();
                 } else {

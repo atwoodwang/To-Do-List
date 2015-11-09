@@ -6,8 +6,8 @@ import android.database.CursorWrapper;
 
 import edu.osu.cse.todolist.to_dolist.GPSCoordinate;
 import edu.osu.cse.todolist.to_dolist.Location;
-import edu.osu.cse.todolist.to_dolist.Task;
 import edu.osu.cse.todolist.to_dolist.ToDoLab;
+import edu.osu.cse.todolist.to_dolist.WiFiPosition;
 import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.LocationTable;
 
 /**
@@ -44,6 +44,8 @@ public class LocationCursorWrapper extends CursorWrapper {
                 loc.setGPSCoordinate(gps);
                 break;
             case WiFi:
+                WiFiPosition wifiPos = ToDoLab.get(context).findWiFiPositionByLocation(loc);
+                loc.setWiFiPosition(wifiPos);
                 break;
         }
 

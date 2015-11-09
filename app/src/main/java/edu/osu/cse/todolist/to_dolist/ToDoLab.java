@@ -17,6 +17,7 @@ import edu.osu.cse.todolist.to_dolist.database.TaskCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.TaskLocationCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.ToDoBaseHelper;
 import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema;
+import edu.osu.cse.todolist.to_dolist.database.WiFiPositionCursorWrapper;
 
 import static edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.*;
 
@@ -505,6 +506,32 @@ public class ToDoLab {
         }
 
         return gps;
+    }
+
+    public WiFiPosition findWiFiPositionByLocation(Location loc) {
+        if (loc == null) {
+            return null;
+        }
+        if (loc.getId() == -1) {
+            return null;
+        }
+        WiFiPosition wifiPos = null;
+        Cursor cursor = query(WiFiPositionTable.NAME,
+                WiFiPositionTable.Cols.LOCATION_ID + " = ?",
+                new String[]{Long.toString(loc.getId())}
+        );
+        WiFiPositionCursorWrapper cw = new WiFiPositionCursorWrapper(cursor);
+        try {
+            if (cw.getCount() == 0) {
+                return null;
+            }
+            cw.moveToFirst();
+            wifiPos = cw.get();
+        } finally {
+            cw.close();
+        }
+
+        return wifiPos;
     }
 
     public <T extends Model> T loadFromCursor(Class<T> type, Cursor cursor) {
