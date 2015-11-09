@@ -226,6 +226,8 @@ public class TaskDetailFragment extends Fragment {
                 Location loc = (Location) parent.getItemAtPosition(pos);
                 if (loc.getId() != -1) {
                     mTask.setLocation(loc);
+                } else {
+                    mTask.setLocation(null);
                 }
             }
 
@@ -247,10 +249,30 @@ public class TaskDetailFragment extends Fragment {
         mDoneButton = (Button) v.findViewById(R.id.done_button);
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
+
             public void onClick(View v) {
-                // TODO: move Task validation here, if valid then save
-                ToDoLab.get(getActivity()).saveTask(mTask);
-                getActivity().onBackPressed();
+                if (mTask.getTitle() == null || mTask.getTitle().isEmpty()) {
+                    Dialog alertDialog = new AlertDialog.Builder(getActivity())
+                            .setMessage("Have to enter a title for your task.")
+                            .setPositiveButton("OK", null)
+                            .create();
+                    alertDialog.show();
+                } else if (mTask.getConfig() == Task.ConfigType.TIME & mTask.getRemindDate() == null) {
+                    Dialog alertDialog = new AlertDialog.Builder(getActivity())
+                            .setMessage("Have to select a time for your task")
+                            .setPositiveButton("OK", null)
+                            .create();
+                    alertDialog.show();
+                } else if ((mTask.getConfig() == Task.ConfigType.LOCATION_ARRIVING || mTask.getConfig() == Task.ConfigType.LOCATION_LEAVING) & mTask.getLocation() == null) {
+                    Dialog alertDialog = new AlertDialog.Builder(getActivity())
+                            .setMessage("Have to select a location for your task")
+                            .setPositiveButton("OK", null)
+                            .create();
+                    alertDialog.show();
+                } else {
+                    ToDoLab.get(getActivity()).saveTask(mTask);
+                    getActivity().onBackPressed();
+                }
             }
         });
 
