@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by Zicong on 2015/11/6.
@@ -160,12 +161,12 @@ public class LocationDetailFragment extends Fragment {
                         mWifiAdvancedSettingButton.setVisibility(View.GONE);
                         mCurrentWifiInfoTextView.setVisibility(View.GONE);
                         mGPSSettingButton.setVisibility(View.VISIBLE);
-                        mGPSCurrentSettingTextView.setVisibility(View.VISIBLE);
+                        updateGPSTextView();
                         break;
                     case WiFi:
                         mWifiSettingLayout.setVisibility(View.VISIBLE);
                         mWifiAdvancedSettingButton.setVisibility(View.VISIBLE);
-                        mCurrentWifiInfoTextView.setVisibility(View.VISIBLE);
+                        updateWifiTextView();
                         mGPSSettingButton.setVisibility(View.GONE);
                         mGPSCurrentSettingTextView.setVisibility(View.GONE);
                         break;
@@ -197,12 +198,19 @@ public class LocationDetailFragment extends Fragment {
                 if (isChecked) {
                     WiFiPosition wiFiPosition = new WiFiPosition();
                     String[] info = WiFiPosition.getCurrentWifiInfo(getContext());
-                    String ssid = info[0];
+                    if (info==null){
+                        Toast.makeText(getActivity(), R.string.no_wifi_connection_warning, Toast
+                                .LENGTH_SHORT)
+                                .show();
+                        mUseCurrentWifiCheckBox.setChecked(false);
+                    }else{
+                        String ssid = info[0];
                     String bssid = info[1];
-                    wiFiPosition.setSSID(ssid);
+                        wiFiPosition.setSSID(ssid);
                     wiFiPosition.setBSSID(bssid);
-                    mLocation.setWiFiPosition(wiFiPosition);
-                    updateWifiTextView();
+                        mLocation.setWiFiPosition(wiFiPosition);
+                        updateWifiTextView();
+                    }
                 } else {
                     mLocation.setWiFiPosition(null);
                     updateWifiTextView();
@@ -276,7 +284,7 @@ public class LocationDetailFragment extends Fragment {
     }
 
     public void updateGPSTextView() {
-        if (mGPSCoordinate == null) {
+        if (mGPSCoordinate.getLatitude()==0&mGPSCoordinate.getLongitude()==0) {
             mGPSCurrentSettingTextView.setVisibility(View.GONE);
         } else {
             mGPSCurrentSettingTextView.setVisibility(View.VISIBLE);
@@ -292,7 +300,8 @@ public class LocationDetailFragment extends Fragment {
             mCurrentWifiInfoTextView.setVisibility(View.VISIBLE);
             mCurrentWifiInfoTextView.setText(getString(R.string.current_wifi_info_title)
                     + " " + mLocation.getWiFiPosition()
-                    .getSSID());
+                    .getSSID()+"\n" + "Current Wi-Fi BSSID:"+" "+mLocation.getWiFiPosition()
+                    .getBSSID());
         }//TODO SHOW BSSID ADDRESS
     }
 

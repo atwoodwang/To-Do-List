@@ -52,4 +52,5 @@
     </string-array>
     <string name="title_activity_maps">Map</string>
     <string name="current_wifi_info_title">"Current WiFi SSID: "</string>
+    <string name="no_wifi_connection_warning">You don\'t have any current Wi-Fi connection.</string>
 </resources>
