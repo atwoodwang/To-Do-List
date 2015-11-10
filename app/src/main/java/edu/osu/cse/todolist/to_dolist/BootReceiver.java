@@ -9,12 +9,12 @@ import android.content.Intent;
  * Created by Zicong on 2015/11/8.
  */
 public class BootReceiver extends BroadcastReceiver {
-    TimeAlarmReceiver mTimeAlarmReceiver = new TimeAlarmReceiver();
+    AlarmReceiver mAlarmReceiver = new AlarmReceiver();
 
     @Override
     public void onReceive(Context context, Intent intent){
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")){
-            mTimeAlarmReceiver.setAlarm(context);
+            mAlarmReceiver.setAlarm(context);
         }
     }
 }

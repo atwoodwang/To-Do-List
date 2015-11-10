@@ -39,8 +39,8 @@ public class TaskListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        TimeAlarmReceiver timeAlarmReceiver = new TimeAlarmReceiver();
-        timeAlarmReceiver.setAlarm(getContext());
+        AlarmReceiver alarmReceiver = new AlarmReceiver();
+        alarmReceiver.setAlarm(getContext());
 
     }
 

@@ -63,7 +63,7 @@
             android:label="@string/title_activity_maps">
         </activity>
 
-        <receiver android:name=".TimeAlarmReceiver"/>
+        <receiver android:name=".AlarmReceiver"/>
 
         <receiver
             android:name=".BootReceiver"
@@ -73,7 +73,7 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".TimeAlarmService"/>
+        <service android:name=".AlarmService"/>
     </application>
 
 </manifest>
