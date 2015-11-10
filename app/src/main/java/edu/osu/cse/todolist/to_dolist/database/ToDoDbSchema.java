@@ -24,6 +24,7 @@ public class ToDoDbSchema {
             public static final String STARRED = "Starred";
             public static final String CONFIG = "Config";
             public static final String COMPLETE = "Complete";
+            public static final String ENABLED = "Enabled";
         }
     }
 

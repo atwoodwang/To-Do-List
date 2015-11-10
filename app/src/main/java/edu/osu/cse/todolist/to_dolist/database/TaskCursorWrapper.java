@@ -34,6 +34,7 @@ public class TaskCursorWrapper extends CursorWrapper {
         int configInt = getInt(getColumnIndex(TaskTable.Cols.CONFIG));
         ConfigType config = ConfigType.values()[configInt];
         boolean complete = getInt(getColumnIndex(TaskTable.Cols.COMPLETE)) != 0;
+        boolean enabled = getInt(getColumnIndex(TaskTable.Cols.ENABLED)) != 0;
 
         // create Task object and set values
         Task task = new Task(id);
@@ -42,6 +43,7 @@ public class TaskCursorWrapper extends CursorWrapper {
         task.setStarred(starred);
         task.setConfig(config);
         task.setComplete(complete);
+        task.setEnabled(enabled);
 
         // TODO: set Location and Schedule
         switch (config) {

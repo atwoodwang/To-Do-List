@@ -4,7 +4,8 @@ CREATE TABLE Task(
     Note TEXT,
     Starred BOOLEAN NOT NULL,
     Config INTEGER NOT NULL,
-    Complete BOOLEAN NOT NULL
+    Complete BOOLEAN NOT NULL,
+    Enabled BOOLEAN NOT NULL
 );
 
 CREATE TABLE Schedule(

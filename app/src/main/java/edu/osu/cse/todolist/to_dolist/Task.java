@@ -76,6 +76,8 @@ public class Task extends Model {
         mConfig = ConfigType.NONE;
         mComplete = false;
 
+        mEnabled = false;
+
         mSchedule = null;
         mLocation = null;
     }
@@ -143,7 +145,7 @@ public class Task extends Model {
 
     /**
      * Get the remind time in Date format
-     * <p>
+     * <p/>
      * This method returns a Date object indicates when to remind this Task
      *
      * @return the <code>Date</code> of mSchedule, or <code>null</code> if there is no associated
@@ -173,7 +175,7 @@ public class Task extends Model {
 
     /**
      * Set when to remind in Date format
-     * <p>
+     * <p/>
      * This method is responsible for creating or update associated schedule.
      *
      * @param date of when to remind
@@ -211,6 +213,7 @@ public class Task extends Model {
         values.put(TaskTable.Cols.STARRED, mStarred);
         values.put(TaskTable.Cols.CONFIG, mConfig.ordinal());
         values.put(TaskTable.Cols.COMPLETE, mComplete);
+        values.put(TaskTable.Cols.ENABLED, mEnabled);
 
         return values;
     }
