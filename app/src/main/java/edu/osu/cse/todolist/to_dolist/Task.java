@@ -76,7 +76,7 @@ public class Task extends Model {
         mConfig = ConfigType.NONE;
         mComplete = false;
 
-        mEnabled = false;
+        mEnabled = true;
 
         mSchedule = null;
         mLocation = null;

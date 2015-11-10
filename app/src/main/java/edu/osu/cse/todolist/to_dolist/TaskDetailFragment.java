@@ -8,16 +8,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatSpinner;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,20 +24,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.security.acl.LastOwnerException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
 
 public class TaskDetailFragment extends Fragment {
     private Task mTask;
@@ -58,6 +47,7 @@ public class TaskDetailFragment extends Fragment {
     private Button mShortCutButton;
     private Button mDoneButton;
     private MenuItem mStarred;
+    private MenuItem mEnabled;
     private List<Location> mLocations;
     private List<String> mlocationArray;
 
@@ -332,8 +322,12 @@ public class TaskDetailFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_task_detail, menu);
         mStarred = menu.findItem(R.id.menu_item_task_importance);
+        mEnabled = menu.findItem(R.id.menu_item_enabled);
         if (mTask.isStarred()) {
             mStarred.setIcon(R.drawable.ic_task_important);
+        }
+        if (!mTask.isEnabled()) {
+            mEnabled.setIcon(R.drawable.ic_menu_disabled);
         }
     }
 
@@ -364,6 +358,19 @@ public class TaskDetailFragment extends Fragment {
                     mTask.setStarred(false);
                     mStarred.setIcon(R.drawable.ic_task_not_important);
                     Toast.makeText(getActivity(), "You have set this task to be unimportant", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            case R.id.menu_item_enabled:
+                if (mTask.isEnabled()) {
+                    mTask.setEnabled(false);
+                    mEnabled.setIcon(R.drawable.ic_menu_disabled);
+                    Toast.makeText(getActivity(), "You have disabled this alarm", Toast
+                            .LENGTH_SHORT).show();
+                } else {
+                    mTask.setEnabled(true);
+                    mEnabled.setIcon(R.drawable.ic_menu_enabled);
+                    Toast.makeText(getActivity(), "You have enabled this alarm", Toast.LENGTH_SHORT)
+                            .show();
                 }
                 return true;
             default:

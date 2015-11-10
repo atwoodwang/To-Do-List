@@ -33,6 +33,9 @@ public class AlarmService extends IntentService {
         //TODO CHECK IF TASK IS ALREADY COMPLETED
         List<Task> tasks = ToDoLab.get(this).getTasks();
         for (Task task : tasks) {
+            if(task.isComplete()|(!task.isEnabled())){
+                continue;
+            }
             if (task.getSchedule() != null & task.getConfig() == Task.ConfigType.TIME) {
                 long setTime = task.getRemindDate().getTime();
                 long currentTime = new Date().getTime();
@@ -100,8 +103,10 @@ public class AlarmService extends IntentService {
         PendingIntent intent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         if (task.getConfig() == Task.ConfigType.TIME) {
             mMessage = task.getRemindDateString();
-        } else if (task.getLocation().getConfig() == Location.ConfigType.GPS) {
-            mMessage = task.getLocation().getTitle();
+        } else if (task.getConfig()== Task.ConfigType.LOCATION_ARRIVING) {
+            mMessage = getString(R.string.location_arriving)+" "+task.getLocation().getTitle();
+        }else if(task.getConfig()== Task.ConfigType.LOCATION_LEAVING){
+            mMessage = getString(R.string.location_leaving)+" "+task.getLocation().getTitle();
         }
         long[] pattern = {1000, 200, 200, 200};
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
@@ -115,6 +120,8 @@ public class AlarmService extends IntentService {
         Random random = new Random();
         int i = random.nextInt();
         notificationManager.notify(i, mBuilder.build());
+        task.setEnabled(false);
+        ToDoLab.get(getApplicationContext()).saveTask(task);
     }
 
 //    protected synchronized void buildGoogleApiClient() {

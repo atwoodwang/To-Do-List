@@ -41,7 +41,6 @@ public class TaskListFragment extends Fragment {
 
         AlarmReceiver alarmReceiver = new AlarmReceiver();
         alarmReceiver.setAlarm(getContext());
-
     }
 
     @Override
@@ -161,7 +160,8 @@ public class TaskListFragment extends Fragment {
                     mTitleSingleTextView.setVisibility(View.GONE);
                     mTitleTextView.setVisibility(View.VISIBLE);
                     mReminderTypeView.setVisibility(View.VISIBLE);
-                    mReminderTypeView.setText(getString(R.string.location_arriving) + mTask.getLocation().getTitle());
+                    mReminderTypeView.setText(getString(R.string.location_arriving) + " " + mTask.getLocation().getTitle
+                            ());
                     break;
                 case LOCATION_LEAVING:
                     setParentLayout(72);
@@ -169,7 +169,7 @@ public class TaskListFragment extends Fragment {
                     mTitleSingleTextView.setVisibility(View.GONE);
                     mTitleTextView.setVisibility(View.VISIBLE);
                     mReminderTypeView.setVisibility(View.VISIBLE);
-                    mReminderTypeView.setText(getString(R.string.location_leaving) + mTask.getLocation().getTitle());
+                    mReminderTypeView.setText(getString(R.string.location_leaving) + " " + mTask.getLocation().getTitle());
                     break;
                 case NONE:
                     setParentLayout(48);
@@ -190,6 +190,8 @@ public class TaskListFragment extends Fragment {
                 }
             });
 
+
+            //TODO UPDATE STAR IMAGE WHEN BACK FROM DETAIL FRAGMENT
             if (mTask.isStarred()) {
                 mIsImportant.setImageResource(R.drawable.ic_task_important);
             } else {
