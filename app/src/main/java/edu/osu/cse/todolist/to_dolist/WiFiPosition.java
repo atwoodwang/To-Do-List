@@ -79,21 +79,22 @@ public class WiFiPosition extends Model {
         return null;
     }
 
-    public static String[] getCurrentWifiInfo(Context context){
+    public static String[] getCurrentWifiInfo(Context context) {
         String ssid = null;
         String mac = null;
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
-        if (networkInfo.isConnected()) {
-            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-            if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
-                ssid = connectionInfo.getSSID();
-                mac = connectionInfo.getMacAddress();
-
+        if (networkInfo != null) {
+            if (networkInfo.isConnected()) {
+                final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+                final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+                if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
+                    ssid = connectionInfo.getSSID();
+                    mac = connectionInfo.getMacAddress();
+                    return new String[]{ssid, mac};
+                }
             }
         }
-        return new String[]{ssid,mac};
+        return null;
     }
-
 }
