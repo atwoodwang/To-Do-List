@@ -7,31 +7,30 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
-import android.util.Log;
+
+import java.util.Calendar;
 
 /**
  * Created by Zicong on 2015/11/8.
  */
-public class TimeAlarmReceiver extends WakefulBroadcastReceiver {
-    private AlarmManager mTimemAlarmManager;
+public class AlarmReceiver extends WakefulBroadcastReceiver {
+    private AlarmManager mAlarmManager;
     private PendingIntent mTimeAlarmIntent;
-    private static final String TAG = "RECEIVER";
     private static final int INTERVAL = 1000 * 10;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent service = new Intent(context, TimeAlarmService.class);
+        Intent service = new Intent(context, AlarmService.class);
         startWakefulService(context, service);
     }
 
 
     public void setAlarm(Context context) {
-        mTimemAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, TimeAlarmReceiver.class);
+        mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, AlarmReceiver.class);
         mTimeAlarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-        mTimemAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), INTERVAL, mTimeAlarmIntent);
-
-        ComponentName receiver = new ComponentName(context, TimeAlarmReceiver.class);
+        mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), INTERVAL, mTimeAlarmIntent);
+        ComponentName receiver = new ComponentName(context, AlarmReceiver.class);
         PackageManager packageManager = context.getPackageManager();
 
         packageManager.setComponentEnabledSetting(receiver,
@@ -40,11 +39,11 @@ public class TimeAlarmReceiver extends WakefulBroadcastReceiver {
     }
 
     public void cancelAlarm(Context context) {
-        if (mTimemAlarmManager != null) {
-            mTimemAlarmManager.cancel(mTimeAlarmIntent);
+        if (mAlarmManager != null) {
+            mAlarmManager.cancel(mTimeAlarmIntent);
         }
 
-        ComponentName receiver = new ComponentName(context, TimeAlarmReceiver.class);
+        ComponentName receiver = new ComponentName(context, AlarmReceiver.class);
         PackageManager packageManager = context.getPackageManager();
 
         packageManager.setComponentEnabledSetting(receiver,

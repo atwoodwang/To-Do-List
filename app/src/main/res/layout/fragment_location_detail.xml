@@ -73,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            >
+            android:visibility="gone">
 
             <CheckBox
                 android:id="@+id/use_current_wifi_check_bot"
@@ -93,12 +93,13 @@
 
         <TextView
             android:id="@+id/current_wifi_info_textview"
-            android:gravity="center"
+            android:gravity="left"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"/>
+            android:layout_marginRight="16dp"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/wifi_advanced_setting"
@@ -107,7 +108,8 @@
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:text="@string/wifi_advanced_settings"/>
+            android:text="@string/wifi_advanced_settings"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/gps_location_setting"
@@ -125,7 +127,8 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"/>
+            android:layout_marginRight="16dp"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/done_button"
