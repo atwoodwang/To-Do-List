@@ -45,20 +45,27 @@ public class TaskCursorWrapper extends CursorWrapper {
         task.setComplete(complete);
         task.setEnabled(enabled);
 
-        // TODO: set Location and Schedule
-        switch (config) {
-            case NONE:
-                break;
-            case TIME:
-                Schedule s = ToDoLab.get(context).findScheduleByTask(task);
-                task.setSchedule(s);
-                break;
-            case LOCATION_ARRIVING:
-            case LOCATION_LEAVING:
-                Location loc = ToDoLab.get(context).findLocationByTask(task);
-                task.setLocation(loc);
-                break;
-        }
+//        switch (config) {
+//            case NONE:
+//                break;
+//            case TIME:
+//                Schedule s = ToDoLab.get(context).findScheduleByTask(task);
+//                task.setSchedule(s);
+//                break;
+//            case LOCATION_ARRIVING:
+//            case LOCATION_LEAVING:
+//                Location loc = ToDoLab.get(context).findLocationByTask(task);
+//                task.setLocation(loc);
+//                break;
+//        }
+
+        // TODO: set associated schedule and location should be moved to somewhere else
+        // Set associated Schedule and Location if exists, no matter what the Config is
+        Schedule schedule = ToDoLab.get(context).findScheduleByTask(task);
+        task.setSchedule(schedule); // set a null schedule is OK
+
+        Location location = ToDoLab.get(context).findLocationByTask(task);
+        task.setLocation(location); // set a null location is OK
 
         return task;
     }

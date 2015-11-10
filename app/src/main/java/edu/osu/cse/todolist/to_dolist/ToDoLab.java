@@ -221,11 +221,8 @@ public class ToDoLab {
         boolean result = false;
         switch (task.getConfig()) {
             case NONE:
-                cleanTaskScheduleRelation(task);
-                cleanTaskLocationRelation(task);
                 break;
             case TIME:
-                cleanTaskLocationRelation(task);
                 Schedule schedule = task.getSchedule();
                 // Avoid saving null schedule object
                 if (schedule != null && save(schedule)) {
@@ -234,7 +231,7 @@ public class ToDoLab {
                 break;
             case LOCATION_ARRIVING:
             case LOCATION_LEAVING:
-                cleanTaskScheduleRelation(task);
+                // TODO: refactor createTaskLocation and updateTaskLocation into one method
                 Location loc = findLocationByTask(task);
                 if (loc == null) { // no exists Task_Location relationship
                     if (createTaskLocation(task, task.getLocation())) {
@@ -378,6 +375,25 @@ public class ToDoLab {
 
         // Remove Location itself
         delete(location);
+    }
+
+    public void deleteTask(Task task) {
+        if (task == null) {
+            return;
+        }
+        if (task.getId() == -1) {
+            return;
+        }
+        // Remove associated Schedule
+        Schedule schedule = findScheduleByTask(task);
+        if (schedule != null) {
+            delete(schedule);
+        }
+        // Remove associated Task-Location joint table record
+        deleteTaskLocation(task);
+
+        // Remove Task itself
+        delete(task);
     }
 
     public Cursor query(String table, String whereClause, String[] whereArgs) {

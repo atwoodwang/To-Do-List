@@ -361,7 +361,7 @@ public class TaskDetailFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 //                                ToDoLab.get(getActivity()).removeTask(mTask);
-                                ToDoLab.get(getActivity()).delete(mTask);
+                                ToDoLab.get(getActivity()).deleteTask(mTask);
                                 getActivity().finish();
                             }
                         })
