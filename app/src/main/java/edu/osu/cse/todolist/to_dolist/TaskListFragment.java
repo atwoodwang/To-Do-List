@@ -145,6 +145,7 @@ public class TaskListFragment extends Fragment {
         public void bindTask(Task task) {
             mTask = task;
 
+            // TODO: add code to deal with null object
             switch (mTask.getConfig()) {
                 case TIME:
                     setParentLayout(72);
