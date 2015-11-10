@@ -37,16 +37,24 @@ public class LocationCursorWrapper extends CursorWrapper {
         loc.setNote(note);
         loc.setConfig(config);
 
-        // TODO: set GPSCoordinate and WiFiPosition
-        switch (config) {
-            case GPS:
-                GPSCoordinate gps = ToDoLab.get(context).findGPSCoordinateByLocation(loc);
-                loc.setGPSCoordinate(gps);
-                break;
-            case WiFi:
-                WiFiPosition wifiPos = ToDoLab.get(context).findWiFiPositionByLocation(loc);
-                loc.setWiFiPosition(wifiPos);
-                break;
+//        switch (config) {
+//            case GPS:
+//                GPSCoordinate gps = ToDoLab.get(context).findGPSCoordinateByLocation(loc);
+//                loc.setGPSCoordinate(gps);
+//                break;
+//            case WiFi:
+//                WiFiPosition wifiPos = ToDoLab.get(context).findWiFiPositionByLocation(loc);
+//                loc.setWiFiPosition(wifiPos);
+//                break;
+//        }
+        // Set associated GPSCoordinate and WiFiPosition if exists, no matter what the Config is
+        GPSCoordinate gps = ToDoLab.get(context).findGPSCoordinateByLocation(loc);
+        if (gps != null) {
+            loc.setGPSCoordinate(gps);
+        }
+        WiFiPosition wifiPos = ToDoLab.get(context).findWiFiPositionByLocation(loc);
+        if (wifiPos != null) {
+            loc.setWiFiPosition(wifiPos);
         }
 
         return loc;

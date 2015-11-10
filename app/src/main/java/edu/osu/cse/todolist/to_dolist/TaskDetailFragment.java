@@ -282,8 +282,22 @@ public class TaskDetailFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         mLocationSpinner.setAdapter(adapter);
-        int pos = locations.indexOf(mTask.getLocation());
-        mLocationSpinner.setSelection(pos);
+        if (mTask.getLocation() == null) {
+            mLocationSpinner.setSelection(0);
+        } else {
+            long SelId = mTask.getLocation().getId();
+            int index = 0;
+            for (Location loc : locations) {
+                if (loc.getId() == SelId) {
+                    mLocationSpinner.setSelection(index);
+                    break;
+                }
+                index++;
+            }
+        }
+
+//        int pos = locations.indexOf(mTask.getLocation());
+//        mLocationSpinner.setSelection(pos);
 
 //        mlocationArray = new ArrayList<String>();
 //        mLocations = ToDoLab.get(getActivity()).getLocations();
@@ -341,7 +355,7 @@ public class TaskDetailFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 //                                ToDoLab.get(getActivity()).removeTask(mTask);
-                                ToDoLab.get(getActivity()).delete(mTask);
+                                ToDoLab.get(getActivity()).deleteTask(mTask);
                                 getActivity().finish();
                             }
                         })

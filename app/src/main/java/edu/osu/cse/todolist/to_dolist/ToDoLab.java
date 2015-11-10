@@ -31,32 +31,32 @@ public class ToDoLab {
     private static ToDoLab sToDoLab;
 
     private Context mContext;
+
+    /**
+     * SQLite database instance for all database manipulation
+     */
     private SQLiteDatabase mDatabase;
 
     /**
      * Currently manipulate Task
+     * <p/>
+     * Used to transmit Task between different Activities and Fragments
      */
     private Task mTask;
-    private List<Task> mTasks;
 
+    /**
+     * Current in-memory GPSCoordinate
+     * <p/>
+     * Used to transmit GPSCoordinate between different Activities and Fragments
+     */
     private GPSCoordinate mGPSCoordinate;
 
     /**
      * Current in-memory Location
+     * <p/>
+     * Used to transmit Location between different Activities and Fragments
      */
     private Location mLocation;
-    //    private List<Folder> mFolders;
-    private List<Location> mLocations;
-    private List<GPSCoordinate> mGPSCoordinates;
-    private List<WiFiPosition> mWiFiPositions;
-    //    private List<AccessPoint> mAccessPoints;
-    private List<Schedule> mSchedules;
-
-    /**
-     * Use static class variable to simulate SQLite ROW_ID. This is only used for developing and
-     * test
-     */
-    private static long dummyId = 1;
 
     /**
      * Tag used for debug
@@ -73,14 +73,6 @@ public class ToDoLab {
     private ToDoLab(Context context) {
         mContext = context.getApplicationContext();
         mDatabase = new ToDoBaseHelper(mContext).getWritableDatabase();
-
-        mTasks = new ArrayList<>();
-//        mFolders = new ArrayList<>();
-        mLocations = new ArrayList<>();
-        mGPSCoordinates = new ArrayList<>();
-        mWiFiPositions = new ArrayList<>();
-//        mAccessPoints = new ArrayList<>();
-        mSchedules = new ArrayList<>();
     }
 
     private void GenerateTestData() {
@@ -103,21 +95,8 @@ public class ToDoLab {
         return findAll(Task.class);
     }
 
-//    public List<Folder> getFolders() {
-//        return mFolders;
-//    }
-
     public List<Location> getLocations() {
         return findAll(Location.class);
-    }
-
-
-    public List<WiFiPosition> getWiFiPositions() {
-        return mWiFiPositions;
-    }
-
-    public List<Schedule> getSchedules() {
-        return mSchedules;
     }
 
     public void addTask(Task task) {
@@ -129,24 +108,6 @@ public class ToDoLab {
     public void addLocation(Location location) {
         if (location.getId() == -1) {
             mLocation = location;
-        }
-    }
-
-    public Location removeLocation(Location location) {
-        if (mLocations.contains(location)) {
-            mLocations.remove(location);
-            return location;
-        } else {
-            return null;
-        }
-    }
-
-    public Task removeTask(Task task) {
-        if (mTasks.contains(task)) {
-            mTasks.remove(task);
-            return task;
-        } else {
-            return null;
         }
     }
 
@@ -260,11 +221,8 @@ public class ToDoLab {
         boolean result = false;
         switch (task.getConfig()) {
             case NONE:
-                cleanTaskScheduleRelation(task);
-                cleanTaskLocationRelation(task);
                 break;
             case TIME:
-                cleanTaskLocationRelation(task);
                 Schedule schedule = task.getSchedule();
                 // Avoid saving null schedule object
                 if (schedule != null && save(schedule)) {
@@ -273,7 +231,7 @@ public class ToDoLab {
                 break;
             case LOCATION_ARRIVING:
             case LOCATION_LEAVING:
-                cleanTaskScheduleRelation(task);
+                // TODO: refactor createTaskLocation and updateTaskLocation into one method
                 Location loc = findLocationByTask(task);
                 if (loc == null) { // no exists Task_Location relationship
                     if (createTaskLocation(task, task.getLocation())) {
@@ -290,21 +248,6 @@ public class ToDoLab {
                 break;
         }
         return result;
-    }
-
-    private void cleanTaskLocationRelation(Task task) {
-        if (task.getLocation() != null) {
-            deleteTaskLocation(task);
-            task.setLocation(null);
-        }
-    }
-
-    private void cleanTaskScheduleRelation(Task task) {
-        Schedule s = task.getSchedule();
-        if (s != null && s.getId() != -1) {
-            delete(s);
-            task.setSchedule(null);
-        }
     }
 
     public boolean createTaskLocation(Task task, Location loc) {
@@ -390,9 +333,52 @@ public class ToDoLab {
         if (result) {
             Log.d(TAG, String.format("%s(id=%d) deleted", model.getClass().getSimpleName(), id));
         } else {
-            Log.d(TAG, String.format("%s(id=%d) failed to delet", model.getClass().getSimpleName(), id));
+            Log.d(TAG, String.format("%s(id=%d) failed to delete", model.getClass().getSimpleName
+                    (), id));
         }
         return result;
+    }
+
+    public void deleteLocation(Location location) {
+        if (location == null) {
+            return;
+        }
+        if (location.getId() == -1) {
+            return;
+        }
+        // Remove associated GPSCoordinate
+        GPSCoordinate gps = findGPSCoordinateByLocation(location);
+        if (gps != null) {
+            delete(gps);
+        }
+
+        // Remove associated WiFiPosition
+        WiFiPosition wifiPos = findWiFiPositionByLocation(location);
+        if (wifiPos != null) {
+            delete(wifiPos);
+        }
+
+        // Remove Location itself
+        delete(location);
+    }
+
+    public void deleteTask(Task task) {
+        if (task == null) {
+            return;
+        }
+        if (task.getId() == -1) {
+            return;
+        }
+        // Remove associated Schedule
+        Schedule schedule = findScheduleByTask(task);
+        if (schedule != null) {
+            delete(schedule);
+        }
+        // Remove associated Task-Location joint table record
+        deleteTaskLocation(task);
+
+        // Remove Task itself
+        delete(task);
     }
 
     public Cursor query(String table, String whereClause, String[] whereArgs) {
@@ -627,7 +613,7 @@ public class ToDoLab {
      * Get the table name of the given class name
      *
      * @param className the given class name, the class must be a subclass of Model
-     * @return the associated table name of given class name if exists, othewise an empty string
+     * @return the associated table name of given class name if exists, otherwise an empty string
      */
     public String getTableName(String className) {
         String tableName = "";
