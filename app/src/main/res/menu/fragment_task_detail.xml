@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/menu_item_enabled"
+        android:title="@string/need_remind"
+        android:icon="@drawable/ic_menu_enabled"
+        app:showAsAction="always|never">
+    </item>
     <item android:id="@+id/menu_item_task_importance"
           android:title="@string/task_importance"
           android:icon="@drawable/ic_task_not_important"
