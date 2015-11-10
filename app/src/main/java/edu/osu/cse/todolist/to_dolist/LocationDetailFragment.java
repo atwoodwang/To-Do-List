@@ -265,7 +265,7 @@ public class LocationDetailFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
 //                                ToDoLab.get(getActivity()).removeLocation(mLocation);
                                 // TODO: Create deleteLocation to deal with foreign key in TaskLocation Table
-                                ToDoLab.get(getActivity()).delete(mLocation);
+                                ToDoLab.get(getActivity()).deleteLocation(mLocation);
                                 getActivity().finish();
                             }
                         })

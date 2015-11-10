@@ -357,6 +357,29 @@ public class ToDoLab {
         return result;
     }
 
+    public void deleteLocation(Location location) {
+        if (location == null) {
+            return;
+        }
+        if (location.getId() == -1) {
+            return;
+        }
+        // Remove associated GPSCoordinate
+        GPSCoordinate gps = findGPSCoordinateByLocation(location);
+        if (gps != null) {
+            delete(gps);
+        }
+
+        // Remove associated WiFiPosition
+        WiFiPosition wifiPos = findWiFiPositionByLocation(location);
+        if (wifiPos != null) {
+            delete(wifiPos);
+        }
+
+        // Remove Location itself
+        delete(location);
+    }
+
     public Cursor query(String table, String whereClause, String[] whereArgs) {
         Cursor cursor = mDatabase.query(
                 table,
