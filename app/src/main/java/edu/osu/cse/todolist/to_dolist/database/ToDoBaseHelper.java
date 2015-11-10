@@ -48,7 +48,8 @@ public class ToDoBaseHelper extends SQLiteOpenHelper {
                 "    %s TEXT,\n" +    //NOTE
                 "    %s BOOLEAN NOT NULL,\n" +    //STARRED
                 "    %s INTEGER NOT NULL,\n" +    //CONFIG
-                "    %s BOOLEAN NOT NULL\n" + //COMPLETE
+                "    %s BOOLEAN NOT NULL,\n" +  //COMPLETE
+                "    %s BOOLEAN NOT NULL\n" +   //ENABLED
                 ")";
         sql = String.format(sql, TaskTable.NAME,
                 TaskTable.Cols.ID,
@@ -56,7 +57,8 @@ public class ToDoBaseHelper extends SQLiteOpenHelper {
                 TaskTable.Cols.NOTE,
                 TaskTable.Cols.STARRED,
                 TaskTable.Cols.CONFIG,
-                TaskTable.Cols.COMPLETE);
+                TaskTable.Cols.COMPLETE,
+                TaskTable.Cols.ENABLED);
 
         Log.d(TAG, sql);
         db.execSQL(sql);

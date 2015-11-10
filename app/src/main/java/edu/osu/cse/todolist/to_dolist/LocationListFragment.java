@@ -108,6 +108,7 @@ public class LocationListFragment extends Fragment {
             getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
         }
 
+        // TODO: add code to handle null object
         public void bindLocation(Location location) {
             mLocation = location;
             mLocationTitleTextView.setText(mLocation.getTitle());
