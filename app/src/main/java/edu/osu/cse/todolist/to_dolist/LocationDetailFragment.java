@@ -283,7 +283,7 @@ public class LocationDetailFragment extends Fragment {
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public void updateGPSTextView() {
+    private void updateGPSTextView() {
         if (mGPSCoordinate.getLatitude()==0&mGPSCoordinate.getLongitude()==0) {
             mGPSCurrentSettingTextView.setVisibility(View.GONE);
         } else {
