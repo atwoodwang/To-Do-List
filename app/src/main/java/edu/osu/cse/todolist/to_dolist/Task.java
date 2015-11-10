@@ -34,7 +34,10 @@ public class Task extends Model {
     private Location mLocation;
     private boolean mComplete;
 
-    private boolean mReminded;
+    /**
+     * Enable/Disable remind
+     */
+    private boolean mEnabled;
 
     /**
      * Config Type for setting up reminder manner
@@ -188,12 +191,12 @@ public class Task extends Model {
         // TODO: update Task.mSchedule and Schedule.mTask
     }
 
-    public boolean isReminded() {
-        return mReminded;
+    public boolean isEnabled() {
+        return mEnabled;
     }
 
-    public void setReminded(boolean reminded) {
-        mReminded = reminded;
+    public void setEnabled(boolean enabled) {
+        mEnabled = enabled;
     }
 
     @Override
