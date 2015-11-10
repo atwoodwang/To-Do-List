@@ -250,21 +250,6 @@ public class ToDoLab {
         return result;
     }
 
-    private void cleanTaskLocationRelation(Task task) {
-        if (task.getLocation() != null) {
-            deleteTaskLocation(task);
-            task.setLocation(null);
-        }
-    }
-
-    private void cleanTaskScheduleRelation(Task task) {
-        Schedule s = task.getSchedule();
-        if (s != null && s.getId() != -1) {
-            delete(s);
-            task.setSchedule(null);
-        }
-    }
-
     public boolean createTaskLocation(Task task, Location loc) {
         boolean result = false;
         ContentValues values = new ContentValues();
