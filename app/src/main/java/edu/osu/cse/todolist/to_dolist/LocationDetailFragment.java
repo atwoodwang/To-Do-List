@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +28,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by Zicong on 2015/11/6.
  */
@@ -44,6 +52,8 @@ public class LocationDetailFragment extends Fragment {
     private Spinner mLocationTypeSpinner;
     private GPSCoordinate mGPSCoordinate;
     private static final String ARG_LOCATION_ID = "location_id";
+    private static final int PLACE_PICKER_REQUEST = 1;
+
 
     public static LocationDetailFragment newInstance(long locationId) {
         Bundle args = new Bundle();
@@ -182,9 +192,19 @@ public class LocationDetailFragment extends Fragment {
         mGPSSettingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = MapsActivity.newIntent(getActivity(), mLocation.getId());
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+                try {
+                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                    startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
+
+                } catch (GooglePlayServicesRepairableException e) {
+                    GooglePlayServicesUtil
+                            .getErrorDialog(e.getConnectionStatusCode(), getActivity(), 0);
+                    Log.d("Error","error");
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    Toast.makeText(getActivity(), "Google Play Services is not available.", Toast.LENGTH_LONG)
+                            .show();
+                    Log.d("Error", "error");
+                }
             }
         });
 
@@ -198,16 +218,16 @@ public class LocationDetailFragment extends Fragment {
                 if (isChecked) {
                     WiFiPosition wiFiPosition = new WiFiPosition();
                     String[] info = WiFiPosition.getCurrentWifiInfo(getContext());
-                    if (info==null){
+                    if (info == null) {
                         Toast.makeText(getActivity(), R.string.no_wifi_connection_warning, Toast
                                 .LENGTH_SHORT)
                                 .show();
                         mUseCurrentWifiCheckBox.setChecked(false);
-                    }else{
+                    } else {
                         String ssid = info[0];
-                    String bssid = info[1];
+                        String bssid = info[1];
                         wiFiPosition.setSSID(ssid);
-                    wiFiPosition.setBSSID(bssid);
+                        wiFiPosition.setBSSID(bssid);
                         mLocation.setWiFiPosition(wiFiPosition);
                         updateWifiTextView();
                     }
@@ -284,7 +304,7 @@ public class LocationDetailFragment extends Fragment {
     }
 
     private void updateGPSTextView() {
-        if (mGPSCoordinate.getLatitude()==0&mGPSCoordinate.getLongitude()==0) {
+        if (mGPSCoordinate.getLatitude() == 0 & mGPSCoordinate.getLongitude() == 0) {
             mGPSCurrentSettingTextView.setVisibility(View.GONE);
         } else {
             mGPSCurrentSettingTextView.setVisibility(View.VISIBLE);
@@ -300,10 +320,32 @@ public class LocationDetailFragment extends Fragment {
             mCurrentWifiInfoTextView.setVisibility(View.VISIBLE);
             mCurrentWifiInfoTextView.setText(getString(R.string.current_wifi_info_title)
                     + " " + mLocation.getWiFiPosition()
-                    .getSSID()+"\n" + "Current Wi-Fi BSSID:"+" "+mLocation.getWiFiPosition()
+                    .getSSID() + "\n" + "Current Wi-Fi BSSID:" + " " + mLocation.getWiFiPosition()
                     .getBSSID());
         }//TODO SHOW BSSID ADDRESS
     }
 
+    @Override
+    public void onActivityResult(int requestCode,
+                                 int resultCode, Intent data) {
 
+        if (requestCode == PLACE_PICKER_REQUEST
+                && resultCode == Activity.RESULT_OK) {
+
+            // The user has selected a place. Extract the name and address.
+            final Place place = PlacePicker.getPlace(data, getActivity());
+            final CharSequence address = place.getAddress();
+            final LatLng latLng = place.getLatLng();
+            mGPSCoordinate.setLatitude(latLng.latitude);
+            mGPSCoordinate.setLongitude(latLng.longitude);
+            updateGPSTextView();
+            String attributions = PlacePicker.getAttributions(data);
+            if (attributions == null) {
+                attributions = "";
+            }
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }
