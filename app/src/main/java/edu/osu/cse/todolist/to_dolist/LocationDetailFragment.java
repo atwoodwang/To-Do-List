@@ -63,8 +63,8 @@ public class LocationDetailFragment extends Fragment {
         mGPSCoordinate = mLocation.getGPSCoordinate();
         if (mGPSCoordinate == null) {
             mGPSCoordinate = new GPSCoordinate(-1);
+            mLocation.setGPSCoordinate(mGPSCoordinate);
         }
-        ToDoLab.get(getActivity()).setGPSCoordinate(mGPSCoordinate);
     }
 
     @Override

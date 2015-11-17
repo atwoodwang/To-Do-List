@@ -60,7 +60,7 @@ public class MapsActivity extends AppCompatActivity
         long locationId = (long) getIntent().getSerializableExtra(EXTRA_LOCATION);
         mLocation = ToDoLab.get(this).getLocation(locationId);
 
-        mGPSCoordinate = ToDoLab.get(this).getGPSCoordinate();
+        mGPSCoordinate = mLocation.getGPSCoordinate();
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -70,13 +70,12 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
-        if (mLocation.getGPSCoordinate() == null) {
+        if (mGPSCoordinate.getLatitude()==0&mGPSCoordinate.getLongitude() == 0) {
             enableMyLocation();
         } else {
             mMap.setMyLocationEnabled(true);
-            GPSCoordinate gpsCoordinate = mLocation.getGPSCoordinate();
-            double lat = gpsCoordinate.getLatitude();
-            double lng = gpsCoordinate.getLongitude();
+            double lat = mGPSCoordinate.getLatitude();
+            double lng = mGPSCoordinate.getLongitude();
             mLatLng = new LatLng(lat, lng);
             addMarker(mLatLng);
         }
