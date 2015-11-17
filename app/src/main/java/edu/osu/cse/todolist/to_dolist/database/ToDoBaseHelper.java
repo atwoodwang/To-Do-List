@@ -126,6 +126,8 @@ public class ToDoBaseHelper extends SQLiteOpenHelper {
                 "    %s REAL NOT NULL,\n" +  //LONGITUDE
                 "    %s REAL NOT NULL,\n" +   //LATITUDE
                 "    %s REAL NOT NULL,\n" +  //RANGE
+                "    %s TEXT,\n" +  //ADDRESS
+                "    %s TEXT,\n" +  //PlaceId
                 "    FOREIGN KEY(%s) REFERENCES %s(%s)\n" +  //LOCATION_ID & Location(ID)
                 ")";
 
@@ -135,6 +137,8 @@ public class ToDoBaseHelper extends SQLiteOpenHelper {
                 GPSCoordinateTable.Cols.LONGITUDE,
                 GPSCoordinateTable.Cols.LATITUDE,
                 GPSCoordinateTable.Cols.RANGE,
+                GPSCoordinateTable.Cols.ADDRESS,
+                GPSCoordinateTable.Cols.PLACE_ID,
                 GPSCoordinateTable.Cols.LOCATION_ID, LocationTable.NAME, LocationTable.Cols.ID);
 
         Log.d(TAG, sql);

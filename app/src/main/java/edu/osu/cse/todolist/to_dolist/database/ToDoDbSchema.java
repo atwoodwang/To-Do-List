@@ -111,6 +111,8 @@ public class ToDoDbSchema {
             public static final String LONGITUDE = "Longitude";
             public static final String LATITUDE = "Latitude";
             public static final String RANGE = "Range";
+            public static final String ADDRESS = "Address";
+            public static final String PLACE_ID = "PlaceId";
         }
     }
 
