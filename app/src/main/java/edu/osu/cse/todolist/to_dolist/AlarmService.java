@@ -1,16 +1,20 @@
 package edu.osu.cse.todolist.to_dolist;
 
+import android.Manifest;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 
+import java.security.Provider;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -22,6 +26,8 @@ public class AlarmService extends IntentService {
     private WiFiPosition mWiFiPosition;
     private GPSCoordinate mGPSCoordinate;
     private GoogleApiClient mGoogleApiClient;
+    private LocationManager mLocationManager;
+    private String mProvider;
 
     public AlarmService() {
         super(TAG);
@@ -29,11 +35,10 @@ public class AlarmService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(TAG,"RECEIVE INTENT");
-        //TODO CHECK IF TASK IS ALREADY COMPLETED
+        Log.d(TAG, "RECEIVE INTENT");
         List<Task> tasks = ToDoLab.get(this).getTasks();
         for (Task task : tasks) {
-            if(task.isComplete()|(!task.isEnabled())){
+            if (task.isComplete() | (!task.isEnabled())) {
                 continue;
             }
             if (task.getSchedule() != null & task.getConfig() == Task.ConfigType.TIME) {
@@ -49,7 +54,7 @@ public class AlarmService extends IntentService {
                         .getWiFiPosition() != null) {
                     mWiFiPosition = task.getLocation().getWiFiPosition();
                     String[] wifiInfo = WiFiPosition.getCurrentWifiInfo(getBaseContext());
-                    if (wifiInfo != null){
+                    if (wifiInfo != null) {
                         String ssid = wifiInfo[0];
                         String mac = wifiInfo[1];
                         if (ssid.equals(mWiFiPosition.getSSID()) & mac.equals(mWiFiPosition.getBSSID())) {
@@ -57,30 +62,43 @@ public class AlarmService extends IntentService {
                             Log.d(TAG, task.getTitle());
                         }
                     }
+                } else if (task.getLocation().getConfig() == Location.ConfigType.GPS & task
+                        .getLocation().getGPSCoordinate() != null) {
+                    mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                    List<String> providerList = mLocationManager.getProviders(true);
+                    if (providerList.contains(LocationManager.GPS_PROVIDER)) {
+                        mProvider = LocationManager.GPS_PROVIDER;
+                    } else if (providerList.contains(LocationManager.NETWORK_PROVIDER)) {
+                        mProvider = LocationManager.NETWORK_PROVIDER;
+                    } else {
+                        return;
+                    }
+
+                    try {
+                        android.location.Location location = mLocationManager.getLastKnownLocation(mProvider);
+                        if (location != null) {
+                            Double lng = location.getLongitude();
+                            Double lat = location.getLatitude();
+
+                            mGPSCoordinate = task.getLocation().getGPSCoordinate();
+                            Double setLat = mGPSCoordinate.getLatitude();
+                            Double setLng = mGPSCoordinate.getLongitude();
+                            if (Math.abs(setLat-lat)<0.005 & Math.abs(setLng-lng)<0.005) {
+                                sendNotification(task);
+                                Log.d("Location", "yes");
+                            }
+                        }
+                    } catch (SecurityException ex) {
+                        return;
+                    }
                 }
-//                else if(task.getLocation().getConfig()== Location.ConfigType.GPS&task
-//                        .getLocation().getGPSCoordinate()!=null){
-//                    buildGoogleApiClient();
-//                    mGoogleApiClient.connect();
-//                    android.location.Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-//                            mGoogleApiClient);
-//                    if (mLastLocation != null) {
-//                        mGPSCoordinate = task.getLocation().getGPSCoordinate();
-//                        if(mLastLocation.getLongitude()==mGPSCoordinate.getLongitude()
-//                                &mLastLocation.getLatitude()==mGPSCoordinate.getLatitude()){
-//                            sendNotification(task);
-//                            Log.d(TAG,"arrving at"+task.getLocation().getTitle());
-//                            mGoogleApiClient.disconnect();
-//                        }
-//                    }
-//                }
             } else if (task.getLocation() != null & task.getConfig() == Task.ConfigType
                     .LOCATION_LEAVING) {
                 if (task.getLocation().getConfig() == Location.ConfigType.WiFi & task.getLocation()
                         .getWiFiPosition() != null) {
                     mWiFiPosition = task.getLocation().getWiFiPosition();
                     String[] wifiInfo = WiFiPosition.getCurrentWifiInfo(getBaseContext());
-                    if(wifiInfo != null){
+                    if (wifiInfo != null) {
                         String ssid = wifiInfo[0];
                         String mac = wifiInfo[1];
                         if (!ssid.equals(mWiFiPosition.getSSID()) & !mac.equals(mWiFiPosition.getBSSID()
@@ -88,6 +106,37 @@ public class AlarmService extends IntentService {
                             sendNotification(task);
                             Log.d(TAG, task.getTitle());
                         }
+                    } else {
+                        sendNotification(task);
+                    }
+                }else if (task.getLocation().getConfig() == Location.ConfigType.GPS & task
+                        .getLocation().getGPSCoordinate() != null) {
+                    mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                    List<String> providerList = mLocationManager.getProviders(true);
+                    if (providerList.contains(LocationManager.GPS_PROVIDER)) {
+                        mProvider = LocationManager.GPS_PROVIDER;
+                    } else if (providerList.contains(LocationManager.NETWORK_PROVIDER)) {
+                        mProvider = LocationManager.NETWORK_PROVIDER;
+                    } else {
+                        return;
+                    }
+
+                    try {
+                        android.location.Location location = mLocationManager.getLastKnownLocation(mProvider);
+                        if (location != null) {
+                            Double lng = location.getLongitude();
+                            Double lat = location.getLatitude();
+
+                            mGPSCoordinate = task.getLocation().getGPSCoordinate();
+                            Double setLat = mGPSCoordinate.getLatitude();
+                            Double setLng = mGPSCoordinate.getLongitude();
+                            if (Math.abs(setLat-lat)>0.005 & Math.abs(setLng-lng)>0.005) {
+                                sendNotification(task);
+                                Log.d("Location", "yes");
+                            }
+                        }
+                    } catch (SecurityException ex) {
+                        return;
                     }
                 }
             }
@@ -96,17 +145,17 @@ public class AlarmService extends IntentService {
 
     public void sendNotification(Task task) {
         NotificationManager notificationManager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
-        Intent resultIntent = TaskDetailActivity.newIntent(getBaseContext(),task.getId());
+        Intent resultIntent = TaskDetailActivity.newIntent(getBaseContext(), task.getId());
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(TaskDetailActivity.class);
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent intent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         if (task.getConfig() == Task.ConfigType.TIME) {
             mMessage = task.getRemindDateString();
-        } else if (task.getConfig()== Task.ConfigType.LOCATION_ARRIVING) {
-            mMessage = getString(R.string.location_arriving)+" "+task.getLocation().getTitle();
-        }else if(task.getConfig()== Task.ConfigType.LOCATION_LEAVING){
-            mMessage = getString(R.string.location_leaving)+" "+task.getLocation().getTitle();
+        } else if (task.getConfig() == Task.ConfigType.LOCATION_ARRIVING) {
+            mMessage = getString(R.string.location_arriving) + " " + task.getLocation().getTitle();
+        } else if (task.getConfig() == Task.ConfigType.LOCATION_LEAVING) {
+            mMessage = getString(R.string.location_leaving) + " " + task.getLocation().getTitle();
         }
         long[] pattern = {1000, 200, 200, 200};
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
@@ -124,11 +173,8 @@ public class AlarmService extends IntentService {
         ToDoLab.get(getApplicationContext()).saveTask(task);
     }
 
-//    protected synchronized void buildGoogleApiClient() {
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addConnectionCallbacks((GoogleApiClient.ConnectionCallbacks) getBaseContext())
-//                .addOnConnectionFailedListener((GoogleApiClient.OnConnectionFailedListener) this)
-//                .addApi(LocationServices.API)
-//                .build();
-//    }
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "DESTROY");
+    }
 }

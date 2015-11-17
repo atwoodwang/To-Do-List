@@ -14,7 +14,7 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 public class AlarmReceiver extends WakefulBroadcastReceiver {
     private AlarmManager mAlarmManager;
     private PendingIntent mTimeAlarmIntent;
-    private static final int INTERVAL = 1000 * 10;
+    private static final int INTERVAL = 1000 * 60;
 
     @Override
     public void onReceive(Context context, Intent intent) {
