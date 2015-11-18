@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -55,7 +56,9 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import java.security.Provider;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -79,8 +82,10 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
     private static final int PLACE_PICKER_REQUEST = 1;
     protected GoogleApiClient mGoogleApiClient;
     private PlaceAutocompleteAdapter mAdapter;
-    private static final LatLngBounds BOUNDS_GREATER_SYDNEY = new LatLngBounds(
-            new LatLng(-34.041458, 150.790100), new LatLng(-33.682247, 151.383362));
+    private LocationManager mLocationManager;
+    private String mProvider;
+    private LatLngBounds mLatLngBounds;
+    private static final String TAG = "LocationDetailFragment";
 
     public static LocationDetailFragment newInstance(long locationId){
         Bundle args = new Bundle();
@@ -190,36 +195,6 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
         mLocationAddressEditText = (AutoCompleteTextView) v.findViewById(R.id.location_address_edit_text);
         mLocationTypeSpinner = (Spinner) v.findViewById(R.id.location_type_spinner);
 
-        mAdapter = new PlaceAutocompleteAdapter(getActivity(),mGoogleApiClient,BOUNDS_GREATER_SYDNEY,null);
-        mLocationAddressEditText.setAdapter(mAdapter);
-        mLocationAddressEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final AutocompletePrediction item = mAdapter.getItem(position);
-                final String placeId = item.getPlaceId();
-                final CharSequence primaryText = item.getPrimaryText(null);
-
-                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
-                        .getPlaceById(mGoogleApiClient, placeId);
-                placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
-                    @Override
-                    public void onResult(PlaceBuffer places) {
-                        if (!places.getStatus().isSuccess()) {
-                            places.release();
-                            return;
-                        }
-
-                        final Place place = places.get(0);
-
-
-                    }
-                });
-
-            }
-        });
-
-
-
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.location_type_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mLocationTypeSpinner.setAdapter(adapter);
@@ -252,11 +227,70 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
             }
         });
 
+
+       mLocationManager= (LocationManager) getContext().getSystemService
+               (Context.LOCATION_SERVICE);
+        List<String> providerList = mLocationManager.getProviders(true);
+        if (providerList.contains(LocationManager.GPS_PROVIDER)) {
+            mProvider = LocationManager.GPS_PROVIDER;
+        } else if (providerList.contains(LocationManager.NETWORK_PROVIDER)) {
+            mProvider = LocationManager.NETWORK_PROVIDER;
+        } else {
+        }
+
+        try {
+            android.location.Location location = mLocationManager.getLastKnownLocation(mProvider);
+            if (location != null) {
+                Double lng = location.getLongitude();
+                Double lat = location.getLatitude();
+                mLatLngBounds = new LatLngBounds(new LatLng(lat-0.1,lng-0.1),new LatLng(lat+0.1,
+                        lng+0.1));
+            }
+        } catch (SecurityException ex) {
+            Log.d(TAG,"Can't get current Location");
+        }
+        mAdapter = new PlaceAutocompleteAdapter(getActivity(),mGoogleApiClient,mLatLngBounds,null);
+        mLocationAddressEditText.setAdapter(mAdapter);
+        mLocationAddressEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final AutocompletePrediction item = mAdapter.getItem(position);
+                final String placeId = item.getPlaceId();
+                final CharSequence primaryText = item.getPrimaryText(null);
+
+                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                        .getPlaceById(mGoogleApiClient, placeId);
+                placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
+                    @Override
+                    public void onResult(PlaceBuffer places) {
+                        if (!places.getStatus().isSuccess()) {
+                            places.release();
+                            return;
+                        }
+
+                        final Place place = places.get(0);
+                        mGPSCoordinate.setAddress(place.getAddress().toString());
+                        mGPSCoordinate.setPlaceId(place.getId());
+                        mGPSCoordinate.setLongitude(place.getLatLng().longitude);
+                        mGPSCoordinate.setLatitude(place.getLatLng().latitude);
+
+                    }
+                });
+
+            }
+        });
+
+
+
+
         mGPSSettingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+//                    if (mGPSCoordinate.getAddress()!=null){
+//                        builder.setLatLngBounds(new LatLng(m),new LatLng());
+//                    }
                     startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
 
                 } catch (GooglePlayServicesRepairableException e) {
@@ -307,7 +341,6 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
         mDoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mGPSCoordinate = ToDoLab.get(getActivity()).getGPSCoordinate();
                 if (mLocation.getTitle() == null || mLocation.getTitle().isEmpty()) {
                     Dialog alertDialog = new AlertDialog.Builder(getActivity())
                             .setMessage("Have to enter a title for this location.")
@@ -322,7 +355,6 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
                             .create();
                     alertDialog.show();
                 } else {
-                    mLocation.setGPSCoordinate(mGPSCoordinate);
                     ToDoLab.get(getActivity()).saveLocation(mLocation);
                     getActivity().onBackPressed();
                 }
@@ -367,7 +399,11 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
     }
 
     private void updateGPSTextView() {
-//            mLocationAddressEditText.setText(mGPSCoordinate.getLatitude() + "  " + mGPSCoordinate.getLongitude());
+        if (mGPSCoordinate.getAddress()==null){
+            mLocationAddressEditText.setText("");
+        }else{
+            mLocationAddressEditText.setText(mGPSCoordinate.getAddress());
+        }
     }
 
 
