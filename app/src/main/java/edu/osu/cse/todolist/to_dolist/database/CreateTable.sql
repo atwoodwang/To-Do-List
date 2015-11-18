@@ -37,6 +37,8 @@ CREATE TABLE GPSCoordinate(
     Longitude REAL NOT NULL,
     Latitude REAL NOT NULL,
     Range REAL NOT NULL,
+    Address TEXT,
+    PlaceId TEXT,
     FOREIGN KEY(Location_ID) REFERENCES Location(ID)
 );
 

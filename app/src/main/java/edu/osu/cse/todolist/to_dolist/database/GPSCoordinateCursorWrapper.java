@@ -27,11 +27,16 @@ public class GPSCoordinateCursorWrapper extends CursorWrapper {
         double latitude = getDouble((getColumnIndex(GPSCoordinateTable.Cols.LATITUDE)));
         double range = getDouble((getColumnIndex(GPSCoordinateTable.Cols.RANGE)));
 
+        String address = getString((getColumnIndex(GPSCoordinateTable.Cols.ADDRESS)));
+        String placeId = getString((getColumnIndex(GPSCoordinateTable.Cols.PLACE_ID)));
+
         GPSCoordinate gps = new GPSCoordinate(id);
         gps.setForeignKey(locationID);
         gps.setLongitude(longitude);
         gps.setLatitude(latitude);
         gps.setRange(range);
+        gps.setAddress(address);
+        gps.setPlaceId(placeId);
 
         return gps;
     }

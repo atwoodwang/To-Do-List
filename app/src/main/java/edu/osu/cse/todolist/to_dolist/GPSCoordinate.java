@@ -13,6 +13,9 @@ public class GPSCoordinate extends Model {
     private double mLatitude;
     private double mRange;
 
+    private String mAddress;
+    private String mPlaceId;
+
     //TODO: should associate Location with GPSCoordinate, either Location.setGPSCoordinate or
     // GPSCoordinate.setLocation. REMEMBER to update GPSCoordinate's Foreign key
     public GPSCoordinate() {
@@ -54,6 +57,22 @@ public class GPSCoordinate extends Model {
         return false;
     }
 
+    public String getAddress() {
+        return mAddress;
+    }
+
+    public void setAddress(String address) {
+        mAddress = address;
+    }
+
+    public String getPlaceId() {
+        return mPlaceId;
+    }
+
+    public void setPlaceId(String placeId) {
+        mPlaceId = placeId;
+    }
+
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
 
@@ -61,6 +80,9 @@ public class GPSCoordinate extends Model {
         values.put(GPSCoordinateTable.Cols.LONGITUDE, mLongitude);
         values.put(GPSCoordinateTable.Cols.LATITUDE, mLatitude);
         values.put(GPSCoordinateTable.Cols.RANGE, mRange);
+
+        values.put(GPSCoordinateTable.Cols.ADDRESS, mAddress);
+        values.put(GPSCoordinateTable.Cols.PLACE_ID, mPlaceId);
 
         return values;
     }
