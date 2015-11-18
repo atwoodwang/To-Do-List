@@ -111,6 +111,16 @@
             android:text="@string/wifi_advanced_settings"
             android:visibility="gone"/>
 
+        <AutoCompleteTextView
+            android:id="@+id/location_address_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:hint="@string/enter_location_hint"
+            android:singleLine="true"/>
+
         <Button
             android:id="@+id/gps_location_setting"
             android:layout_width="match_parent"
@@ -120,15 +130,6 @@
             android:layout_marginRight="16dp"
             android:text="@string/gps_location_setting"/>
 
-        <TextView
-            android:id="@+id/gps_current_setting"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:visibility="gone"/>
 
         <Button
             android:id="@+id/done_button"

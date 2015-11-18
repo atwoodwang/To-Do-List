@@ -2,13 +2,18 @@ package edu.osu.cse.todolist.to_dolist;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
+import android.text.style.CharacterStyle;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,26 +24,45 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.data.DataBufferUtils;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.AutocompletePredictionBuffer;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Zicong on 2015/11/6.
  */
-public class LocationDetailFragment extends Fragment {
+public class LocationDetailFragment extends Fragment implements GoogleApiClient
+        .OnConnectionFailedListener {
     private Location mLocation;
     private EditText mTitleField;
     private EditText mNoteField;
@@ -46,23 +70,27 @@ public class LocationDetailFragment extends Fragment {
     private LinearLayout mWifiSettingLayout;
     private Button mWifiAdvancedSettingButton;
     private Button mGPSSettingButton;
-    private TextView mGPSCurrentSettingTextView;
+    private AutoCompleteTextView mLocationAddressEditText;
     private TextView mCurrentWifiInfoTextView;
     private CheckBox mUseCurrentWifiCheckBox;
     private Spinner mLocationTypeSpinner;
     private GPSCoordinate mGPSCoordinate;
     private static final String ARG_LOCATION_ID = "location_id";
     private static final int PLACE_PICKER_REQUEST = 1;
+    protected GoogleApiClient mGoogleApiClient;
+    private PlaceAutocompleteAdapter mAdapter;
+    private static final LatLngBounds BOUNDS_GREATER_SYDNEY = new LatLngBounds(
+            new LatLng(-34.041458, 150.790100), new LatLng(-33.682247, 151.383362));
 
-
-    public static LocationDetailFragment newInstance(long locationId) {
+    public static LocationDetailFragment newInstance(long locationId){
         Bundle args = new Bundle();
-        args.putSerializable(ARG_LOCATION_ID, locationId);
-
-        LocationDetailFragment fragment = new LocationDetailFragment();
+        args.putSerializable(ARG_LOCATION_ID,locationId);
+        LocationDetailFragment fragment= new LocationDetailFragment();
         fragment.setArguments(args);
         return fragment;
     }
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +103,12 @@ public class LocationDetailFragment extends Fragment {
             mGPSCoordinate = new GPSCoordinate(-1);
             mLocation.setGPSCoordinate(mGPSCoordinate);
         }
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .enableAutoManage(getActivity(), 0 /* clientId */, this)
+                .addApi(Places.GEO_DATA_API)
+                .build();
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -153,8 +187,38 @@ public class LocationDetailFragment extends Fragment {
         mCurrentWifiInfoTextView = (TextView) v.findViewById(R.id.current_wifi_info_textview);
         mWifiAdvancedSettingButton = (Button) v.findViewById(R.id.wifi_advanced_setting);
         mGPSSettingButton = (Button) v.findViewById(R.id.gps_location_setting);
-        mGPSCurrentSettingTextView = (TextView) v.findViewById(R.id.gps_current_setting);
+        mLocationAddressEditText = (AutoCompleteTextView) v.findViewById(R.id.location_address_edit_text);
         mLocationTypeSpinner = (Spinner) v.findViewById(R.id.location_type_spinner);
+
+        mAdapter = new PlaceAutocompleteAdapter(getActivity(),mGoogleApiClient,BOUNDS_GREATER_SYDNEY,null);
+        mLocationAddressEditText.setAdapter(mAdapter);
+        mLocationAddressEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final AutocompletePrediction item = mAdapter.getItem(position);
+                final String placeId = item.getPlaceId();
+                final CharSequence primaryText = item.getPrimaryText(null);
+
+                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                        .getPlaceById(mGoogleApiClient, placeId);
+                placeResult.setResultCallback(new ResultCallback<PlaceBuffer>() {
+                    @Override
+                    public void onResult(PlaceBuffer places) {
+                        if (!places.getStatus().isSuccess()) {
+                            places.release();
+                            return;
+                        }
+
+                        final Place place = places.get(0);
+
+
+                    }
+                });
+
+            }
+        });
+
+
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.location_type_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -171,14 +235,13 @@ public class LocationDetailFragment extends Fragment {
                         mWifiAdvancedSettingButton.setVisibility(View.GONE);
                         mCurrentWifiInfoTextView.setVisibility(View.GONE);
                         mGPSSettingButton.setVisibility(View.VISIBLE);
-                        updateGPSTextView();
+                        mLocationAddressEditText.setVisibility(View.VISIBLE);
                         break;
                     case WiFi:
                         mWifiSettingLayout.setVisibility(View.VISIBLE);
                         mWifiAdvancedSettingButton.setVisibility(View.VISIBLE);
-                        updateWifiTextView();
                         mGPSSettingButton.setVisibility(View.GONE);
-                        mGPSCurrentSettingTextView.setVisibility(View.GONE);
+                        mLocationAddressEditText.setVisibility(View.GONE);
                         break;
                 }
             }
@@ -199,7 +262,7 @@ public class LocationDetailFragment extends Fragment {
                 } catch (GooglePlayServicesRepairableException e) {
                     GooglePlayServicesUtil
                             .getErrorDialog(e.getConnectionStatusCode(), getActivity(), 0);
-                    Log.d("Error","error");
+                    Log.d("Error", "error");
                 } catch (GooglePlayServicesNotAvailableException e) {
                     Toast.makeText(getActivity(), "Google Play Services is not available.", Toast.LENGTH_LONG)
                             .show();
@@ -304,12 +367,7 @@ public class LocationDetailFragment extends Fragment {
     }
 
     private void updateGPSTextView() {
-        if (mGPSCoordinate.getLatitude() == 0 & mGPSCoordinate.getLongitude() == 0) {
-            mGPSCurrentSettingTextView.setVisibility(View.GONE);
-        } else {
-            mGPSCurrentSettingTextView.setVisibility(View.VISIBLE);
-            mGPSCurrentSettingTextView.setText(mGPSCoordinate.getLatitude() + "  " + mGPSCoordinate.getLongitude());
-        }
+//            mLocationAddressEditText.setText(mGPSCoordinate.getLatitude() + "  " + mGPSCoordinate.getLongitude());
     }
 
 
@@ -348,4 +406,17 @@ public class LocationDetailFragment extends Fragment {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+        Log.e("Location", "onConnectionFailed: ConnectionResult.getErrorCode() = "
+                + connectionResult.getErrorCode());
+
+        // TODO(Developer): Check error code and notify the user of error state and resolution.
+        Toast.makeText(getActivity(),
+                "Could not connect to Google API Client: Error " + connectionResult.getErrorCode(),
+                Toast.LENGTH_SHORT).show();
+    }
+
 }
