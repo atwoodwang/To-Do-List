@@ -24,7 +24,7 @@
     <string name="location_type_label">Set Location Type</string>
     <string name="use_current_wifi_label">Use Current Wi-Fi location</string>
     <string name="wifi_advanced_settings">Wi-Fi Location Advanced Settings</string>
-    <string name="gps_location_setting">GPS Location Setting</string>
+    <string name="gps_location_setting">Use Place Picker</string>
     <string name="location_setting_label">Set Location</string>
     <string name="no_location">Press \"+\" to add a new location</string>
     <string name="list_based_on_gps">Based on: GPS</string>
@@ -53,5 +53,6 @@
     <string name="title_activity_maps">Map</string>
     <string name="current_wifi_info_title">"Current WiFi SSID: "</string>
     <string name="no_wifi_connection_warning">You don\'t have any current Wi-Fi connection.</string>
-    <string name="enter_location_hint">Enter location address or use the map to select location</string>
+    <string name="enter_location_hint">Enter location address</string>
+    <string name="current_wifi_bssid">Current Wi-Fi BSSID:</string>
 </resources>

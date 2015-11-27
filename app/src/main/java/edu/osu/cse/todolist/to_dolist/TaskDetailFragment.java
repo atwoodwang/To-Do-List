@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,14 +43,15 @@ public class TaskDetailFragment extends Fragment {
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 1;
     private static final String ARG_TASK_ID = "task_id";
+    private static final String STAR = "star";
+    private static final String LOCATION = "location";
+    private static final String ENABLED = "enabled";
     private Spinner mRemindSpinner;
     private Spinner mLocationSpinner;
     private Button mShortCutButton;
     private Button mDoneButton;
     private MenuItem mStarred;
     private MenuItem mEnabled;
-    private List<Location> mLocations;
-    private List<String> mlocationArray;
 
     public static TaskDetailFragment newInstance(long taskId) {
         Bundle args = new Bundle();
@@ -63,12 +65,23 @@ public class TaskDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setHasOptionsMenu(true);
         long taskId = (long) getArguments().getSerializable(ARG_TASK_ID);
         mTask = ToDoLab.get(getActivity()).getTask(taskId);
+        if (savedInstanceState != null) {
+            mTask.setStarred(savedInstanceState.getBoolean(STAR));
+            mTask.setEnabled(savedInstanceState.getBoolean(ENABLED));
+        }
 
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        Log.d("Rotate", "onSave");
+        savedInstanceState.putBoolean(STAR, mTask.isStarred());
+        savedInstanceState.putBoolean(ENABLED, mTask.isEnabled());
     }
 
     @Override
