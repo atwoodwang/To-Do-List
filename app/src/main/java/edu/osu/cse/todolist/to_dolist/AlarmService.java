@@ -71,11 +71,12 @@ public class AlarmService extends IntentService {
                     } else if (providerList.contains(LocationManager.NETWORK_PROVIDER)) {
                         mProvider = LocationManager.NETWORK_PROVIDER;
                     } else {
-                        return;
+                        mProvider = LocationManager.GPS_PROVIDER;
                     }
 
                     try {
-                        android.location.Location location = mLocationManager.getLastKnownLocation(mProvider);
+                        android.location.Location location = mLocationManager
+                                .getLastKnownLocation(mProvider);
                         if (location != null) {
                             Double lng = location.getLongitude();
                             Double lat = location.getLatitude();
@@ -83,12 +84,13 @@ public class AlarmService extends IntentService {
                             mGPSCoordinate = task.getLocation().getGPSCoordinate();
                             Double setLat = mGPSCoordinate.getLatitude();
                             Double setLng = mGPSCoordinate.getLongitude();
-                            if (Math.abs(setLat-lat)<0.005 & Math.abs(setLng-lng)<0.005) {
+                            if (Math.abs(setLat - lat) < 0.001 & Math.abs(setLng - lng) < 0.001) {
                                 sendNotification(task);
-                                Log.d("Location", "yes");
+                                Log.d(TAG, "yes");
                             }
                         }
                     } catch (SecurityException ex) {
+                        Log.d(TAG, "Permission denied.....");
                         return;
                     }
                 }
@@ -109,7 +111,7 @@ public class AlarmService extends IntentService {
                     } else {
                         sendNotification(task);
                     }
-                }else if (task.getLocation().getConfig() == Location.ConfigType.GPS & task
+                } else if (task.getLocation().getConfig() == Location.ConfigType.GPS & task
                         .getLocation().getGPSCoordinate() != null) {
                     mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                     List<String> providerList = mLocationManager.getProviders(true);
@@ -130,7 +132,7 @@ public class AlarmService extends IntentService {
                             mGPSCoordinate = task.getLocation().getGPSCoordinate();
                             Double setLat = mGPSCoordinate.getLatitude();
                             Double setLng = mGPSCoordinate.getLongitude();
-                            if (Math.abs(setLat-lat)>0.005 & Math.abs(setLng-lng)>0.005) {
+                            if (Math.abs(setLat - lat) > 0.001 & Math.abs(setLng - lng) > 0.001) {
                                 sendNotification(task);
                                 Log.d("Location", "yes");
                             }
