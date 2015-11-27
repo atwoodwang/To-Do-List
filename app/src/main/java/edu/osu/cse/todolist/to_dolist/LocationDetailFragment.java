@@ -1,14 +1,17 @@
 package edu.osu.cse.todolist.to_dolist;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.Html;
@@ -87,14 +90,14 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
     private LatLngBounds mLatLngBounds;
     private static final String TAG = "LocationDetailFragment";
 
-    public static LocationDetailFragment newInstance(long locationId){
+
+    public static LocationDetailFragment newInstance(long locationId) {
         Bundle args = new Bundle();
-        args.putSerializable(ARG_LOCATION_ID,locationId);
-        LocationDetailFragment fragment= new LocationDetailFragment();
+        args.putSerializable(ARG_LOCATION_ID, locationId);
+        LocationDetailFragment fragment = new LocationDetailFragment();
         fragment.setArguments(args);
         return fragment;
     }
-
 
 
     @Override
@@ -120,6 +123,12 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
     public void onResume() {
         super.onResume();
         updateGPSTextView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mGoogleApiClient.disconnect();
     }
 
     @Override
@@ -215,6 +224,7 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
                     case WiFi:
                         mWifiSettingLayout.setVisibility(View.VISIBLE);
                         mWifiAdvancedSettingButton.setVisibility(View.VISIBLE);
+                        mCurrentWifiInfoTextView.setVisibility(View.VISIBLE);
                         mGPSSettingButton.setVisibility(View.GONE);
                         mLocationAddressEditText.setVisibility(View.GONE);
                         break;
@@ -226,10 +236,8 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
 
             }
         });
-
-
-       mLocationManager= (LocationManager) getContext().getSystemService
-               (Context.LOCATION_SERVICE);
+        
+        mLocationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         List<String> providerList = mLocationManager.getProviders(true);
         if (providerList.contains(LocationManager.GPS_PROVIDER)) {
             mProvider = LocationManager.GPS_PROVIDER;
@@ -237,19 +245,19 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
             mProvider = LocationManager.NETWORK_PROVIDER;
         } else {
         }
-
         try {
-            android.location.Location location = mLocationManager.getLastKnownLocation(mProvider);
+            android.location.Location location = mLocationManager.getLastKnownLocation
+                    (mProvider);
             if (location != null) {
                 Double lng = location.getLongitude();
                 Double lat = location.getLatitude();
-                mLatLngBounds = new LatLngBounds(new LatLng(lat-0.1,lng-0.1),new LatLng(lat+0.1,
-                        lng+0.1));
+                mLatLngBounds = new LatLngBounds(new LatLng(lat - 0.1, lng - 0.1), new LatLng(lat + 0.1,
+                        lng + 0.1));
             }
         } catch (SecurityException ex) {
-            Log.d(TAG,"Can't get current Location");
+            Log.d(TAG, "Can't get current Location");
         }
-        mAdapter = new PlaceAutocompleteAdapter(getActivity(),mGoogleApiClient,mLatLngBounds,null);
+        mAdapter = new PlaceAutocompleteAdapter(getActivity(), mGoogleApiClient, mLatLngBounds, null);
         mLocationAddressEditText.setAdapter(mAdapter);
         mLocationAddressEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -273,7 +281,7 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
                         mGPSCoordinate.setPlaceId(place.getId());
                         mGPSCoordinate.setLongitude(place.getLatLng().longitude);
                         mGPSCoordinate.setLatitude(place.getLatLng().latitude);
-
+                        places.release();
                     }
                 });
 
@@ -281,16 +289,17 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
         });
 
 
-
-
         mGPSSettingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-//                    if (mGPSCoordinate.getAddress()!=null){
-//                        builder.setLatLngBounds(new LatLng(m),new LatLng());
-//                    }
+                    if (mGPSCoordinate.getLatitude() != 0 & mGPSCoordinate.getLongitude() != 0) {
+                        Double lat = mGPSCoordinate.getLatitude();
+                        Double lng = mGPSCoordinate.getLongitude();
+                        builder.setLatLngBounds(new LatLngBounds(new LatLng(lat - 0.002, lng - 0.002), new
+                                LatLng(lat + 0.002, lng + 0.002)));
+                    }
                     startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
 
                 } catch (GooglePlayServicesRepairableException e) {
@@ -399,10 +408,13 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
     }
 
     private void updateGPSTextView() {
-        if (mGPSCoordinate.getAddress()==null){
+        if (mGPSCoordinate.getLatitude() == 0 && mGPSCoordinate.getLongitude() == 0) {
             mLocationAddressEditText.setText("");
-        }else{
+        } else if (mGPSCoordinate.getAddress() != null) {
             mLocationAddressEditText.setText(mGPSCoordinate.getAddress());
+        } else {
+            mLocationAddressEditText.setText(mGPSCoordinate.getLatitude() + " " + mGPSCoordinate
+                    .getLongitude());
         }
     }
 
@@ -414,9 +426,10 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
             mCurrentWifiInfoTextView.setVisibility(View.VISIBLE);
             mCurrentWifiInfoTextView.setText(getString(R.string.current_wifi_info_title)
                     + " " + mLocation.getWiFiPosition()
-                    .getSSID() + "\n" + "Current Wi-Fi BSSID:" + " " + mLocation.getWiFiPosition()
+                    .getSSID() + "\n" + getString(R.string.current_wifi_bssid) + " " + mLocation
+                    .getWiFiPosition()
                     .getBSSID());
-        }//TODO SHOW BSSID ADDRESS
+        }
     }
 
     @Override
@@ -429,7 +442,15 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
             // The user has selected a place. Extract the name and address.
             final Place place = PlacePicker.getPlace(data, getActivity());
             final CharSequence address = place.getAddress();
+            final String placeId = place.getId();
             final LatLng latLng = place.getLatLng();
+            mGPSCoordinate.setPlaceId(placeId);
+            if (address.length() != 0) {
+                mGPSCoordinate.setAddress(address.toString());
+            } else {
+                mGPSCoordinate.setAddress(null);
+            }
+
             mGPSCoordinate.setLatitude(latLng.latitude);
             mGPSCoordinate.setLongitude(latLng.longitude);
             updateGPSTextView();
