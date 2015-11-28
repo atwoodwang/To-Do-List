@@ -197,21 +197,34 @@ public class TaskDetailFragment extends Fragment {
                         mLocationTextView.setVisibility(View.GONE);
                         mLocationSpinner.setVisibility(View.GONE);
                         mShortCutButton.setVisibility(View.GONE);
+
+                        // disable remind by default
+                        mTask.setEnabled(false);
                         break;
+
                     case TIME:
                         mTimeTitleTextView.setVisibility(View.VISIBLE);
                         mDateButton.setVisibility(View.VISIBLE);
                         mLocationTextView.setVisibility(View.GONE);
                         mLocationSpinner.setVisibility(View.GONE);
                         mShortCutButton.setVisibility(View.GONE);
+
+                        // enable remind on time
+                        mTask.setEnabled(true);
                         break;
-                    default:
+
+                    case LOCATION_ARRIVING:
+                    case LOCATION_LEAVING:
                         mTimeTitleTextView.setVisibility(View.GONE);
                         mDateButton.setVisibility(View.GONE);
                         mLocationTextView.setVisibility(View.VISIBLE);
                         mLocationSpinner.setVisibility(View.VISIBLE);
                         mShortCutButton.setVisibility(View.VISIBLE);
+
+                        // enable remind on location
+                        mTask.setEnabled(true);
                         break;
+                    default:
                 }
             }
 

@@ -76,7 +76,8 @@ public class Task extends Model {
         mConfig = ConfigType.NONE;
         mComplete = false;
 
-        mEnabled = true;
+        // default: disable remind, enable remind when setting config
+        mEnabled = false;
 
         mSchedule = null;
         mLocation = null;
