@@ -59,24 +59,26 @@ public class AlarmService extends IntentService {
                         String mac = wifiInfo[1];
                         if (ssid.equals(mWiFiPosition.getSSID()) & mac.equals(mWiFiPosition.getBSSID())) {
                             sendNotification(task);
-                            Log.d(TAG, task.getTitle());
+                            Log.d(TAG, task.getTitle()+"  Arriving: "+task.getLocation().getTitle
+                                    ()+"(WIFI)");
                         }
                     }
                 } else if (task.getLocation().getConfig() == Location.ConfigType.GPS & task
                         .getLocation().getGPSCoordinate() != null) {
                     mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
                     List<String> providerList = mLocationManager.getProviders(true);
                     if (providerList.contains(LocationManager.GPS_PROVIDER)) {
                         mProvider = LocationManager.GPS_PROVIDER;
                     } else if (providerList.contains(LocationManager.NETWORK_PROVIDER)) {
                         mProvider = LocationManager.NETWORK_PROVIDER;
-                    } else {
-                        mProvider = LocationManager.GPS_PROVIDER;
                     }
-
                     try {
                         android.location.Location location = mLocationManager
                                 .getLastKnownLocation(mProvider);
+                        if(location==null){
+                            location = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                        }
                         if (location != null) {
                             Double lng = location.getLongitude();
                             Double lat = location.getLatitude();
@@ -86,12 +88,16 @@ public class AlarmService extends IntentService {
                             Double setLng = mGPSCoordinate.getLongitude();
                             if (Math.abs(setLat - lat) < 0.001 & Math.abs(setLng - lng) < 0.001) {
                                 sendNotification(task);
-                                Log.d(TAG, "yes");
+                                Log.d(TAG, task.getTitle()+"  Arriving: "+task.getLocation()
+                                        .getTitle()+"(GPS)");
                             }
                         }
                     } catch (SecurityException ex) {
                         Log.d(TAG, "Permission denied.....");
-                        return;
+                        continue;
+                    } catch(IllegalArgumentException ex){
+                        Log.d(TAG,"No provider");
+                        continue;
                     }
                 }
             } else if (task.getLocation() != null & task.getConfig() == Task.ConfigType
@@ -106,10 +112,13 @@ public class AlarmService extends IntentService {
                         if (!ssid.equals(mWiFiPosition.getSSID()) & !mac.equals(mWiFiPosition.getBSSID()
                         )) {
                             sendNotification(task);
-                            Log.d(TAG, task.getTitle());
+                            Log.d(TAG, task.getTitle()+"  leaving: "+task.getLocation().getTitle
+                                    ()+"(WIFI)");
                         }
                     } else {
                         sendNotification(task);
+                        Log.d(TAG, task.getTitle() + "  leaving: " + task.getLocation().getTitle
+                                () + "(WIFI)");
                     }
                 } else if (task.getLocation().getConfig() == Location.ConfigType.GPS & task
                         .getLocation().getGPSCoordinate() != null) {
@@ -119,12 +128,13 @@ public class AlarmService extends IntentService {
                         mProvider = LocationManager.GPS_PROVIDER;
                     } else if (providerList.contains(LocationManager.NETWORK_PROVIDER)) {
                         mProvider = LocationManager.NETWORK_PROVIDER;
-                    } else {
-                        return;
                     }
 
                     try {
                         android.location.Location location = mLocationManager.getLastKnownLocation(mProvider);
+                        if(location==null){
+                            location = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                        }
                         if (location != null) {
                             Double lng = location.getLongitude();
                             Double lat = location.getLatitude();
@@ -134,11 +144,16 @@ public class AlarmService extends IntentService {
                             Double setLng = mGPSCoordinate.getLongitude();
                             if (Math.abs(setLat - lat) > 0.001 & Math.abs(setLng - lng) > 0.001) {
                                 sendNotification(task);
-                                Log.d("Location", "yes");
+                                Log.d(TAG, task.getTitle()+"  Leaving: "+task.getLocation()
+                                        .getTitle()+"(GPS)");
                             }
                         }
                     } catch (SecurityException ex) {
-                        return;
+                        Log.d(TAG,"permission denied");
+                        continue;
+                    } catch (IllegalArgumentException ex){
+                        Log.d(TAG,"No provider");
+                        continue;
                     }
                 }
             }

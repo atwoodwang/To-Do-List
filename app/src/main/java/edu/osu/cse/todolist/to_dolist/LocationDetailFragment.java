@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.location.Criteria;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -236,18 +237,22 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
 
             }
         });
-        
+
         mLocationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-        List<String> providerList = mLocationManager.getProviders(true);
-        if (providerList.contains(LocationManager.GPS_PROVIDER)) {
-            mProvider = LocationManager.GPS_PROVIDER;
-        } else if (providerList.contains(LocationManager.NETWORK_PROVIDER)) {
-            mProvider = LocationManager.NETWORK_PROVIDER;
-        } else {
-        }
         try {
-            android.location.Location location = mLocationManager.getLastKnownLocation
-                    (mProvider);
+            List<String> providerList = mLocationManager.getProviders(true);
+            if (providerList.contains(LocationManager.GPS_PROVIDER)) {
+                mProvider = LocationManager.GPS_PROVIDER;
+            } else if (providerList.contains(LocationManager.NETWORK_PROVIDER)) {
+                mProvider = LocationManager.NETWORK_PROVIDER;
+            } else if (providerList.contains(LocationManager.PASSIVE_PROVIDER)) {
+                mProvider = LocationManager.PASSIVE_PROVIDER;
+            }
+
+            android.location.Location location = mLocationManager.getLastKnownLocation(mProvider);
+            if (location == null) {
+                location = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            }
             if (location != null) {
                 Double lng = location.getLongitude();
                 Double lat = location.getLatitude();
@@ -255,7 +260,12 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
                         lng + 0.1));
             }
         } catch (SecurityException ex) {
-            Log.d(TAG, "Can't get current Location");
+            Toast.makeText(getActivity(), "Unable to access GPS service, permission denied.",
+                    Toast.LENGTH_LONG).show();
+            mLatLngBounds = new LatLngBounds(new LatLng(-0.1, -0.1), new LatLng(0.1, 0.1));
+        } catch (IllegalArgumentException ex) {
+            Toast.makeText(getActivity(), "GPS service is disabled.", Toast.LENGTH_SHORT).show();
+            mLatLngBounds = new LatLngBounds(new LatLng(-0.1, -0.1), new LatLng(0.1, 0.1));
         }
         mAdapter = new PlaceAutocompleteAdapter(getActivity(), mGoogleApiClient, mLatLngBounds, null);
         mLocationAddressEditText.setAdapter(mAdapter);
@@ -359,7 +369,16 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
                 } else if (mLocation.getConfig() == Location.ConfigType.GPS & (mGPSCoordinate
                         .getLongitude() == 0.0 && mGPSCoordinate.getLatitude() == 0.0)) {
                     Dialog alertDialog = new AlertDialog.Builder(getActivity())
-                            .setMessage("Have to select a GPS location coordinate.")
+                            .setMessage("Make sure GPS service is enabled and have selected a " +
+                                    "GPS " +
+                                    "location coordinate.")
+                            .setPositiveButton("OK", null)
+                            .create();
+                    alertDialog.show();
+                } else if (mLocation.getConfig() == Location.ConfigType.WiFi & mLocation
+                        .getWiFiPosition() == null) {
+                    Dialog alertDialog = new AlertDialog.Builder(getActivity())
+                            .setMessage("Have to select a Wifi location.")
                             .setPositiveButton("OK", null)
                             .create();
                     alertDialog.show();
