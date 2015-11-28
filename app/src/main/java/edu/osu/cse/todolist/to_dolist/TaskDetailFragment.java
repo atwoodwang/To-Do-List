@@ -53,6 +53,8 @@ public class TaskDetailFragment extends Fragment {
     private MenuItem mStarred;
     private MenuItem mEnabled;
 
+    private String TAG = "TaskDetialFragment";
+
     public static TaskDetailFragment newInstance(long taskId) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_TASK_ID, taskId);
@@ -65,6 +67,9 @@ public class TaskDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d(TAG, "onCreate called");
+
         setHasOptionsMenu(true);
         long taskId = (long) getArguments().getSerializable(ARG_TASK_ID);
         mTask = ToDoLab.get(getActivity()).getTask(taskId);
@@ -72,14 +77,14 @@ public class TaskDetailFragment extends Fragment {
             mTask.setStarred(savedInstanceState.getBoolean(STAR));
             mTask.setEnabled(savedInstanceState.getBoolean(ENABLED));
         }
-
-
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        Log.d("Rotate", "onSave");
+
+        Log.d(TAG, "onSaveInstanceState called");
+
         savedInstanceState.putBoolean(STAR, mTask.isStarred());
         savedInstanceState.putBoolean(ENABLED, mTask.isEnabled());
     }
@@ -88,10 +93,14 @@ public class TaskDetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
         updateLocationSpinner();
+        updateUI();
+        Log.d(TAG, "onResume called");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView called");
+
         View v = inflater.inflate(R.layout.fragment_task_detail, container, false);
 
 
@@ -185,47 +194,32 @@ public class TaskDetailFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mRemindSpinner.setAdapter(adapter);
         int position = mTask.getConfig().ordinal();
+        //
         mRemindSpinner.setSelection(position);
         mRemindSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                mTask.setConfig(Task.ConfigType.values()[pos]);
-                switch (mTask.getConfig()) {
-                    case NONE:
-                        mTimeTitleTextView.setVisibility(View.GONE);
-                        mDateButton.setVisibility(View.GONE);
-                        mLocationTextView.setVisibility(View.GONE);
-                        mLocationSpinner.setVisibility(View.GONE);
-                        mShortCutButton.setVisibility(View.GONE);
+                Log.d(TAG, "mRemindSpinner.onItemSelected called");
 
-                        // disable remind by default
+                // compare the old config and new config can avoid error caused by duplicate
+                // calling on onItemSelected
+                Task.ConfigType oldConfig = mTask.getConfig();
+                Task.ConfigType newConfig = Task.ConfigType.values()[pos];
+                boolean bChanged = !newConfig.equals((oldConfig));
+
+                if (bChanged) {
+                    mTask.setConfig(newConfig);
+                    // set remind enabled when switch from NONE to other remind options
+                    if (newConfig == Task.ConfigType.NONE) {
                         mTask.setEnabled(false);
-                        break;
-
-                    case TIME:
-                        mTimeTitleTextView.setVisibility(View.VISIBLE);
-                        mDateButton.setVisibility(View.VISIBLE);
-                        mLocationTextView.setVisibility(View.GONE);
-                        mLocationSpinner.setVisibility(View.GONE);
-                        mShortCutButton.setVisibility(View.GONE);
-
-                        // enable remind on time
+                    } else {
                         mTask.setEnabled(true);
-                        break;
-
-                    case LOCATION_ARRIVING:
-                    case LOCATION_LEAVING:
-                        mTimeTitleTextView.setVisibility(View.GONE);
-                        mDateButton.setVisibility(View.GONE);
-                        mLocationTextView.setVisibility(View.VISIBLE);
-                        mLocationSpinner.setVisibility(View.VISIBLE);
-                        mShortCutButton.setVisibility(View.VISIBLE);
-
-                        // enable remind on location
-                        mTask.setEnabled(true);
-                        break;
-                    default:
+                    }
                 }
+                // DO NOT move update into above if statement，it causes bugs
+                updateUI();
+                updateMenuUI();
+
             }
 
             @Override
@@ -292,11 +286,78 @@ public class TaskDetailFragment extends Fragment {
             }
         });
 
-
         return v;
     }
 
+    private void updateUI() {
+        Log.d(TAG, "updateUI called");
+
+        // avoid crashing
+        if (mEnabled == null || mStarred == null) {
+            return;
+        }
+
+        Task.ConfigType config = mTask.getConfig();
+        switch (config) {
+            case NONE:
+                mTimeTitleTextView.setVisibility(View.GONE);
+                mDateButton.setVisibility(View.GONE);
+                mLocationTextView.setVisibility(View.GONE);
+                mLocationSpinner.setVisibility(View.GONE);
+                mShortCutButton.setVisibility(View.GONE);
+                break;
+
+            case TIME:
+                mTimeTitleTextView.setVisibility(View.VISIBLE);
+                mDateButton.setVisibility(View.VISIBLE);
+                mLocationTextView.setVisibility(View.GONE);
+                mLocationSpinner.setVisibility(View.GONE);
+                mShortCutButton.setVisibility(View.GONE);
+                break;
+
+            case LOCATION_ARRIVING:
+            case LOCATION_LEAVING:
+                mTimeTitleTextView.setVisibility(View.GONE);
+                mDateButton.setVisibility(View.GONE);
+                mLocationTextView.setVisibility(View.VISIBLE);
+                mLocationSpinner.setVisibility(View.VISIBLE);
+                mShortCutButton.setVisibility(View.VISIBLE);
+                break;
+
+            default:
+                break;
+        }
+
+    }
+
+    private void updateMenuUI() {
+        Log.d(TAG, "updateMenuUI called");
+
+        // update the alarm/enable icon
+        Task.ConfigType config = mTask.getConfig();
+        if (config == Task.ConfigType.NONE) {
+            // disable the setting of task enable icon
+            mEnabled.setEnabled(false);
+            mEnabled.setIcon(R.drawable.ic_menu_disabled);
+        } else {
+            mEnabled.setEnabled(true);
+            if (mTask.isEnabled()) {
+                mEnabled.setIcon(R.drawable.ic_menu_enabled);
+            } else {
+                mEnabled.setIcon(R.drawable.ic_menu_disabled);
+            }
+        }
+
+        // update the star icon
+        if (mTask.isStarred()) {
+            mStarred.setIcon(R.drawable.ic_task_important);
+        } else {
+            mStarred.setIcon(R.drawable.ic_task_not_important);
+        }
+    }
+
     private void updateLocationSpinner() {
+        Log.d(TAG, "updateLocationSpinner called");
         Location dummyLoc = new Location();
         dummyLoc.setTitle("Select Location");
 
@@ -359,16 +420,14 @@ public class TaskDetailFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.d(TAG, "onCreateOptionsMenu called");
+
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_task_detail, menu);
         mStarred = menu.findItem(R.id.menu_item_task_importance);
         mEnabled = menu.findItem(R.id.menu_item_enabled);
-        if (mTask.isStarred()) {
-            mStarred.setIcon(R.drawable.ic_task_important);
-        }
-        if (!mTask.isEnabled()) {
-            mEnabled.setIcon(R.drawable.ic_menu_disabled);
-        }
+
+        updateMenuUI();
     }
 
     @Override
@@ -392,26 +451,24 @@ public class TaskDetailFragment extends Fragment {
             case R.id.menu_item_task_importance:
                 if (!mTask.isStarred()) {
                     mTask.setStarred(true);
-                    mStarred.setIcon(R.drawable.ic_task_important);
                     Toast.makeText(getActivity(), "You have set this task to be important", Toast.LENGTH_SHORT).show();
                 } else {
                     mTask.setStarred(false);
-                    mStarred.setIcon(R.drawable.ic_task_not_important);
                     Toast.makeText(getActivity(), "You have set this task to be unimportant", Toast.LENGTH_SHORT).show();
                 }
+                updateMenuUI();
                 return true;
             case R.id.menu_item_enabled:
                 if (mTask.isEnabled()) {
                     mTask.setEnabled(false);
-                    mEnabled.setIcon(R.drawable.ic_menu_disabled);
                     Toast.makeText(getActivity(), "You have disabled this alarm", Toast
                             .LENGTH_SHORT).show();
                 } else {
                     mTask.setEnabled(true);
-                    mEnabled.setIcon(R.drawable.ic_menu_enabled);
                     Toast.makeText(getActivity(), "You have enabled this alarm", Toast.LENGTH_SHORT)
                             .show();
                 }
+                updateMenuUI();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
