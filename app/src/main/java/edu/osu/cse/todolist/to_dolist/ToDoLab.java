@@ -703,4 +703,37 @@ public class ToDoLab {
             alarmReceiver.cancelAlarm(getContext());
         }
     }
+
+    /**
+     * Return the list of tasks which needs to be reminded. Remind disabled tasks, finished tasks
+     * and timeout tasks are not included in the list.
+     *
+     * @return the list of tasks satisfied above criteria
+     */
+    public List<Task> getInTimeTasks(long currentTime) {
+        List<Task> allTasks = getTasks();
+        List<Task> filteredTasks = new ArrayList<>();
+        for (Task task : allTasks) {
+            // bypass finished tasks
+            if (task.isComplete()) {
+                continue;
+            }
+            // bypass remind disabled tasks
+            if (!task.isEnabled()) {
+                continue;
+            }
+
+            // bypass other remind type tasks
+            Task.ConfigType config = task.getConfig();
+            if (!Task.ConfigType.TIME.equals(config)) {
+                continue;
+            }
+
+            if (task.isInTime(currentTime)) {
+                // only add eligible tasks to the filteredTasks
+                filteredTasks.add(task);
+            }
+        }
+        return filteredTasks;
+    }
 }

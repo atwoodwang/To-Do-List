@@ -33,19 +33,29 @@ public class AlarmService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "Receive 1 minute Intent");
+
+        long NEWcurrentTime = new Date().getTime();
+        List<Task> timeTasks = ToDoLab.get(getApplicationContext()).getInTimeTasks(NEWcurrentTime);
+        for (Task task : timeTasks) {
+            sendNotification(task);
+            Log.d(TAG, "[+] Time Remind Task: " + task.getTitle());
+        }
+
+
         List<Task> tasks = ToDoLab.get(this).getTasks();
         for (Task task : tasks) {
             if (task.isComplete() | (!task.isEnabled())) {
                 continue;
             }
-            if (task.getSchedule() != null & task.getConfig() == Task.ConfigType.TIME) {
-                long setTime = task.getRemindDate().getTime();
-                long currentTime = new Date().getTime();
-                if (setTime < currentTime & currentTime < setTime + 60 * 1000) {
-                    sendNotification(task);
-                    Log.d(TAG, task.getTitle());
-                }
-            } else if (task.getLocation() != null & task.getConfig() == Task.ConfigType
+//            if (task.getSchedule() != null & task.getConfig() == Task.ConfigType.TIME) {
+//                long setTime = task.getRemindDate().getTime();
+//                long currentTime = new Date().getTime();
+//                if (setTime < currentTime & currentTime < setTime + 60 * 1000) {
+//                    sendNotification(task);
+//                    Log.d(TAG, task.getTitle());
+//                }
+//            } else
+            if (task.getLocation() != null & task.getConfig() == Task.ConfigType
                     .LOCATION_ARRIVING) {
                 if (task.getLocation().getConfig() == Location.ConfigType.WiFi & task.getLocation()
                         .getWiFiPosition() != null) {

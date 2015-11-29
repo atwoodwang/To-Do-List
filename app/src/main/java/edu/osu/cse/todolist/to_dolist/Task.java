@@ -221,12 +221,34 @@ public class Task extends Model {
      * Check if the given time (usually the current time) exceeds the remind time of the task
      *
      * @param baseTime the given time (usually the current time)
-     * @return <code>true</code> if given time exceeds remind time, otherwise <code>false</code>
+     * @return <code>true</code> if the given time exceeds remind time, otherwise <code>false</code>
      */
     public boolean isTimeout(long baseTime) {
         long remindTime = getTime();
         //
         if (baseTime > remindTime + 60 * 1000) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Check if the given time (usually the current time) is the right time to remind the task
+     *
+     * @param currentTime the given time (usually the current time)
+     * @return <code>true</code> if the given time is the right time to remind the task, otherwise
+     * <code>false</code>
+     */
+    public boolean isInTime(long currentTime) {
+        // get the time when to remind the task
+        long remindTime = getTime();
+        // avoid null Schedule or null Date
+        if (remindTime == 0) {
+            return false;
+        }
+        // check if current time is in the range of [remindTime, remindTime + 1 minute)
+        if (remindTime <= currentTime && currentTime < (remindTime + 60 * 1000)) {
             return true;
         } else {
             return false;
