@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import edu.osu.cse.todolist.to_dolist.database.ToDoDbSchema.WiFiPositionTable;
 
@@ -88,21 +89,36 @@ public class WiFiPosition extends Model {
     }
 
     public static String[] getCurrentWifiInfo(Context context) {
+        String[] result = null;
         String ssid = null;
         String bssid = null;
+
         ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
-        if (networkInfo != null) {
-            if (networkInfo.isConnected()) {
-                final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-                final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
-                if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
-                    ssid = connectionInfo.getSSID();
-                bssid = connectionInfo.getBSSID();
-                }
-            }
-        return new String[]{ssid, bssid};
+        // avoid nullPointerException, maybe caused by no permission
+        if (connManager == null) {
+            return null;
         }
-        return null;
+        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+        // in Airplane mode, can get null NetworkInformation
+        if (networkInfo == null) {
+            return null;
+        }
+        // check if network is connected. Connected doesn't mean it connect to WiFi, maybe LTE or
+        // others
+        if (networkInfo.isConnected()) {
+            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            // just in case maybe forbidden by Security software
+            if (wifiManager == null) {
+                return null;
+            }
+            final WifiInfo connectionInfo = wifiManager.getConnectionInfo();
+            // the BSSID may be null if there is no network currently connected
+            if (connectionInfo != null && connectionInfo.getBSSID() != null) {
+                ssid = connectionInfo.getSSID();
+                bssid = connectionInfo.getBSSID();
+                result = new String[]{ssid, bssid};
+            }
+        }
+        return result;
     }
 }
