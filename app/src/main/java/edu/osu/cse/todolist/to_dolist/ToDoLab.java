@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import edu.osu.cse.todolist.to_dolist.database.GPSCoordinateCursorWrapper;
@@ -62,6 +63,7 @@ public class ToDoLab {
      * Tag used for debug
      */
     private static final String TAG = "ToDoLab";
+    private long mCurrentTime;
 
     public static ToDoLab get(Context context) {
         if (sToDoLab == null) {
@@ -631,5 +633,58 @@ public class ToDoLab {
         }
 
         return tableName;
+    }
+
+    /**
+     * Check if there exists task that need to be reminded
+     *
+     * @return <code>true</code> if exists task which needs remind, otherwise <code>false</code>
+     */
+    public boolean checkRemindTask() {
+        boolean result = false;
+
+        List<Task> tasks = getTasks();
+        for (Task task : tasks) {
+            // bypass finished tasks
+            if (task.isComplete()) {
+                continue;
+            }
+            // bypass remind disabled tasks
+            if (!task.isEnabled()) {
+                continue;
+            }
+
+            Task.ConfigType config = task.getConfig();
+
+            // bypass NONE remind type tasks
+            if (Task.ConfigType.NONE.equals(config)) {
+                continue;
+            }
+
+            // check if a task is reminded by time, and its time isn't passed by
+            if (Task.ConfigType.TIME.equals(config)) {
+                long remindTime = task.getRemindDate().getTime();
+                long mCurrentTime = new Date().getTime();
+                // TODO: Warining, if launch the alarm too late, it may not be triggered
+                // TODO: need improve time remind
+                // bypass timeout tasks
+                if (mCurrentTime > remindTime + 60 * 1000) {
+                    continue;
+                } else {
+                    return true;
+                }
+            }
+
+            if (Task.ConfigType.LOCATION_ARRIVING.equals(config) ||
+                    Task.ConfigType.LOCATION_LEAVING.equals(config)) {
+                // avoid null error
+                if (task.getLocation() != null) {
+                    return true;
+                }
+            }
+
+        }
+
+        return result;
     }
 }
