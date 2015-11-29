@@ -202,6 +202,37 @@ public class Task extends Model {
         mEnabled = enabled;
     }
 
+    /**
+     * Return the remind date in millisecond value since Jan. 1, 1970, midnight GMT. It's exactly
+     * the same as Date.getTime()
+     *
+     * @return the remind date in millisecond Timestamp
+     */
+    public long getTime() {
+        Date date = getRemindDate();
+        if (date == null) {
+            return 0;
+        } else {
+            return date.getTime();
+        }
+    }
+
+    /**
+     * Check if the given time (usually the current time) exceeds the remind time of the task
+     *
+     * @param baseTime the given time (usually the current time)
+     * @return <code>true</code> if given time exceeds remind time, otherwise <code>false</code>
+     */
+    public boolean isTimeout(long baseTime) {
+        long remindTime = getTime();
+        //
+        if (baseTime > remindTime + 60 * 1000) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();

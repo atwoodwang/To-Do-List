@@ -655,7 +655,6 @@ public class ToDoLab {
             }
 
             Task.ConfigType config = task.getConfig();
-
             // bypass NONE remind type tasks
             if (Task.ConfigType.NONE.equals(config)) {
                 continue;
@@ -663,12 +662,11 @@ public class ToDoLab {
 
             // check if a task is reminded by time, and its time isn't passed by
             if (Task.ConfigType.TIME.equals(config)) {
-                long remindTime = task.getRemindDate().getTime();
-                long mCurrentTime = new Date().getTime();
+                long currentTime = new Date().getTime();
                 // TODO: Warining, if launch the alarm too late, it may not be triggered
                 // TODO: need improve time remind
                 // bypass timeout tasks
-                if (mCurrentTime > remindTime + 60 * 1000) {
+                if (task.isTimeout(currentTime)) {
                     continue;
                 } else {
                     return true;
