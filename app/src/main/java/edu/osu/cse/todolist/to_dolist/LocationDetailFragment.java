@@ -415,22 +415,25 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
         } else if (mGPSCoordinate.getAddress() != null) {
             mLocationAddressEditText.setText(mGPSCoordinate.getAddress());
         } else {
-            mLocationAddressEditText.setText(mGPSCoordinate.getLatitude() + " " + mGPSCoordinate
-                    .getLongitude());
+            mLocationAddressEditText.setText(String.format(
+                    getString(R.string.gps_coordinate_info),
+                    mGPSCoordinate.getLatitude(),
+                    mGPSCoordinate.getLongitude()));
         }
     }
 
 
     private void updateWifiTextView() {
-        if (mLocation.getWiFiPosition() == null) {
+        WiFiPosition wiFiPosition = mLocation.getWiFiPosition();
+        if (wiFiPosition == null) {
             mCurrentWifiInfoTextView.setVisibility(View.GONE);
         } else {
             mCurrentWifiInfoTextView.setVisibility(View.VISIBLE);
-            mCurrentWifiInfoTextView.setText(getString(R.string.current_wifi_info_title)
-                    + " " + mLocation.getWiFiPosition()
-                    .getSSID() + "\n" + getString(R.string.current_wifi_bssid) + " " + mLocation
-                    .getWiFiPosition()
-                    .getBSSID());
+            mCurrentWifiInfoTextView.setText(
+                    String.format(getString(R.string.wifi_info),
+                            wiFiPosition.getSSID(),
+                            wiFiPosition.getBSSID())
+            );
         }
     }
 

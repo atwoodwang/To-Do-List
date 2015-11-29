@@ -51,8 +51,8 @@
         <item>Wi-Fi</item>
     </string-array>
     <string name="title_activity_maps">Map</string>
-    <string name="current_wifi_info_title">"Current WiFi SSID: "</string>
     <string name="no_wifi_connection_warning">You don\'t have any current Wi-Fi connection.</string>
     <string name="enter_location_hint">Enter location address</string>
-    <string name="current_wifi_bssid">Current Wi-Fi BSSID:</string>
+    <string name="wifi_info">Wi-Fi SSID:  %1$s\nWi-Fi BSSID: %2$s</string>
+    <string name="gps_coordinate_info">GPS (%1$.6f, %2$.6f)</string>
 </resources>

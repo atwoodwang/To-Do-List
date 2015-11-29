@@ -115,7 +115,7 @@ public class WiFiPosition extends Model {
             // the BSSID may be null if there is no network currently connected
             if (connectionInfo != null && connectionInfo.getBSSID() != null) {
                 ssid = connectionInfo.getSSID();
-                bssid = connectionInfo.getBSSID();
+                bssid = connectionInfo.getBSSID().toUpperCase();
                 result = new String[]{ssid, bssid};
             }
         }
