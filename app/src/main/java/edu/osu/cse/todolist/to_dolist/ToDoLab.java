@@ -685,6 +685,24 @@ public class ToDoLab {
 
         }
 
+        Log.d(TAG, "checkRemindTask called, return " + result, new Exception());
         return result;
+    }
+
+    /**
+     * Turn on/off the alarm used for remind service, according to the exists of tasks that needs
+     * remind. The exists of remind task is determined by checkRemindTask().
+     */
+    public void setupRemindService() {
+        Log.d(TAG, "setupRemindService called");
+
+        AlarmReceiver alarmReceiver = new AlarmReceiver();
+        if (checkRemindTask()) {
+            Log.d(TAG, "turn on alarm service");
+            alarmReceiver.setAlarm(getContext());
+        } else {
+            Log.d(TAG, "turn off alarm service");
+            alarmReceiver.cancelAlarm(getContext());
+        }
     }
 }

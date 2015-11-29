@@ -39,8 +39,9 @@ public class TaskListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        AlarmReceiver alarmReceiver = new AlarmReceiver();
-        alarmReceiver.setAlarm(getContext());
+//        AlarmReceiver alarmReceiver = new AlarmReceiver();
+//        alarmReceiver.setAlarm(getContext());
+        ToDoLab.get(getContext()).setupRemindService();
     }
 
     @Override

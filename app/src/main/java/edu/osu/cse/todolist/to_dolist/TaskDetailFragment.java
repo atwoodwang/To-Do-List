@@ -281,8 +281,13 @@ public class TaskDetailFragment extends Fragment {
                     alertDialog.show();
                 } else {
                     ToDoLab.get(getActivity()).saveTask(mTask);
+                    ToDoLab.get(getActivity()).setupRemindService();
                     getActivity().onBackPressed();
                 }
+
+                //Debug
+//                Log.d(TAG, "ToDoLab.CheckRemind: " + ToDoLab.get(null).checkRemindTask());
+
             }
         });
 

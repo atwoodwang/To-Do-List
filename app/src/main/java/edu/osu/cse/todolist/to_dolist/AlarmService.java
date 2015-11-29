@@ -1,20 +1,16 @@
 package edu.osu.cse.todolist.to_dolist;
 
-import android.Manifest;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 
-import java.security.Provider;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -31,11 +27,12 @@ public class AlarmService extends IntentService {
 
     public AlarmService() {
         super(TAG);
+        Log.d(TAG, "Alarm Service created");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(TAG, "RECEIVE INTENT");
+        Log.d(TAG, "Receive 1 minute Intent");
         List<Task> tasks = ToDoLab.get(this).getTasks();
         for (Task task : tasks) {
             if (task.isComplete() | (!task.isEnabled())) {
@@ -59,8 +56,8 @@ public class AlarmService extends IntentService {
                         String mac = wifiInfo[1];
                         if (ssid.equals(mWiFiPosition.getSSID()) & mac.equals(mWiFiPosition.getBSSID())) {
                             sendNotification(task);
-                            Log.d(TAG, task.getTitle()+"  Arriving: "+task.getLocation().getTitle
-                                    ()+"(WIFI)");
+                            Log.d(TAG, task.getTitle() + "  Arriving: " + task.getLocation().getTitle
+                                    () + "(WIFI)");
                         }
                     }
                 } else if (task.getLocation().getConfig() == Location.ConfigType.GPS & task
@@ -76,7 +73,7 @@ public class AlarmService extends IntentService {
                     try {
                         android.location.Location location = mLocationManager
                                 .getLastKnownLocation(mProvider);
-                        if(location==null){
+                        if (location == null) {
                             location = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
                         }
                         if (location != null) {
@@ -88,15 +85,15 @@ public class AlarmService extends IntentService {
                             Double setLng = mGPSCoordinate.getLongitude();
                             if (Math.abs(setLat - lat) < 0.001 & Math.abs(setLng - lng) < 0.001) {
                                 sendNotification(task);
-                                Log.d(TAG, task.getTitle()+"  Arriving: "+task.getLocation()
-                                        .getTitle()+"(GPS)");
+                                Log.d(TAG, task.getTitle() + "  Arriving: " + task.getLocation()
+                                        .getTitle() + "(GPS)");
                             }
                         }
                     } catch (SecurityException ex) {
                         Log.d(TAG, "Permission denied.....");
                         continue;
-                    } catch(IllegalArgumentException ex){
-                        Log.d(TAG,"No provider");
+                    } catch (IllegalArgumentException ex) {
+                        Log.d(TAG, "No provider");
                         continue;
                     }
                 }
@@ -112,8 +109,8 @@ public class AlarmService extends IntentService {
                         if (!ssid.equals(mWiFiPosition.getSSID()) & !mac.equals(mWiFiPosition.getBSSID()
                         )) {
                             sendNotification(task);
-                            Log.d(TAG, task.getTitle()+"  leaving: "+task.getLocation().getTitle
-                                    ()+"(WIFI)");
+                            Log.d(TAG, task.getTitle() + "  leaving: " + task.getLocation().getTitle
+                                    () + "(WIFI)");
                         }
                     } else {
                         sendNotification(task);
@@ -132,7 +129,7 @@ public class AlarmService extends IntentService {
 
                     try {
                         android.location.Location location = mLocationManager.getLastKnownLocation(mProvider);
-                        if(location==null){
+                        if (location == null) {
                             location = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
                         }
                         if (location != null) {
@@ -144,20 +141,21 @@ public class AlarmService extends IntentService {
                             Double setLng = mGPSCoordinate.getLongitude();
                             if (Math.abs(setLat - lat) > 0.001 & Math.abs(setLng - lng) > 0.001) {
                                 sendNotification(task);
-                                Log.d(TAG, task.getTitle()+"  Leaving: "+task.getLocation()
-                                        .getTitle()+"(GPS)");
+                                Log.d(TAG, task.getTitle() + "  Leaving: " + task.getLocation()
+                                        .getTitle() + "(GPS)");
                             }
                         }
                     } catch (SecurityException ex) {
-                        Log.d(TAG,"permission denied");
+                        Log.d(TAG, "permission denied");
                         continue;
-                    } catch (IllegalArgumentException ex){
-                        Log.d(TAG,"No provider");
+                    } catch (IllegalArgumentException ex) {
+                        Log.d(TAG, "No provider");
                         continue;
                     }
                 }
             }
         }
+        ToDoLab.get(getApplicationContext()).setupRemindService();
     }
 
     public void sendNotification(Task task) {
@@ -192,6 +190,6 @@ public class AlarmService extends IntentService {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "DESTROY");
+        Log.d(TAG, "Alarm Service Destroyed");
     }
 }

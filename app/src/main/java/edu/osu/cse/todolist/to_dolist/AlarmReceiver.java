@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
+import android.util.Log;
 
 /**
  * Created by Zicong on 2015/11/8.
@@ -16,6 +17,8 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
     private PendingIntent mTimeAlarmIntent;
     private static final int INTERVAL = 1000 * 60;
 
+    private String TAG = "AlarmReceiver";
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent service = new Intent(context, AlarmService.class);
@@ -24,6 +27,8 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
 
 
     public void setAlarm(Context context) {
+        Log.d(TAG, "setAlarm called");
+
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmReceiver.class);
         mTimeAlarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
@@ -37,6 +42,7 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
     }
 
     public void cancelAlarm(Context context) {
+        Log.d(TAG, "cancelAlarm called");
         if (mAlarmManager != null) {
             mAlarmManager.cancel(mTimeAlarmIntent);
         }
