@@ -96,6 +96,9 @@ public class ToDoLab {
         // initialize cached flag and tasks
         mCached = false;
         mCachedTasks = null;
+
+        //Populate some tasks for test and profiling
+        //populateTestData();
     }
 
     public Context getContext() {
@@ -791,5 +794,19 @@ public class ToDoLab {
             }
         }
         return filteredTasks;
+    }
+
+    /**
+     * Populate some tasks for testing and profiling
+     */
+    private void populateTestData() {
+        //Generate 300 data for performance profiling
+        Log.d(TAG, "Start populate data");
+        for (int i = 0; i < 300; i++) {
+            Task task = new Task();
+            task.setTitle("Task #" + i);
+            saveTask(task);
+        }
+        Log.d(TAG, "finish populate data");
     }
 }
