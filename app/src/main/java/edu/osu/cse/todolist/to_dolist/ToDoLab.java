@@ -60,6 +60,18 @@ public class ToDoLab {
     private Location mLocation;
 
     /**
+     * Cache tasks retrieved from database
+     * <p/>
+     * used to improve the performance of getTasks() method
+     */
+    private List<Task> mCachedTasks;
+
+    /**
+     * a flag/control on cached tasks
+     */
+    private boolean mCached;
+
+    /**
      * Tag used for debug
      */
     private static final String TAG = "ToDoLab";
@@ -72,13 +84,21 @@ public class ToDoLab {
         return sToDoLab;
     }
 
+    /**
+     * ToDoLab instantiation
+     *
+     * @param context an Activity context or Application context
+     */
     private ToDoLab(Context context) {
         mContext = context.getApplicationContext();
         mDatabase = new ToDoBaseHelper(mContext).getWritableDatabase();
-    }
 
-    private void GenerateTestData() {
-        //Generate random data for coding and test
+        // initialize cached flag and tasks
+        mCached = false;
+        mCachedTasks = null;
+
+        //Populate some tasks for test and profiling
+        //populateTestData();
     }
 
     public Context getContext() {
@@ -93,8 +113,20 @@ public class ToDoLab {
         mGPSCoordinate = GPSCoordinate;
     }
 
+    /**
+     * Retrieve all tasks from database, cached result after the first retrieved
+     *
+     * @return the list of all tasks
+     */
     public List<Task> getTasks() {
-        return findAll(Task.class);
+        if (!mCached) {
+            mCachedTasks = findAll(Task.class);
+            mCached = true;
+            Log.d(TAG, "[+] Cached all task list", new Exception());
+        } else {
+            Log.d(TAG, "[+] Retrieve task list from cache", new Exception());
+        }
+        return mCachedTasks;
     }
 
     public List<Location> getLocations() {
@@ -250,6 +282,32 @@ public class ToDoLab {
                 }
                 break;
         }
+
+        // if successfully saved the task, and the tasks list is already cached, then update the
+        // cached list
+        if (result && mCached) {
+            /* the simplest way is to retrieve tasks from database again. However, since we're trying
+             to improve the performance by decrease invoking SQLite database query, we're going to
+             directly manipulate the memory list */
+            // TODO: may implement Task.equals(), and then use mCachedTasks.contains()
+            // indicates if the newly add task is already in cached list
+            boolean bFound = false;
+            long taskId = task.getId();
+            for (int i = 0; i < mCachedTasks.size(); i++) {
+                if (mCachedTasks.get(i).getId() == taskId) {
+                    bFound = true;
+                    mCachedTasks.set(i, task);
+                    break;
+                }
+            }
+            // if newly add task isn't in cached list, just add it to
+            if (!bFound) {
+                mCachedTasks.add(task);
+            }
+
+            Log.d(TAG, "[+] Update cached task list");
+        }
+
         return result;
     }
 
@@ -736,5 +794,19 @@ public class ToDoLab {
             }
         }
         return filteredTasks;
+    }
+
+    /**
+     * Populate some tasks for testing and profiling
+     */
+    private void populateTestData() {
+        //Generate 300 data for performance profiling
+        Log.d(TAG, "Start populate data");
+        for (int i = 0; i < 300; i++) {
+            Task task = new Task();
+            task.setTitle("Task #" + i);
+            saveTask(task);
+        }
+        Log.d(TAG, "finish populate data");
     }
 }
