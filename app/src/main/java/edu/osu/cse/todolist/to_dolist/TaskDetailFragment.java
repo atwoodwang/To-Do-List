@@ -294,13 +294,9 @@ public class TaskDetailFragment extends Fragment {
         return v;
     }
 
+    // Update UI according users' selection of reminder type.
     private void updateUI() {
         Log.d(TAG, "updateUI called");
-
-        // avoid crashing
-        if (mEnabled == null || mStarred == null) {
-            return;
-        }
 
         Task.ConfigType config = mTask.getConfig();
         switch (config) {
@@ -335,8 +331,14 @@ public class TaskDetailFragment extends Fragment {
 
     }
 
+    // Update the toolbar UI
     private void updateMenuUI() {
         Log.d(TAG, "updateMenuUI called");
+
+        // avoid crashing
+        if (mEnabled == null || mStarred == null) {
+            return;
+        }
 
         // update the alarm/enable icon
         Task.ConfigType config = mTask.getConfig();
