@@ -211,6 +211,7 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
                         mCurrentWifiInfoTextView.setVisibility(View.VISIBLE);
                         mGPSSettingButton.setVisibility(View.GONE);
                         mLocationAddressEditText.setVisibility(View.GONE);
+                        updateWifiTextView();
                         break;
                 }
             }
@@ -337,7 +338,6 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
             }
         });
 
-        updateWifiTextView();
 
         mDoneButton = (Button) v.findViewById(R.id.done_button);
         mDoneButton.setOnClickListener(new View.OnClickListener() {
