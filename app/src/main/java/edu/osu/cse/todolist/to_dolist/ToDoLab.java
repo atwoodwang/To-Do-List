@@ -223,6 +223,7 @@ public class ToDoLab {
         boolean result = false;
         switch (task.getConfig()) {
             case NONE:
+                result = true;
                 break;
             case TIME:
                 Schedule schedule = task.getSchedule();
