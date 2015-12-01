@@ -27,6 +27,8 @@ public class GPSCoordinate extends Model {
         mLongitude = 0;
         mLatitude = 0;
         mRange = 0;
+        mAddress = "";
+        mPlaceId = "";
     }
 
     public double getLongitude() {
