@@ -440,6 +440,26 @@ public class ToDoLab {
 
         // Remove Task itself
         delete(task);
+
+        // handle cached task list
+        if (mCached) {
+            /* the simplest way is to retrieve tasks from database again. However, since we're trying
+             to improve the performance by decrease invoking SQLite database query, we're going to
+             directly manipulate the memory list */
+            long taskId = task.getId();
+            int taskIndex = -1;
+            for (int i = 0; i < mCachedTasks.size(); i++) {
+                if (mCachedTasks.get(i).getId() == taskId) {
+                    taskIndex = i;
+                    break;
+                }
+            }
+            // if found the task in cached list, delete it
+            if (taskIndex != -1) {
+                mCachedTasks.remove(taskIndex);
+                Log.d(TAG, "[+] Update cached task list");
+            }
+        }
     }
 
     public Cursor query(String table, String whereClause, String[] whereArgs) {
