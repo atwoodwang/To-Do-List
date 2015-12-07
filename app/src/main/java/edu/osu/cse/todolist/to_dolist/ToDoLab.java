@@ -817,12 +817,14 @@ public class ToDoLab {
     }
 
     /**
-     * Populate some tasks for testing and profiling
+     * Populate given {@code num} number of tasks into database, used for testing and profiling
+     *
+     * @param num
      */
-    private void populateTestData() {
+    private void populateTestData(int num) {
         //Generate 300 data for performance profiling
         Log.d(TAG, "Start populate data");
-        for (int i = 0; i < 300; i++) {
+        for (int i = 0; i < num; i++) {
             Task task = new Task();
             task.setTitle("Task #" + i);
             saveTask(task);
