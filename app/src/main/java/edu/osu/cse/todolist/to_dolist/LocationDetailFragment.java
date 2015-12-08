@@ -67,6 +67,7 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
     private GPSCoordinate mGPSCoordinate;
     private static final String ARG_LOCATION_ID = "location_id";
     private static final int PLACE_PICKER_REQUEST = 1;
+    private static final String STATE_SAVED = "SavedOnRotation";
     protected GoogleApiClient mGoogleApiClient;
     private PlaceAutocompleteAdapter mAdapter;
     private LocationManager mLocationManager;
@@ -94,6 +95,14 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
         if (mGPSCoordinate == null) {
             mGPSCoordinate = new GPSCoordinate(-1);
             mLocation.setGPSCoordinate(mGPSCoordinate);
+        }
+
+        if (savedInstanceState != null) {
+            boolean bSaved = savedInstanceState.getBoolean(STATE_SAVED, false);
+            if (bSaved) {
+                Log.d(TAG, "[+] Get Location State from ToDoLab");
+                mLocation = ToDoLab.get(getContext()).getLocationState();
+            }
         }
 
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
@@ -479,6 +488,14 @@ public class LocationDetailFragment extends Fragment implements GoogleApiClient
         Toast.makeText(getActivity(),
                 "Could not connect to Google API Client: Error " + connectionResult.getErrorCode(),
                 Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putBoolean(STATE_SAVED, true);
+        ToDoLab.get(getContext()).setLocationState(mLocation);
+        Log.d(TAG, "[+] Saved Location State to ToDoLab.");
     }
 
 }

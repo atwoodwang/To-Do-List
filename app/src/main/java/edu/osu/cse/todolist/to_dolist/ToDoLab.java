@@ -54,6 +54,11 @@ public class ToDoLab {
     private Task mTaskState;
 
     /**
+     * Used to save Location state during rotation
+     */
+    private Location mLocationState;
+
+    /**
      * Current in-memory GPSCoordinate
      * <p/>
      * Used to transmit GPSCoordinate between different Activities and Fragments
@@ -180,6 +185,14 @@ public class ToDoLab {
 
     public void setTaskState(Task taskState) {
         mTaskState = taskState;
+    }
+
+    public Location getLocationState() {
+        return mLocationState;
+    }
+
+    public void setLocationState(Location locationState) {
+        mLocationState = locationState;
     }
 
     /**
