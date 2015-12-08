@@ -27,8 +27,9 @@
     <string name="gps_location_setting">Use Place Picker</string>
     <string name="location_setting_label">Set Location</string>
     <string name="no_location">Press \"+\" to add a new location</string>
-    <string name="list_based_on_gps">Based on: GPS</string>
-    <string name="list_based_on_wifi">Based on: Wi-Fi</string>
+    <string name="list_based_on_gps">GPS:  %1$s.</string>
+    <string name="list_based_on_wifi">Wi-Fi:  %1$s.</string>
+    <string name="list_based_on_gpscoordinate">GPS:  %1$.5f  %2$.5f.</string>
     <string name="delete_location">Delete Location</string>
     <string name="location_arriving">When Arriving: </string>
     <string name="location_leaving">When Leaving: </string>

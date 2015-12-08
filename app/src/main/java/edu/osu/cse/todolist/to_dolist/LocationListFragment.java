@@ -107,10 +107,25 @@ public class LocationListFragment extends Fragment {
             mLocationTitleTextView.setText(mLocation.getTitle());
             switch (mLocation.getConfig()) {
                 case GPS:
-                    mLocationTypeTextView.setText(R.string.list_based_on_gps);
+                    if(mLocation.getGPSCoordinate().getAddress()!=null){
+                        String string = mLocation.getGPSCoordinate().getAddress();
+                        int end = string.lastIndexOf(",");
+                        string = string.substring(0,end);
+                        mLocationTypeTextView.setText(String.format(getString(R.string
+                                .list_based_on_gps), string));
+                    }else{
+                        mLocationTypeTextView.setText(String.format(getString(R.string
+                                        .list_based_on_gpscoordinate),
+                                mLocation
+                                        .getGPSCoordinate()
+                                        .getLatitude(),
+                                mLocation.getGPSCoordinate().getLongitude()));
+                    }
                     break;
                 case WiFi:
-                    mLocationTypeTextView.setText(R.string.list_based_on_wifi);
+                    mLocationTypeTextView.setText(String.format(getString(R.string
+                                    .list_based_on_wifi),
+                            mLocation.getWiFiPosition().getSSID()));
                     break;
             }
         }
