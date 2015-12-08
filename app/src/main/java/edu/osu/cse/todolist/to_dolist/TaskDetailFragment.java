@@ -282,6 +282,7 @@ public class TaskDetailFragment extends Fragment {
                 } else {
                     ToDoLab.get(getActivity()).saveTask(mTask);
                     ToDoLab.get(getActivity()).setupRemindService();
+                    ToDoLab.get(getActivity()).setTimeAlarm();
                     getActivity().onBackPressed();
                 }
 

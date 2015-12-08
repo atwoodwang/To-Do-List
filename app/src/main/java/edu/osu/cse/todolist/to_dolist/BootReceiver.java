@@ -16,6 +16,7 @@ public class BootReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
 //            mAlarmReceiver.setAlarm(context);
             ToDoLab.get(context).setupRemindService();
+            ToDoLab.get(context).setTimeAlarm();
         }
     }
 }

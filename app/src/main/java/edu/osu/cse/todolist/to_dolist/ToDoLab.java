@@ -7,8 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
 
 import edu.osu.cse.todolist.to_dolist.database.GPSCoordinateCursorWrapper;
 import edu.osu.cse.todolist.to_dolist.database.LocationCursorWrapper;
@@ -739,18 +742,18 @@ public class ToDoLab {
                 continue;
             }
 
-            // check if a task is reminded by time, and its time isn't passed by
-            if (Task.ConfigType.TIME.equals(config)) {
-                long currentTime = new Date().getTime();
-                // TODO: Warining, if launch the alarm too late, it may not be triggered
-                // TODO: need improve time remind
-                // bypass timeout tasks
-                if (task.isTimeout(currentTime)) {
-                    continue;
-                } else {
-                    return true;
-                }
-            }
+//            // check if a task is reminded by time, and its time isn't passed by
+//            if (Task.ConfigType.TIME.equals(config)) {
+//                long currentTime = new Date().getTime();
+//                // TODO: Warining, if launch the alarm too late, it may not be triggered
+//                // TODO: need improve time remind
+//                // bypass timeout tasks
+//                if (task.isTimeout(currentTime)) {
+//                    continue;
+//                } else {
+//                    return true;
+//                }
+//            }
 
             if (Task.ConfigType.LOCATION_ARRIVING.equals(config) ||
                     Task.ConfigType.LOCATION_LEAVING.equals(config)) {
@@ -765,6 +768,64 @@ public class ToDoLab {
         Log.d(TAG, "checkRemindTask called, return " + result, new Exception());
         return result;
     }
+
+    /**
+     * Set the time alarm if needed, cancel the alarm if no tasks needed to be reminded.
+     */
+    public void setTimeAlarm() {
+        List<Task> tasks = getCurrentTimeTasks();
+        TimeAlarmReceiver timeAlarmReceiver = new TimeAlarmReceiver();
+        //Cancel the alarm if no tasks.
+        if (tasks == null || tasks.size() == 0) {
+            timeAlarmReceiver.cancelAlarm(getContext());
+            return;
+        }
+        //Get the earliest task.
+        Task task = tasks.get(0);
+        timeAlarmReceiver.setAlarm(getContext(), task);
+    }
+
+    /**
+     * Check whether there is time task needed to be reminded.
+     *
+     * @return List of tasks that needs remind in a sorted order, otherwise <code>null</code>
+     */
+    public List<Task> getCurrentTimeTasks() {
+        List<Task> tasks = getTasks();
+        List<Task> timeTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            // bypass finished tasks
+            if (task.isComplete()) {
+                continue;
+            }
+            // bypass remind disabled tasks
+            if (!task.isEnabled()) {
+                continue;
+            }
+
+            Task.ConfigType config = task.getConfig();
+            // bypass Other remind type tasks
+            if (!Task.ConfigType.TIME.equals(config)) {
+                continue;
+            }
+            //bypass the Time task that is out of date.
+            long currentTime = new Date().getTime();
+            if (task.isTimeout(currentTime)) {
+                continue;
+            }
+            timeTasks.add(task);
+        }
+        //Sort the tasks in a increasing time order.The earlier task will be earlier in the list.
+        Collections.sort(timeTasks, new Comparator<Task>() {
+            @Override
+            public int compare(Task a, Task b) {
+                return a.getTime() < b.getTime() ? -1 : 0;
+            }
+        });
+
+        return timeTasks;
+    }
+
 
     /**
      * Turn on/off the alarm used for remind service, according to the exists of tasks that needs

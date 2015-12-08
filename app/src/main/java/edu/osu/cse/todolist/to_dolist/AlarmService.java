@@ -34,12 +34,12 @@ public class AlarmService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "Receive 1 minute Intent");
 
-        long NEWcurrentTime = new Date().getTime();
-        List<Task> timeTasks = ToDoLab.get(getApplicationContext()).getInTimeTasks(NEWcurrentTime);
-        for (Task task : timeTasks) {
-            sendNotification(task);
-            Log.d(TAG, "[+] Time Remind Task: " + task.getTitle());
-        }
+//        long NEWcurrentTime = new Date().getTime();
+//        List<Task> timeTasks = ToDoLab.get(getApplicationContext()).getInTimeTasks(NEWcurrentTime);
+//        for (Task task : timeTasks) {
+//            sendNotification(task);
+//            Log.d(TAG, "[+] Time Remind Task: " + task.getTitle());
+//        }
 
 
         List<Task> tasks = ToDoLab.get(this).getTasks();
