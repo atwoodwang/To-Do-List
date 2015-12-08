@@ -57,20 +57,21 @@ public class AlarmService extends IntentService {
 //            } else
             if (task.getLocation() != null & task.getConfig() == Task.ConfigType
                     .LOCATION_ARRIVING) {
-                if (task.getLocation().getConfig() == Location.ConfigType.WiFi & task.getLocation()
-                        .getWiFiPosition() != null) {
-                    mWiFiPosition = task.getLocation().getWiFiPosition();
-                    String[] wifiInfo = WiFiPosition.getCurrentWifiInfo(getBaseContext());
-                    if (wifiInfo != null) {
-                        String ssid = wifiInfo[0];
-                        String mac = wifiInfo[1];
-                        if (ssid.equals(mWiFiPosition.getSSID()) & mac.equals(mWiFiPosition.getBSSID())) {
-                            sendNotification(task);
-                            Log.d(TAG, task.getTitle() + "  Arriving: " + task.getLocation().getTitle
-                                    () + "(WIFI)");
-                        }
-                    }
-                } else if (task.getLocation().getConfig() == Location.ConfigType.GPS & task
+//                if (task.getLocation().getConfig() == Location.ConfigType.WiFi & task.getLocation()
+//                        .getWiFiPosition() != null) {
+//                    mWiFiPosition = task.getLocation().getWiFiPosition();
+//                    String[] wifiInfo = WiFiPosition.getCurrentWifiInfo(getBaseContext());
+//                    if (wifiInfo != null) {
+//                        String ssid = wifiInfo[0];
+//                        String mac = wifiInfo[1];
+//                        if (ssid.equals(mWiFiPosition.getSSID()) & mac.equals(mWiFiPosition.getBSSID())) {
+//                            sendNotification(task);
+//                            Log.d(TAG, task.getTitle() + "  Arriving: " + task.getLocation().getTitle
+//                                    () + "(WIFI)");
+//                        }
+//                    }
+//                } else
+                if (task.getLocation().getConfig() == Location.ConfigType.GPS & task
                         .getLocation().getGPSCoordinate() != null) {
                     mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -109,25 +110,26 @@ public class AlarmService extends IntentService {
                 }
             } else if (task.getLocation() != null & task.getConfig() == Task.ConfigType
                     .LOCATION_LEAVING) {
-                if (task.getLocation().getConfig() == Location.ConfigType.WiFi & task.getLocation()
-                        .getWiFiPosition() != null) {
-                    mWiFiPosition = task.getLocation().getWiFiPosition();
-                    String[] wifiInfo = WiFiPosition.getCurrentWifiInfo(getBaseContext());
-                    if (wifiInfo != null) {
-                        String ssid = wifiInfo[0];
-                        String mac = wifiInfo[1];
-                        if (!ssid.equals(mWiFiPosition.getSSID()) & !mac.equals(mWiFiPosition.getBSSID()
-                        )) {
-                            sendNotification(task);
-                            Log.d(TAG, task.getTitle() + "  leaving: " + task.getLocation().getTitle
-                                    () + "(WIFI)");
-                        }
-                    } else {
-                        sendNotification(task);
-                        Log.d(TAG, task.getTitle() + "  leaving: " + task.getLocation().getTitle
-                                () + "(WIFI)");
-                    }
-                } else if (task.getLocation().getConfig() == Location.ConfigType.GPS & task
+//                if (task.getLocation().getConfig() == Location.ConfigType.WiFi & task.getLocation()
+//                        .getWiFiPosition() != null) {
+//                    mWiFiPosition = task.getLocation().getWiFiPosition();
+//                    String[] wifiInfo = WiFiPosition.getCurrentWifiInfo(getBaseContext());
+//                    if (wifiInfo != null) {
+//                        String ssid = wifiInfo[0];
+//                        String mac = wifiInfo[1];
+//                        if (!ssid.equals(mWiFiPosition.getSSID()) & !mac.equals(mWiFiPosition.getBSSID()
+//                        )) {
+//                            sendNotification(task);
+//                            Log.d(TAG, task.getTitle() + "  leaving: " + task.getLocation().getTitle
+//                                    () + "(WIFI)");
+//                        }
+//                    } else {
+//                        sendNotification(task);
+//                        Log.d(TAG, task.getTitle() + "  leaving: " + task.getLocation().getTitle
+//                                () + "(WIFI)");
+//                    }
+//                } else
+            if (task.getLocation().getConfig() == Location.ConfigType.GPS & task
                         .getLocation().getGPSCoordinate() != null) {
                     mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                     List<String> providerList = mLocationManager.getProviders(true);

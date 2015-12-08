@@ -781,6 +781,20 @@ public class ToDoLab {
             Log.d(TAG, "turn off alarm service");
             alarmReceiver.cancelAlarm(getContext());
         }
+
+        if (getLocationArrivingTasks().size() > 0 || getLocationLeavingTasks().size() > 0) {
+            // save the current connected WiFi info, because we won't receive CONNECTED intent
+            // for already connected WiFi AP
+            String info[] = WiFiPosition.getCurrentWifiInfo(mContext);
+            if (info != null) {
+                String ssid = info[0];
+                String bssid = info[1];
+                WiFiReceiver.setLastConnectedWiFi(mContext, ssid, bssid);
+            }
+            WiFiReceiver.setWiFiRemindEnabled(mContext, true);
+        } else {
+            WiFiReceiver.setWiFiRemindEnabled(mContext, false);
+        }
     }
 
     /**
@@ -811,6 +825,70 @@ public class ToDoLab {
             if (task.isInTime(currentTime)) {
                 // only add eligible tasks to the filteredTasks
                 filteredTasks.add(task);
+            }
+        }
+        return filteredTasks;
+    }
+
+    public List<Task> getLocationArrivingTasks() {
+        List<Task> allTasks = getTasks();
+        List<Task> filteredTasks = new ArrayList<>();
+        for (Task task : allTasks) {
+            // bypass finished tasks
+            if (task.isComplete()) {
+                continue;
+            }
+            // bypass remind disabled tasks
+            if (!task.isEnabled()) {
+                continue;
+            }
+
+            // bypass other remind type tasks
+            Task.ConfigType config = task.getConfig();
+            if (!Task.ConfigType.LOCATION_ARRIVING.equals(config)) {
+                continue;
+            }
+
+            // avoid null pointer crash
+            Location location = task.getLocation();
+            if (location != null) {
+                WiFiPosition wiFiPosition = location.getWiFiPosition();
+                if (wiFiPosition != null && wiFiPosition.getSSID() != null
+                        && wiFiPosition.getBSSID() != null) {
+                    filteredTasks.add(task);
+                }
+            }
+        }
+        return filteredTasks;
+    }
+
+    public List<Task> getLocationLeavingTasks() {
+        List<Task> allTasks = getTasks();
+        List<Task> filteredTasks = new ArrayList<>();
+        for (Task task : allTasks) {
+            // bypass finished tasks
+            if (task.isComplete()) {
+                continue;
+            }
+            // bypass remind disabled tasks
+            if (!task.isEnabled()) {
+                continue;
+            }
+
+            // bypass other remind type tasks
+            Task.ConfigType config = task.getConfig();
+            if (!Task.ConfigType.LOCATION_LEAVING.equals(config)) {
+                continue;
+            }
+
+            // avoid null pointer crash
+            Location location = task.getLocation();
+            if (location != null) {
+                WiFiPosition wiFiPosition = location.getWiFiPosition();
+                if (wiFiPosition != null && wiFiPosition.getSSID() != null
+                        && wiFiPosition.getBSSID() != null) {
+                    filteredTasks.add(task);
+                }
             }
         }
         return filteredTasks;
