@@ -22,20 +22,12 @@
         android:textColor="#9E9E9E"
         android:textSize="24sp"/>
 
-    <com.github.clans.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/floating_action_add_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
-        android:layout_marginBottom="8dp"
-        android:src="@drawable/fab_add"
-        app:fab_colorNormal="#DA4336"
-        app:fab_colorPressed="#E75043"
-        app:fab_colorRipple="#99FFFFFF"
-        app:fab_showShadow="true"
-        app:fab_size="normal"
-        app:fab_showAnimation="@anim/fab_scale_up"
-        app:fab_hideAnimation="@anim/fab_scale_down"
-        app:fab_label=""
-        app:fab_progress_color="#FF009688"/>
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_float_button_add"
+        app:backgroundTint="#D32F2F"/>
 </FrameLayout>

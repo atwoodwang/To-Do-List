@@ -8,16 +8,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -28,7 +21,7 @@ public class LocationListFragment extends Fragment {
     private RecyclerView mLocationRecyclerView;
     private LocationAdapter mAdapter;
     private TextView mNoLocationTextView;
-    private com.github.clans.fab.FloatingActionButton mFloatingAddLocation;
+    private FloatingActionButton mFloatingAddLocation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +38,7 @@ public class LocationListFragment extends Fragment {
         mLocationRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
-        mFloatingAddLocation = (com.github.clans.fab.FloatingActionButton) view.findViewById(R.id.floating_action_add_location);
+        mFloatingAddLocation = (FloatingActionButton) view.findViewById(R.id.floating_action_add_location);
         mFloatingAddLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
