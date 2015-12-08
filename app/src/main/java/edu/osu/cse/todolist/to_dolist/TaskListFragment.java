@@ -187,6 +187,8 @@ public class TaskListFragment extends Fragment {
                     mTask.setComplete(isChecked);
                     // Save the Complete status into database
                     ToDoLab.get(getActivity()).saveTask(mTask);
+                    ToDoLab.get(getActivity()).setTimeAlarm();
+                    ToDoLab.get(getActivity()).setupRemindService();
                 }
             });
 
