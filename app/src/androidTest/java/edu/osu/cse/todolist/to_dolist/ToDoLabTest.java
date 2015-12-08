@@ -4,13 +4,20 @@ import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 import android.util.Log;
 
-import java.util.List;
-
 /**
  * Unit test for ToDoLab singleton centralized data class
  */
 public class ToDoLabTest extends AndroidTestCase {
     final private String TAG = "AndroidTestCase";
+
+    /**
+     * a flag indicate if it's the first time running setUp() method, so we can do some one-time
+     * fixture.
+     * <p/>
+     * AndroidTestCase does not support annotation or method like @BeforeClass in JUnit 4.
+     */
+    private static boolean mInitialized = false;
+
     private RenamingDelegatingContext mContext;
 
     @Override
@@ -19,6 +26,14 @@ public class ToDoLabTest extends AndroidTestCase {
         mContext = new RenamingDelegatingContext(getContext(), "test_db");
         // pass the context to ToDoLab
         ToDoLab.get(mContext);
+
+        // populate some test data at the first time running test case
+        if (!mInitialized) {
+            Log.d(TAG, "[+] Populate Date");
+            ToDoLab.get(mContext).populateTestData(10);
+            mInitialized = true;
+        }
+
         Log.d(TAG, "setup() called");
     }
 
