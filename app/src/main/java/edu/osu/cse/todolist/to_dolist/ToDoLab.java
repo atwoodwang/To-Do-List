@@ -842,6 +842,20 @@ public class ToDoLab {
             Log.d(TAG, "turn off alarm service");
             alarmReceiver.cancelAlarm(getContext());
         }
+
+        if (getLocationArrivingTasks().size() > 0 || getLocationLeavingTasks().size() > 0) {
+            // save the current connected WiFi info, because we won't receive CONNECTED intent
+            // for already connected WiFi AP
+            String info[] = WiFiPosition.getCurrentWifiInfo(mContext);
+            if (info != null) {
+                String ssid = info[0];
+                String bssid = info[1];
+                WiFiReceiver.setLastConnectedWiFi(mContext, ssid, bssid);
+            }
+            WiFiReceiver.setWiFiRemindEnabled(mContext, true);
+        } else {
+            WiFiReceiver.setWiFiRemindEnabled(mContext, false);
+        }
     }
 
     /**
@@ -877,15 +891,90 @@ public class ToDoLab {
         return filteredTasks;
     }
 
+    public List<Task> getLocationArrivingTasks() {
+        List<Task> allTasks = getTasks();
+        List<Task> filteredTasks = new ArrayList<>();
+        for (Task task : allTasks) {
+            // bypass finished tasks
+            if (task.isComplete()) {
+                continue;
+            }
+            // bypass remind disabled tasks
+            if (!task.isEnabled()) {
+                continue;
+            }
+
+            // bypass other remind type tasks
+            Task.ConfigType config = task.getConfig();
+            if (!Task.ConfigType.LOCATION_ARRIVING.equals(config)) {
+                continue;
+            }
+
+            // avoid null pointer crash
+            Location location = task.getLocation();
+            if (location != null) {
+                WiFiPosition wiFiPosition = location.getWiFiPosition();
+                if (wiFiPosition != null && wiFiPosition.getSSID() != null
+                        && wiFiPosition.getBSSID() != null) {
+                    filteredTasks.add(task);
+                }
+            }
+        }
+        return filteredTasks;
+    }
+
+    public List<Task> getLocationLeavingTasks() {
+        List<Task> allTasks = getTasks();
+        List<Task> filteredTasks = new ArrayList<>();
+        for (Task task : allTasks) {
+            // bypass finished tasks
+            if (task.isComplete()) {
+                continue;
+            }
+            // bypass remind disabled tasks
+            if (!task.isEnabled()) {
+                continue;
+            }
+
+            // bypass other remind type tasks
+            Task.ConfigType config = task.getConfig();
+            if (!Task.ConfigType.LOCATION_LEAVING.equals(config)) {
+                continue;
+            }
+
+            // avoid null pointer crash
+            Location location = task.getLocation();
+            if (location != null) {
+                WiFiPosition wiFiPosition = location.getWiFiPosition();
+                if (wiFiPosition != null && wiFiPosition.getSSID() != null
+                        && wiFiPosition.getBSSID() != null) {
+                    filteredTasks.add(task);
+                }
+            }
+        }
+        return filteredTasks;
+    }
+
     /**
-     * Populate some tasks for testing and profiling
+     * Populate given {@code num} number of tasks into database, used for testing and profiling
+     *
+     * @param num
      */
-    private void populateTestData() {
+    public void populateTestData(int num) {
         //Generate 300 data for performance profiling
         Log.d(TAG, "Start populate data");
-        for (int i = 0; i < 300; i++) {
+        for (int i = 0; i < num; i++) {
             Task task = new Task();
             task.setTitle("Task #" + i);
+
+            if (i % 2 == 0) {
+                task.setStarred(true);
+            }
+
+            if (i % 3 == 0) {
+                task.setComplete(true);
+            }
+
             saveTask(task);
         }
         Log.d(TAG, "finish populate data");

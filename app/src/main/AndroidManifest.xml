@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="edu.osu.cse.todolist.to_dolist"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="edu.osu.cse.todolist.to_dolist"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -55,8 +56,8 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
         <!--<meta-data-->
-            <!--android:name="com.google.android.maps.v2.API_KEY"-->
-            <!--android:value="@string/google_maps_key"/>-->
+        <!--android:name="com.google.android.maps.v2.API_KEY"-->
+        <!--android:value="@string/google_maps_key"/>-->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key"/>
@@ -72,6 +73,12 @@
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".WiFiReceiver">
+            <intent-filter>
+                <action android:name="android.net.wifi.STATE_CHANGE"/>
             </intent-filter>
         </receiver>
 
