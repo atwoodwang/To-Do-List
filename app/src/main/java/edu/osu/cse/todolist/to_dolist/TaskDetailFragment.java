@@ -46,6 +46,7 @@ public class TaskDetailFragment extends Fragment {
     private static final String STAR = "star";
     private static final String LOCATION = "location";
     private static final String ENABLED = "enabled";
+    private static final String STATE_SAVED = "SavedOnRotation";
     private Spinner mRemindSpinner;
     private Spinner mLocationSpinner;
     private Button mShortCutButton;
@@ -73,10 +74,18 @@ public class TaskDetailFragment extends Fragment {
         setHasOptionsMenu(true);
         long taskId = (long) getArguments().getSerializable(ARG_TASK_ID);
         mTask = ToDoLab.get(getActivity()).getTask(taskId);
+//        if (savedInstanceState != null) {
+//            mTask.setStarred(savedInstanceState.getBoolean(STAR));
+//            mTask.setEnabled(savedInstanceState.getBoolean(ENABLED));
+//        }
         if (savedInstanceState != null) {
-            mTask.setStarred(savedInstanceState.getBoolean(STAR));
-            mTask.setEnabled(savedInstanceState.getBoolean(ENABLED));
+            boolean bSaved = savedInstanceState.getBoolean(STATE_SAVED, false);
+            if (bSaved) {
+                Log.d(TAG, "[+] Get Task State from ToDoLab");
+                mTask = ToDoLab.get(getContext()).getTaskState();
+            }
         }
+
     }
 
     @Override
@@ -85,8 +94,11 @@ public class TaskDetailFragment extends Fragment {
 
         Log.d(TAG, "onSaveInstanceState called");
 
-        savedInstanceState.putBoolean(STAR, mTask.isStarred());
-        savedInstanceState.putBoolean(ENABLED, mTask.isEnabled());
+//        savedInstanceState.putBoolean(STAR, mTask.isStarred());
+//        savedInstanceState.putBoolean(ENABLED, mTask.isEnabled());
+        savedInstanceState.putBoolean(STATE_SAVED, true);
+        ToDoLab.get(getContext()).setTaskState(mTask);
+        Log.d(TAG,"[+] Saved Task State to ToDoLab.");
     }
 
     @Override
