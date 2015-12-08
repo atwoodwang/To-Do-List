@@ -899,12 +899,21 @@ public class ToDoLab {
      *
      * @param num
      */
-    private void populateTestData(int num) {
+    public void populateTestData(int num) {
         //Generate 300 data for performance profiling
         Log.d(TAG, "Start populate data");
         for (int i = 0; i < num; i++) {
             Task task = new Task();
             task.setTitle("Task #" + i);
+
+            if (i % 2 == 0) {
+                task.setStarred(true);
+            }
+
+            if (i % 3 == 0) {
+                task.setComplete(true);
+            }
+
             saveTask(task);
         }
         Log.d(TAG, "finish populate data");
